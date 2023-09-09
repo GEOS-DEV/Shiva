@@ -10,6 +10,7 @@ set( shiva_dependencies
      geometry
      )
 
+add_subdirectory( types )
 add_subdirectory( geometry )
 
 blt_add_library( NAME             shiva

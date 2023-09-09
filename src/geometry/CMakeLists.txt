@@ -1,9 +1,14 @@
 
 set( geometry_headers
      CellHexahedron.hpp
+     CellUtilities.hpp
      )
 
 set( geometry_sources
+     )
+
+set( geometry_dependencies
+     types 
      )
 
 blt_add_library( NAME             geometry
@@ -16,6 +21,9 @@ target_include_directories( geometry
                             INTERFACE 
                             $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include> )
 
+target_include_directories( geometry 
+                            INTERFACE 
+                            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src> )
 
 install( FILES ${geometry_headers} 
          DESTINATION include/geometry )
