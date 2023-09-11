@@ -38,6 +38,11 @@ testJacobianHelper< Cube< double > >(
     double detJ = inverseJacobian( cell, invJ );
     EXPECT_EQ( detJ, 0.125*h*h*h );
     EXPECT_EQ( invJ, ( 2 / h ) );
+
+        auto const [ detJ2, invJ2 ] = inverseJacobian( cell );
+    EXPECT_EQ( detJ2, 0.125*h*h*h );
+    EXPECT_EQ( invJ2, ( 2 / h ) );
+
   } );
 }
 

@@ -41,18 +41,26 @@ testJacobianHelper< RectangularCuboid< double > >(
     data[1] = h[1];
     data[2] = h[2];
     
-    typename std::remove_reference_t<decltype(cell)>::JacobianType J;
+    typename std::remove_reference_t<decltype(cell)>::JacobianType::type J ;
     jacobian( cell, J );
     EXPECT_EQ( J[0], ( h[0] / 2 ) );
     EXPECT_EQ( J[1], ( h[1] / 2 ) );
     EXPECT_EQ( J[2], ( h[2] / 2 ) );
     
-    typename std::remove_reference_t<decltype(cell)>::JacobianType invJ;
+    typename std::remove_reference_t<decltype(cell)>::JacobianType::type invJ;
     double detJ = inverseJacobian( cell, invJ );
+    
     EXPECT_EQ( detJ, 0.125*h[0]*h[1]*h[2] );
     EXPECT_EQ( invJ[0], ( 2 / h[0] ) );
     EXPECT_EQ( invJ[1], ( 2 / h[1] ) );
     EXPECT_EQ( invJ[2], ( 2 / h[2] ) );
+
+    auto const [ detJ2, invJ2 ] = inverseJacobian( cell );
+    EXPECT_EQ( detJ2, 0.125*h[0]*h[1]*h[2] );
+    EXPECT_EQ( invJ2.data[0], ( 2 / h[0] ) );
+    EXPECT_EQ( invJ2.data[1], ( 2 / h[1] ) );
+    EXPECT_EQ( invJ2.data[2], ( 2 / h[2] ) );
+
   } );
 }
 

@@ -1,6 +1,7 @@
 
 set( types_headers
      MultiIndex.hpp
+     types.hpp
      )
 
 set( types_sources

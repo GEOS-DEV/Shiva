@@ -34,6 +34,14 @@ void jacobian( Cube< REAL_TYPE > const & cell,
 }
 
 template< typename REAL_TYPE >
+typename Cube< REAL_TYPE >::JacobianType jacobian( Cube< REAL_TYPE > const & cell )
+{
+  typename Cube< REAL_TYPE >::JacobianType J;
+  jacobian( cell, J );
+  return J;
+}
+
+template< typename REAL_TYPE >
 REAL_TYPE inverseJacobian( Cube< REAL_TYPE > const & cell, 
                            typename Cube< REAL_TYPE >::JacobianType & invJ )
 {
@@ -42,6 +50,12 @@ REAL_TYPE inverseJacobian( Cube< REAL_TYPE > const & cell,
   return 0.125 * h * h * h;
 }
 
+template< typename REAL_TYPE >
+auto inverseJacobian( Cube< REAL_TYPE > const & cell )
+{
+  typename Cube< REAL_TYPE >::JacobianType invJ;
+  return std::make_pair( inverseJacobian( cell, invJ ), invJ );
+}
 
 } // namespace utilities
 } // namespace geometry
