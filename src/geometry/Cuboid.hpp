@@ -1,4 +1,5 @@
-#include "types/MultiIndex.hpp"
+#pragma once
+
 namespace shiva
 {
 
