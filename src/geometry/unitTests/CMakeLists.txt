@@ -3,8 +3,7 @@
 #
 
 set( unit_tests_sources
-     testCellHexahedron.cpp
-     testCellUtilities.cpp
+     testGeometry.cpp
      )
 
 set( dependencyList ${parallelDeps} gtest geometry )

@@ -1,10 +1,58 @@
 
-#include "../CellUtilities.hpp"
+#include "../Cube.hpp"
+#include "../Cuboid.hpp"
+#include "../RectangularCuboid.hpp"
 
 #include <gtest/gtest.h>
 
 using namespace shiva;
-using namespace shiva::cellUtilites;
+using namespace shiva::geometry;
+using namespace shiva::geometry::utilities;
+
+
+
+template< typename CELLTYPE, typename FUNC >
+void testConstructionAndSettersHelper( FUNC && setData )
+{
+  CELLTYPE cell;
+  CELLTYPE const & cellConst = cell;
+
+  typename CELLTYPE::DataType & data = cell.getData();
+  typename CELLTYPE::DataType const & constData = cellConst.getData();
+
+  setData( data, constData );
+}
+
+TEST( testGeometry, testConstructionAndSetters )
+{
+  {
+  double const h = 10;
+  testConstructionAndSettersHelper< Cube< double > >( 
+    [h]( auto & data, auto const & constData )
+    {
+      data = h;
+      EXPECT_EQ( constData, h );
+    } );
+  }
+
+  {
+  double const h[3] = { 10, 20, 30 } ;
+  testConstructionAndSettersHelper< RectangularCuboid< double > >( 
+    [h]( auto & data, auto const & constData )
+    {
+      data[0] = h[0];
+      data[1] = h[1];
+      data[2] = h[2];
+      EXPECT_EQ( constData[0], h[0] );
+      EXPECT_EQ( constData[1], h[1] );
+      EXPECT_EQ( constData[2], h[2] );
+    } );
+  }
+
+}
+
+
+
 
 template< typename CELLTYPE, typename FUNC >
 void testJacobianHelper( FUNC && func )
@@ -17,11 +65,11 @@ void testJacobianHelper( FUNC && func )
   func( data, cellConst );
 }
 
-TEST( testCellUtilities, testJacobian )
+TEST( testGeometry, testJacobian )
 {
   {
   double const h = 10;
-  testJacobianHelper< CellHexahedronUniformIJK< int, double > >( 
+  testJacobianHelper< Cube< double > >( 
     [h]( auto & data, auto const & cell )
     {
       data = h;
@@ -38,7 +86,7 @@ TEST( testCellUtilities, testJacobian )
 
   {
   double const h[3] = { 10, 20, 30 } ;
-  testJacobianHelper< CellHexahedronIJK< int, double > >( 
+  testJacobianHelper< RectangularCuboid< double > >( 
     [h]( auto & data, auto const & cell )
     {
       data[0] = h[0];
@@ -63,7 +111,6 @@ TEST( testCellUtilities, testJacobian )
   }
 
 }
-
 
 int main( int argc, char * * argv )
 {

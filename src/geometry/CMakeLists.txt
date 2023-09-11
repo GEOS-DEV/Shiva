@@ -1,7 +1,8 @@
 
 set( geometry_headers
-     CellHexahedron.hpp
-     CellUtilities.hpp
+     Cube.hpp
+     Cuboid.hpp
+     RectangularCuboid.hpp
      )
 
 set( geometry_sources
