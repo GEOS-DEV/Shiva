@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/ShivaMacros.hpp"
 #include "types/MultiIndex.hpp"
 #include "types/types.hpp"
 namespace shiva
@@ -14,11 +15,12 @@ public:
   using JacobianType = Scalar<REAL_TYPE>;
   using DataType = REAL_TYPE;
 
+  constexpr static bool jacobianIsConstInCell() { return true; }
+
   DataType       & getData()       { return m_h; }
   DataType const & getData() const { return m_h; }
 
 private:
-  constexpr static bool jacobianIsConstInCell = true;
   DataType m_h;
 };
 
@@ -36,12 +38,13 @@ void jacobian( Cube< REAL_TYPE > const & cell,
 
 
 template< typename REAL_TYPE >
-REAL_TYPE inverseJacobian( Cube< REAL_TYPE > const & cell, 
-                           typename Cube< REAL_TYPE >::JacobianType::type & invJ )
+void inverseJacobian( Cube< REAL_TYPE > const & cell, 
+                      typename Cube< REAL_TYPE >::JacobianType::type & invJ,
+                      REAL_TYPE & detJ )
 {
   typename Cube< REAL_TYPE >::DataType const & h = cell.getData();
   invJ = 2 / h;
-  return 0.125 * h * h * h;
+  detJ = 0.125 * h * h * h;
 }
 
 } // namespace utilities

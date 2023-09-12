@@ -3,8 +3,9 @@
 #include <gtest/gtest.h>
 
 
-template< typename CELLTYPE, typename FUNC >
-void testConstructionAndSettersHelper( FUNC && setData )
+template< typename CELLTYPE, typename SETDATAFUNC, typename CHECKFUNC >
+void testConstructionAndSettersHelper( SETDATAFUNC && setData,
+                                       CHECKFUNC && checkData )
 {
   CELLTYPE cell;
   CELLTYPE const & cellConst = cell;
@@ -12,7 +13,8 @@ void testConstructionAndSettersHelper( FUNC && setData )
   typename CELLTYPE::DataType & data = cell.getData();
   typename CELLTYPE::DataType const & constData = cellConst.getData();
 
-  setData( data, constData );
+  setData( data );
+  checkData( constData );
 }
 
 
