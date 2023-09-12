@@ -10,6 +10,7 @@ set( geometry_sources
      )
 
 set( geometry_dependencies
+     common
      types 
      )
 
