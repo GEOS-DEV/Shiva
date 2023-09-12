@@ -8,7 +8,7 @@ set( unit_tests_sources
      testRectangularCuboid.cpp
      )
 
-set( dependencyList ${parallelDeps} gtest geometry )
+set( dependencyList ${parallelDeps} gtest gtest )
 
 #
 # Add gtest C++ based tests
@@ -24,10 +24,11 @@ foreach(test ${unit_tests_sources})
     blt_add_executable( NAME ${test_name}
                         SOURCES ${test}
                         HEADERS ${header} ../geometryUtilities.hpp
+                        INCLUDES ${CMAKE_SOURCE_DIR}/src
                         OUTPUT_DIR ${TEST_OUTPUT_DIRECTORY}
                         DEPENDS_ON ${dependencyList}
                         )
-
+    
     blt_add_test( NAME ${test_name}
                   COMMAND ${test_name}
                   )
