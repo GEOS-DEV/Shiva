@@ -15,6 +15,13 @@ auto make_tuple( T && ... t )
 }
 
 
+template< typename T >
+struct Scalar
+{
+  using type = T;
+  T data;
+};
+
 template< typename T, int N >
 struct CArray1d
 {

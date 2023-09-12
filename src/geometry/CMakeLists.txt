@@ -3,6 +3,7 @@ set( geometry_headers
      Cube.hpp
      Cuboid.hpp
      RectangularCuboid.hpp
+     geometryUtilities.hpp
      )
 
 set( geometry_sources

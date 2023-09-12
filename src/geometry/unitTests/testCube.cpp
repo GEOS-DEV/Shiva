@@ -1,8 +1,7 @@
 
 #include "testGeometryHelpers.hpp"
 #include "../Cube.hpp"
-#include "../Cuboid.hpp"
-#include "../RectangularCuboid.hpp"
+#include "../geometryUtilities.hpp"
 
 #include <gtest/gtest.h>
 
@@ -31,17 +30,17 @@ testJacobianHelper< Cube< double > >(
   [h]( auto & data, auto const & cell )
   {
     data = h;
-    typename std::remove_reference_t<decltype(cell)>::JacobianType J;
+    typename std::remove_reference_t<decltype(cell)>::JacobianType::type J;
     jacobian( cell, J );
     EXPECT_EQ( J, ( h / 2 ) );
-    typename std::remove_reference_t<decltype(cell)>::JacobianType invJ;
+    typename std::remove_reference_t<decltype(cell)>::JacobianType::type invJ;
     double detJ = inverseJacobian( cell, invJ );
     EXPECT_EQ( detJ, 0.125*h*h*h );
     EXPECT_EQ( invJ, ( 2 / h ) );
 
-        auto const [ detJ2, invJ2 ] = inverseJacobian( cell );
+    auto const [ detJ2, invJ2 ] = inverseJacobian( cell );
     EXPECT_EQ( detJ2, 0.125*h*h*h );
-    EXPECT_EQ( invJ2, ( 2 / h ) );
+    EXPECT_EQ( invJ2.data, ( 2 / h ) );
 
   } );
 }

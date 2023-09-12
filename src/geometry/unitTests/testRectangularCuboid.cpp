@@ -1,6 +1,7 @@
 
 #include "testGeometryHelpers.hpp"
 #include "../RectangularCuboid.hpp"
+#include "../geometryUtilities.hpp"
 
 #include <gtest/gtest.h>
 
@@ -46,6 +47,12 @@ testJacobianHelper< RectangularCuboid< double > >(
     EXPECT_EQ( J[0], ( h[0] / 2 ) );
     EXPECT_EQ( J[1], ( h[1] / 2 ) );
     EXPECT_EQ( J[2], ( h[2] / 2 ) );
+
+    auto J2 = jacobian( cell );
+    EXPECT_EQ( J2.data[0], ( h[0] / 2 ) );
+    EXPECT_EQ( J2.data[1], ( h[1] / 2 ) );
+    EXPECT_EQ( J2.data[2], ( h[2] / 2 ) );
+
     
     typename std::remove_reference_t<decltype(cell)>::JacobianType::type invJ;
     double detJ = inverseJacobian( cell, invJ );

@@ -35,13 +35,6 @@ void jacobian( RectangularCuboid< REAL_TYPE > const & cell,
   J[2] = 0.5 * h[2];
 }
 
-template< typename REAL_TYPE >
-typename RectangularCuboid< REAL_TYPE >::JacobianType jacobian( RectangularCuboid< REAL_TYPE > const & cell )
-{
-  typename RectangularCuboid< REAL_TYPE >::JacobianType J;
-  jacobian( cell, J );
-  return J;
-}
 
 
 template< typename REAL_TYPE >
@@ -54,15 +47,6 @@ REAL_TYPE inverseJacobian( RectangularCuboid< REAL_TYPE > const & cell,
   invJ[2] = 2 / h[2];
   return 0.125 * h[0] * h[1] * h[2];
 }
-
-template< typename REAL_TYPE >
-auto inverseJacobian( RectangularCuboid< REAL_TYPE > const & cell )
-{
-  typename RectangularCuboid< REAL_TYPE >::JacobianType invJ;
-  auto const detJ = inverseJacobian( cell, invJ.data );
-  return make_tuple( detJ, invJ );
-}
-
 
 } // namespace utilities
 } // namespace geometry
