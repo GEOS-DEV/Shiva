@@ -14,9 +14,15 @@ public:
   using JacobianType = CArray1d<REAL_TYPE,3>;
   using DataType = REAL_TYPE[3];
 
+  template< typename LAMBDA >
+  RectangularCuboid( LAMBDA && lambda ):
+  m_h()
+  {
+    lambda( m_h );
+  }
+
   constexpr static bool jacobianIsConstInCell() { return true; }
 
-  DataType       & getData()       { return m_h; }
   DataType const & getData() const { return m_h; }
 
 private:

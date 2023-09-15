@@ -60,22 +60,24 @@ static double const detJref[8] = { 1.9654823830313,
 template< typename REAL_TYPE >
 auto makeCuboid( REAL_TYPE const (&X)[8][3] )
 {
-  Cuboid< REAL_TYPE > cell;
-  auto & data = cell.getData();
-  for( int a=0; a<2; ++a )
-  {
-    for( int b=0; b<2; ++b )
+  auto setter = [X] ( auto & data ) 
+  { 
+    for( int a=0; a<2; ++a )
     {
-      for( int c=0; c<2; ++c )
+      for( int b=0; b<2; ++b )
       {
-        for( int j=0; j<3; ++j )
+        for( int c=0; c<2; ++c )
         {
-          data[a][b][c][j] = X[ a + 2*b + 4*c ][j];
+          for( int j=0; j<3; ++j )
+          {
+            data[a][b][c][j] = X[ a + 2*b + 4*c ][j];
+          }
         }
-      }
-    } 
-  }
-
+      } 
+    }
+  };
+    
+  Cuboid< REAL_TYPE > cell( setter );
   return cell;
 }
 

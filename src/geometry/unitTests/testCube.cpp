@@ -12,8 +12,9 @@ using namespace shiva::geometry::utilities;
 template< typename REAL_TYPE >
 auto makeCube( REAL_TYPE const h )
 {
-  Cube< REAL_TYPE > cell;
-  cell.getData() = h;
+  auto setter = [h] ( auto & data ) { data = h; };
+  Cube< REAL_TYPE > cell( setter );
+
   return cell;
 }
 

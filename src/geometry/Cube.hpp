@@ -17,7 +17,13 @@ public:
 
   constexpr static bool jacobianIsConstInCell() { return true; }
 
-  DataType       & getData()       { return m_h; }
+  template< typename LAMBDA >
+  Cube( LAMBDA && lambda ):
+  m_h()
+  {
+    lambda( m_h );
+  }
+
   DataType const & getData() const { return m_h; }
 
 private:

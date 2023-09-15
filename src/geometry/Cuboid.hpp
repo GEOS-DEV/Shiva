@@ -17,13 +17,19 @@ public:
   using JacobianType = CArray2d<REAL_TYPE,3,3>;
   using DataType = REAL_TYPE[2][2][2][3];
 
+  template< typename LAMBDA >
+  Cuboid( LAMBDA && lambda ):
+  m_vertexCoords()
+  {
+    lambda( m_vertexCoords );
+  }
+
   constexpr static bool jacobianIsConstInCell() { return false; }
 
-  DataType       & getData()       { return m_VertexCoords; }
-  DataType const & getData() const { return m_VertexCoords; }
+  DataType const & getData() const { return m_vertexCoords; }
 
 private:
-  DataType m_VertexCoords;
+  DataType m_vertexCoords;
 };
 
 namespace utilities
