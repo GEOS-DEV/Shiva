@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/ShivaMacros.hpp"
-#include "types/MultiIndex.hpp"
+#include "types/IndexTypes.hpp"
 #include "types/types.hpp"
 namespace shiva
 {
