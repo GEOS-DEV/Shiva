@@ -17,17 +17,14 @@ public:
 
   constexpr static bool jacobianIsConstInCell() { return true; }
 
-  template< typename LAMBDA >
-  Cube( LAMBDA && lambda ):
-  m_h()
-  {
-    lambda( m_h );
-  }
+  DataType const & getLength() const { return m_length; }
 
-  DataType const & getData() const { return m_h; }
+  void setLength( DataType const & h ) 
+  { m_length = h; }
+
 
 private:
-  DataType m_h;
+  DataType m_length;
 };
 
 
@@ -38,7 +35,7 @@ template< typename REAL_TYPE >
 void jacobian( Cube< REAL_TYPE > const & cell, 
                typename Cube< REAL_TYPE >::JacobianType::type & J )
 {
-  typename Cube< REAL_TYPE >::DataType const & h = cell.getData();
+  typename Cube< REAL_TYPE >::DataType const & h = cell.getLength();
   J = 0.5 * h;
 }
 
@@ -48,7 +45,7 @@ void inverseJacobian( Cube< REAL_TYPE > const & cell,
                       typename Cube< REAL_TYPE >::JacobianType::type & invJ,
                       REAL_TYPE & detJ )
 {
-  typename Cube< REAL_TYPE >::DataType const & h = cell.getData();
+  typename Cube< REAL_TYPE >::DataType const & h = cell.getLength();
   invJ = 2 / h;
   detJ = 0.125 * h * h * h;
 }

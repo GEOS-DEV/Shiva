@@ -15,18 +15,48 @@ class Cuboid
 {
 public:
   using JacobianType = CArray2d<REAL_TYPE,3,3>;
-  using DataType = REAL_TYPE[2][2][2][3];
-
-  template< typename LAMBDA >
-  Cuboid( LAMBDA && lambda ):
-  m_vertexCoords()
-  {
-    lambda( m_vertexCoords );
-  }
+  using DataType = REAL_TYPE[8][3];
+  using CoordType = REAL_TYPE[3];
 
   constexpr static bool jacobianIsConstInCell() { return false; }
 
-  DataType const & getData() const { return m_vertexCoords; }
+  REAL_TYPE const & getVertexCoord( int const a, int const b, int const c, int const i ) const 
+  { return m_vertexCoords[ 4*a+2*b+c ][i]; }
+
+  REAL_TYPE const & getVertexCoord( int const a, int const i ) const 
+  { return m_vertexCoords[a][i]; }
+
+
+
+  CoordType const & getVertexCoord( int const a, int const b, int const c ) const 
+  { return m_vertexCoords[ 4*a+2*b+c ]; }
+
+  CoordType const & getVertexCoord( int const a ) const 
+  { return m_vertexCoords[a]; }
+
+
+
+
+  void setVertexCoord( int const a, int const b, int const c, int const i, REAL_TYPE const & value ) 
+  { m_vertexCoords[ 4*a+2*b+c ][i] = value; }
+
+  void setVertexCoord( int const a, int const i, REAL_TYPE const & value ) 
+  { m_vertexCoords[a][i] = value; }
+
+
+
+  void setVertexCoord( int const a, CoordType const & value ) 
+  { 
+    m_vertexCoords[ a ][0] = value[0]; 
+    m_vertexCoords[ a ][1] = value[1]; 
+    m_vertexCoords[ a ][2] = value[1]; 
+  }
+
+  void setVertexCoord( int const a, int const b, int const c, CoordType const & value ) 
+  { 
+    setVertexCoord( 4*a+2*b+c, value ); 
+  }
+
 
 private:
   DataType m_vertexCoords;
@@ -38,30 +68,7 @@ namespace utilities
 template< typename REAL_TYPE >
 void jacobian( Cuboid<REAL_TYPE> const & ,//cell, 
                typename Cuboid<REAL_TYPE>::JacobianType::type & )//J )
-{
-  // constexpr static int dpsi[2] = { -1, 1 };
-
-  // auto const & X = cell.getData();
-  // for( int a=0; a<2; ++a )
-  // {
-  //   for( int b=0; b<2; ++b )
-  //   {
-  //     for( int c=0; c<2; ++c )
-  //     {
-  //       REAL_TYPE const dNdXi[3] = { dpsi[a] * 0.125,
-  //                                    dpsi[b] * 0.125,
-  //                                    dpsi[c] * 0.125 };
-  //       for( int i = 0; i < 3; ++i )
-  //       {
-  //         for( int j = 0; j < 3; ++j )
-  //         {
-  //           J[j][i] = J[j][i] + dNdXi[i] * X[a][b][c][j];
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-}
+{}
 
 template< typename REAL_TYPE >
 void jacobian( Cuboid<REAL_TYPE> const & cell, 
@@ -70,7 +77,6 @@ void jacobian( Cuboid<REAL_TYPE> const & cell,
 {
   constexpr static int sign[2] = { -1, 1 };
 
-  auto const & X = cell.getData();
   for( int a=0; a<2; ++a )
   {
     for( int b=0; b<2; ++b )
@@ -84,7 +90,7 @@ void jacobian( Cuboid<REAL_TYPE> const & cell,
         {
           for( int j = 0; j < 3; ++j )
           {
-            J[j][i] = J[j][i] + dNdXi[i] * X[a][b][c][j];
+            J[j][i] = J[j][i] + dNdXi[i] * cell.getVertexCoord( a, b, c, j );
           }
         }
       }

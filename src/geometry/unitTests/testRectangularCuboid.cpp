@@ -12,13 +12,9 @@ using namespace shiva::geometry::utilities;
 template< typename REAL_TYPE >
 auto makeRectangularCuboid( REAL_TYPE const (&h)[3] )
 {
-  auto setter = [h] ( auto & data ) 
-  { 
-    data[0] = h[0];
-    data[1] = h[1];
-    data[2] = h[2];
-  };
-  RectangularCuboid< REAL_TYPE > cell( setter );
+  RectangularCuboid< REAL_TYPE > cell;
+  cell.setLength( h );
+
   return cell;
 }
 
@@ -27,7 +23,7 @@ TEST( testRectangularCuboid, testConstructionAndSetters )
   double const h[3] = { 10, 20, 30 } ;
   auto cell = makeRectangularCuboid( h );
 
-  auto const & constData = cell.getData();
+  auto const & constData = cell.getLengths();
   EXPECT_EQ( constData[0], h[0] );
   EXPECT_EQ( constData[1], h[1] );
   EXPECT_EQ( constData[2], h[2] );

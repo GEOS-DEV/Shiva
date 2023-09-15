@@ -59,35 +59,10 @@ static double const detJref[8] = { 1.9654823830313,
 
 template< typename REAL_TYPE >
 auto makeCuboid( REAL_TYPE const (&X)[8][3] )
-{
-  auto setter = [X] ( auto & data ) 
-  { 
-    for( int a=0; a<2; ++a )
-    {
-      for( int b=0; b<2; ++b )
-      {
-        for( int c=0; c<2; ++c )
-        {
-          for( int j=0; j<3; ++j )
-          {
-            data[a][b][c][j] = X[ a + 2*b + 4*c ][j];
-          }
-        }
-      } 
-    }
-  };
-    
-  Cuboid< REAL_TYPE > cell( setter );
-  return cell;
-}
+{  
+  Cuboid< REAL_TYPE > cell;
 
-TEST( testCuboid, testConstructionAndSetters )
-{
-  auto cell = makeCuboid( Xref );
-
-  auto const & constData = cell.getData();
-
-    for( int a=0; a<2; ++a )
+  for( int a=0; a<2; ++a )
   {
     for( int b=0; b<2; ++b )
     {
@@ -95,7 +70,28 @@ TEST( testCuboid, testConstructionAndSetters )
       {
         for( int j=0; j<3; ++j )
         {
-          EXPECT_DOUBLE_EQ( constData[a][b][c][j], Xref[ a + 2*b + 4*c ][j] );
+          cell.setVertexCoord( a, b, c, j, X[ a + 2*b + 4*c ][j] );
+        }
+      }
+    } 
+  }
+
+  return cell;
+}
+
+TEST( testCuboid, testConstructionAndSetters )
+{
+  auto const cell = makeCuboid( Xref );
+
+  for( int a=0; a<2; ++a )
+  {
+    for( int b=0; b<2; ++b )
+    {
+      for( int c=0; c<2; ++c )
+      {
+        for( int j=0; j<3; ++j )
+        {
+          EXPECT_DOUBLE_EQ( cell.getVertexCoord( a, b, c, j ), Xref[ a + 2*b + 4*c ][j] );
         }
       }
     } 

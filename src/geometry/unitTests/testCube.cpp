@@ -12,8 +12,8 @@ using namespace shiva::geometry::utilities;
 template< typename REAL_TYPE >
 auto makeCube( REAL_TYPE const h )
 {
-  auto setter = [h] ( auto & data ) { data = h; };
-  Cube< REAL_TYPE > cell( setter );
+  Cube< REAL_TYPE > cell;
+  cell.setLength(h);
 
   return cell;
 }
@@ -23,7 +23,7 @@ TEST( testCube, testConstructionAndSetters )
   double const h = 3.14;
   auto cell = makeCube( h );
 
-  auto const & constData = cell.getData();
+  auto const & constData = cell.getLength();
   EXPECT_EQ( constData, h );
   static_assert( decltype(cell)::jacobianIsConstInCell() == true );
 }
