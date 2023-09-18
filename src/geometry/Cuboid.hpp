@@ -120,7 +120,9 @@ void jacobian( Cuboid<REAL_TYPE> const & cell,
   cell.forVertices( [&J, pointCoordsParent ]( auto const & index, REAL_TYPE const (&vertexCoord)[3] )
   {
 
-    // dNdXi is provided by the Basis, which will take in the generic "index" type
+    // dNdXi is provided by the Basis, which will take in the generic "index" type. 
+    // it will probably look like:
+    // CArray1d<REAL_TYPE, 3> const dNdXi = basis.dNdXi( index, pointCoordsParent );
 
     int const a = index.data[0];
     int const b = index.data[1];
