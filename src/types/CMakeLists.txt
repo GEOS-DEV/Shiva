@@ -1,5 +1,7 @@
 
 set( types_headers
+     IndexTypes.hpp
+     LinearIndex.hpp
      MultiIndex.hpp
      types.hpp
      )
@@ -31,4 +33,4 @@ install( EXPORT types
          DESTINATION share/shiva/cmake/ )
 
 
-#add_subdirectory( unitTests )
+add_subdirectory( unitTests )
