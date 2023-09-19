@@ -61,20 +61,18 @@ template< typename REAL_TYPE >
 auto makeCuboid( REAL_TYPE const (&X)[8][3] )
 {  
   Cuboid< REAL_TYPE > cell;
+  typename decltype(cell)::IndexType index;
 
-  for( int a=0; a<2; ++a )
+  forRange( index={0,0,0}, [&cell, &X]( auto const & index )
   {
-    for( int b=0; b<2; ++b )
+    int const a = index.data[0];
+    int const b = index.data[1];
+    int const c = index.data[2];
+    for( int j=0; j<3; ++j )
     {
-      for( int c=0; c<2; ++c )
-      {
-        for( int j=0; j<3; ++j )
-        {
-          cell.setVertexCoord( a, b, c, j, X[ a + 2*b + 4*c ][j] );
-        }
-      }
-    } 
-  }
+      cell.setVertexCoord( index, j, X[ a + 2*b + 4*c ][j] );
+    }
+  } );
 
   return cell;
 }
@@ -82,20 +80,19 @@ auto makeCuboid( REAL_TYPE const (&X)[8][3] )
 TEST( testCuboid, testConstructionAndSetters )
 {
   auto const cell = makeCuboid( Xref );
+  typename decltype(cell)::IndexType index;
 
-  for( int a=0; a<2; ++a )
+  forRange( index={0,0,0}, [&cell]( auto const & index )
   {
-    for( int b=0; b<2; ++b )
+    int const a = index.data[0];
+    int const b = index.data[1];
+    int const c = index.data[2];
+
+    for( int j=0; j<3; ++j )
     {
-      for( int c=0; c<2; ++c )
-      {
-        for( int j=0; j<3; ++j )
-        {
-          EXPECT_DOUBLE_EQ( cell.getVertexCoord( a, b, c, j ), Xref[ a + 2*b + 4*c ][j] );
-        }
-      }
-    } 
-  }
+      EXPECT_DOUBLE_EQ( cell.getVertexCoord( index, j ), Xref[ a + 2*b + 4*c ][j] );
+    }
+  } );
 }
 
 TEST( testCuboid, testJacobianFunctionModifyLvalueRefArg )
