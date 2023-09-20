@@ -132,10 +132,54 @@ struct GaussLobattoSpacing
       if constexpr ( INDEX == 3 ) return  sqrt3div7;
       if constexpr ( INDEX == 4 ) return  1.0;
     }
+    else if constexpr (N==6)
+    {
+      if constexpr ( INDEX == 0 ) return -1.0;
+      if constexpr ( INDEX == 1 ) return -0.7650553239294648;
+      if constexpr ( INDEX == 2 ) return -0.2852315164806455;
+      if constexpr ( INDEX == 3 ) return  0.2852315164806455;
+      if constexpr ( INDEX == 4 ) return  0.7650553239294648;
+      if constexpr ( INDEX == 5 ) return  1.0;
+    }
+    else if constexpr (N==7)
+    {
+      if constexpr ( INDEX == 0 ) return -1.0;
+      if constexpr ( INDEX == 1 ) return -0.83022389627857;
+      if constexpr ( INDEX == 2 ) return -0.4688487934707;
+      if constexpr ( INDEX == 3 ) return  0.0;
+      if constexpr ( INDEX == 4 ) return  0.4688487934707;
+      if constexpr ( INDEX == 5 ) return  0.83022389627857;
+      if constexpr ( INDEX == 6 ) return  1.0;
+    }
+    else if constexpr (N==8)
+    {
+      if constexpr ( INDEX == 0 ) return -1.00000000000000;
+      if constexpr ( INDEX == 1 ) return -0.87174014850961;
+      if constexpr ( INDEX == 2 ) return -0.59170018143314;
+      if constexpr ( INDEX == 3 ) return -0.20929921790248;
+      if constexpr ( INDEX == 4 ) return  0.20929921790248;
+      if constexpr ( INDEX == 5 ) return  0.59170018143314;
+      if constexpr ( INDEX == 6 ) return  0.87174014850961;
+      if constexpr ( INDEX == 7 ) return  1.00000000000000;
+    }
+    else if constexpr (N==9)
+    {
+      if constexpr ( INDEX == 0 ) return -1.;
+      if constexpr ( INDEX == 1 ) return -0.89975799541146;
+      if constexpr ( INDEX == 2 ) return -0.67718627951074;
+      if constexpr ( INDEX == 3 ) return -0.36311746382618;
+      if constexpr ( INDEX == 4 ) return 0.0;
+      if constexpr ( INDEX == 5 ) return 0.36311746382618;
+      if constexpr ( INDEX == 6 ) return 0.67718627951074;
+      if constexpr ( INDEX == 7 ) return 0.89975799541146;
+      if constexpr ( INDEX == 8 ) return 1.;
+    }
     return 0;
   }
 
 };
 
 
-}
+} // namespace shiva
+
+

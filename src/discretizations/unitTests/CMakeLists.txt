@@ -3,6 +3,7 @@
 #
 
 set( unit_tests_sources
+     testLagrangeBasis.cpp
      testSpacing.cpp
      testQuadrature.cpp
      )

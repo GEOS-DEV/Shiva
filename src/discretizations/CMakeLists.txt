@@ -1,6 +1,8 @@
 
 set( discretization_headers
+     discretizatios/finiteElementMethod/bases/LagrangeBasis.hpp
      spacing/Spacing.hpp
+     quadrature/Quadrature.hpp
      )
 
 set( discretization_sources
