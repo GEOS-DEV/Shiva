@@ -20,25 +20,13 @@ blt_add_library( NAME             geometry
                  DEPENDS_ON       ${geometry_dependencies}
                  )
 
-target_include_directories( geometry 
-                            INTERFACE 
-                            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include> )
-
-target_include_directories( geometry 
-                            INTERFACE 
-                            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src> )
-
 install( FILES ${geometry_headers} 
          DESTINATION include/geometry )
 
 install( TARGETS geometry
-         EXPORT geometry
+         EXPORT shiva-targets
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
-
-install( EXPORT geometry
-         DESTINATION share/shiva/cmake/ )
-
 
 add_subdirectory( unitTests )
