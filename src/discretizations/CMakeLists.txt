@@ -1,6 +1,7 @@
 
 set( discretization_headers
      finiteElementMethod/bases/LagrangeBasis.hpp
+     finiteElementMethod/parentElements/ParentElement.hpp
      spacing/Spacing.hpp
      quadrature/Quadrature.hpp
      )
