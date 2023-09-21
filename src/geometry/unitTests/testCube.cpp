@@ -13,7 +13,8 @@ template< typename REAL_TYPE >
 auto makeCube( REAL_TYPE const h )
 {
   Cube< REAL_TYPE > cell;
-  cell.getData() = h;
+  cell.setLength(h);
+
   return cell;
 }
 
@@ -22,7 +23,7 @@ TEST( testCube, testConstructionAndSetters )
   double const h = 3.14;
   auto cell = makeCube( h );
 
-  auto const & constData = cell.getData();
+  auto const & constData = cell.getLength();
   EXPECT_EQ( constData, h );
   static_assert( decltype(cell)::jacobianIsConstInCell() == true );
 }
