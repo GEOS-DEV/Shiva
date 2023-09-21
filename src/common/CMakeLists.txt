@@ -15,20 +15,17 @@ blt_add_library( NAME             common
 
 target_include_directories( common 
                             INTERFACE 
-                            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include> )
+                            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+                            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src> )
 
 
 install( FILES ${common_headers} 
          DESTINATION include/common )
 
 install( TARGETS common
-         EXPORT common
+         EXPORT shiva-targets
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
-
-install( EXPORT common
-         DESTINATION share/shiva/cmake/ )
-
 
 #add_subdirectory( unitTests )

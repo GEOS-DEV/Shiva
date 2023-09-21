@@ -24,13 +24,10 @@ install( FILES ${types_headers}
          DESTINATION include/types )
 
 install( TARGETS types
-         EXPORT types
+         EXPORT shiva-targets
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
-
-install( EXPORT types
-         DESTINATION share/shiva/cmake/ )
 
 
 add_subdirectory( unitTests )
