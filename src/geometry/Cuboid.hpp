@@ -6,8 +6,6 @@
 #include "types/IndexTypes.hpp"
 
 
-#define USE_MULTI_INDEX
-
 namespace shiva
 {
 
@@ -112,7 +110,6 @@ void jacobian( Cuboid<REAL_TYPE> const & cell,
   } );
 }
 
-
 template< typename REAL_TYPE >
 void inverseJacobian( Cuboid< REAL_TYPE > const & cell, 
                            REAL_TYPE const (&parentCoords)[3],
@@ -127,5 +124,3 @@ void inverseJacobian( Cuboid< REAL_TYPE > const & cell,
 } //namespace utilities
 } // namespace geometry
 } // namespace shiva
-
-#undef USE_MULTI_INDEX
