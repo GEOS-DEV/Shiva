@@ -157,8 +157,6 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing<REAL_TYPE, N>
   }
 };
 
-
-
 } // namespace shiva
 
 
