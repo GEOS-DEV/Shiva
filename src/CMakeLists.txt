@@ -28,16 +28,16 @@ target_include_directories( shiva
 
 install( FILES ${shiva_headers} 
          DESTINATION include )
-                   
+
 
 install( TARGETS shiva
-         EXPORT shiva
+         EXPORT shiva-targets
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib )
 
-install( EXPORT shiva
-         DESTINATION share/shiva/cmake/ )
+install( EXPORT shiva-targets
+         DESTINATION lib/cmake/shiva )
 
 shiva_add_code_checks( PREFIX shiva
                        EXCLUDES "blt/*" )
