@@ -3,7 +3,9 @@
 #
 
 set( unit_tests_sources
-     testCellHexahedron.cpp
+     testCube.cpp
+     testCuboid.cpp
+     testRectangularCuboid.cpp
      )
 
 set( dependencyList ${parallelDeps} gtest geometry )
@@ -12,10 +14,16 @@ set( dependencyList ${parallelDeps} gtest geometry )
 # Add gtest C++ based tests
 #
 foreach(test ${unit_tests_sources})
-    message("test is ${test}")
+#    message("test is ${test}")
+    set( header ${test} )
+    string(REPLACE "test" "../" header ${header})
+    string(REPLACE ".cpp" ".hpp" header ${header})
+#    message("header is ${header}")
+
     get_filename_component( test_name ${test} NAME_WE )
     blt_add_executable( NAME ${test_name}
                         SOURCES ${test}
+                        HEADERS ${header} ../geometryUtilities.hpp
                         OUTPUT_DIR ${TEST_OUTPUT_DIRECTORY}
                         DEPENDS_ON ${dependencyList}
                         )
