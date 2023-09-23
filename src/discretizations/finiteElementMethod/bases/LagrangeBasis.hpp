@@ -4,7 +4,10 @@
 
 namespace shiva
 {
-namespace finiteElement
+
+namespace discretizations
+{
+namespace finiteElementMethod
 {
 
 
@@ -83,5 +86,6 @@ private:
 }; // class LagrangeBasis
 
 } // namespace basis
-} // namespace finiteElement
+} // namespace finiteElementMethod
+} // namespace discretizations
 } // namespace shiva

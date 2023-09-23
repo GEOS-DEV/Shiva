@@ -7,7 +7,7 @@
 #include <cmath>
 
 using namespace shiva;
-using namespace shiva::finiteElement::basis;
+using namespace shiva::discretizations::finiteElementMethod::basis;
 
 
 
