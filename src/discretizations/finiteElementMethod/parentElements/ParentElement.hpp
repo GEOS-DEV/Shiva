@@ -1,5 +1,6 @@
 #pragma once 
 
+#include "types/types.hpp"
 #include <utility>
 
 namespace shiva
@@ -29,22 +30,69 @@ class ParentElement
   
   static_assert( Dimension == CellType::Dimension(), "Dimension mismatch between cell and number of basis specified" );
 
-
-  template< int ... BF_INDEX >
+  template< int ... BASIS_FUNCTION_INDICES >
   constexpr static RealType value( CoordType const & parentCoord )
   {
-    static_assert( sizeof...(BF_INDEX) == Dimension, "Wrong number of basis function indicies specified" );
-    return valueHelper<BF_INDEX...>( parentCoord, std::make_integer_sequence<int,Dimension>{} );
-  }
-  
-  private:
-  template< int ... BF_INDEX, int ... DIMENSION_INDICES >
-  constexpr static RealType valueHelper( CoordType const & parentCoord, std::integer_sequence<int, DIMENSION_INDICES...> )
-  {
-    return ( BASIS_TYPE::template value<BF_INDEX>( parentCoord[DIMENSION_INDICES] ) * ... );
+    static_assert( sizeof...(BASIS_FUNCTION_INDICES) == Dimension, "Wrong number of basis function indicies specified" );
+    return SequenceUnpacker< std::make_integer_sequence< int, Dimension> >::template value<BASIS_FUNCTION_INDICES...>( parentCoord );
   }
 
+  template< int ... BASIS_FUNCTION_INDICES >
+  constexpr static CArray1d<RealType,Dimension> gradient( CoordType const & parentCoord )
+  {
+    static_assert( sizeof...(BASIS_FUNCTION_INDICES) == Dimension, "Wrong number of basis function indicies specified" );
+    return SequenceUnpacker< std::make_integer_sequence< int, Dimension> >::template gradient<BASIS_FUNCTION_INDICES...>( parentCoord );
+  }
+
+
+private:
+  template< typename... INTEGER_SEQUENCES >
+  struct SequenceUnpacker
+  {};
+
+  template< int ... DIMENSION_INDICES >
+  struct SequenceUnpacker< std::integer_sequence<int, DIMENSION_INDICES...> >
+  {
+    template< int ... BASIS_FUNCTION_INDICES >
+    constexpr static RealType value( CoordType const & parentCoord )
+    {
+      return ( BASIS_TYPE::template value<BASIS_FUNCTION_INDICES>( parentCoord[DIMENSION_INDICES] ) * ... );
+    }
+
+
+    template< int ... BASIS_FUNCTION_INDICES >
+    constexpr static CArray1d<RealType,Dimension> gradient( CoordType const & parentCoord )
+    {
+        return { gradientComponent<DIMENSION_INDICES,BASIS_FUNCTION_INDICES...>( parentCoord )... };
+    }
+
+    template< int GRADIENT_COMPONENT, int ... BASIS_FUNCTION_INDICES >
+    constexpr static RealType gradientComponent( CoordType const & parentCoord )
+    {
+//        printf( "gradientComponent<%d>() \n", GRADIENT_COMPONENT );
+        return ( gradientComponentHelper<BASIS_TYPE, GRADIENT_COMPONENT, BASIS_FUNCTION_INDICES, DIMENSION_INDICES >( parentCoord ) * ... );
+    }
+
+    template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COMPONENT_INDEX >
+    constexpr static RealType gradientComponentHelper( CoordType const & parentCoord )
+    {
+//        printf( "%d, %d \n", GRADIENT_COMPONENT, COMPONENT_INDEX );
+        if constexpr ( GRADIENT_COMPONENT == COMPONENT_INDEX )
+        {
+            return BASIS_FUNCTION::template gradient<BASIS_FUNCTION_INDEX>( parentCoord[COMPONENT_INDEX] );
+        }
+        else
+        {
+            return ( BASIS_FUNCTION::template value<BASIS_FUNCTION_INDEX>( parentCoord[COMPONENT_INDEX] ) );
+        }
+    }
+  };
+
+  
+
+
 };
+
 
 } // namespace finiteElementMethod
 } // namespace discretizations
