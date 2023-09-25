@@ -1,3 +1,8 @@
+
+/**
+ * @file Cuboid.hpp
+ */
+
 #pragma once
 
 #include "common/MathUtilities.hpp"
@@ -6,56 +11,103 @@
 #include "types/IndexTypes.hpp"
 
 
+/**
+ * namespace to encapsulate all shiva code
+ */
 namespace shiva
 {
 
+/**
+ * namespace to encapsulate all geometry code
+ */
 namespace geometry
 {
 
+/**
+ * @brief Class to represent a cuboid
+ * @tparam REAL_TYPE The type of real numbers used for floating point data.
+ */
 template< typename REAL_TYPE >
 class Cuboid
 {
 public:
+
+  /// The type used to represent the Jacobian transformation operation
   using JacobianType = CArray2d<REAL_TYPE,3,3>;
+
+  /// The type used to represent the data stored at the vertices of the cell
   using DataType = REAL_TYPE[8][3];
+
+  /// The type used to represent the coordinates of the vertices of the cell
   using CoordType = REAL_TYPE[3];
+
+  /// The type used to represent the index space of the cell
   using IndexType = MultiIndexRange<int, 2,2,2>;
 
+  /**
+   * @brief Returns a boolean indicating whether the Jacobian is constant in 
+   * the cell. This is used to determine whether the Jacobian should be 
+   * computed once per cell or once per quadrature point.
+   * @return true if the Jacobian is constant in the cell, false otherwise
+   */
   constexpr static bool jacobianIsConstInCell() { return false; }
 
 
 
-
+  /**
+   * @brief const accessor for a component of a vertex coordinate
+   * @tparam INDEX_TYPE The type of the index
+   * @param[in] a The value of the vertex index
+   * @param[in] i The component of the vertex coordinate
+   * @return REAL_TYPE const& A const reference to the vertex coordinate component
+   */
   template< typename INDEX_TYPE >
   REAL_TYPE const & getVertexCoord( INDEX_TYPE const & a, int const i ) const 
   { return m_vertexCoords[ linearIndex(a) ][i]; }
 
-
+  /**
+   * @brief const accessor for the vertex coordinate
+   * @tparam INDEX_TYPE The type of the index
+   * @param[in] a The value of the vertex index
+   * @return CoordType const& A const reference to the vertex coordinate object
+   */
   template< typename INDEX_TYPE >
   CoordType const & getVertexCoord( INDEX_TYPE const & a ) const 
   { return m_vertexCoords[ linearIndex(a) ]; }
 
   
+  /**
+   * @brief non-const accessor for a component of a vertex coordinate
+   * @tparam INDEX_TYPE The type of the index
+   * @param[in] a The value of the vertex index
+   * @param[in] i The component of the vertex coordinate
+   * @return REAL_TYPE& A reference to the vertex coordinate component
+   */
   template< typename INDEX_TYPE >
   void setVertexCoord( INDEX_TYPE const & a, int const i, REAL_TYPE const & value ) 
   { m_vertexCoords[ linearIndex(a) ][i] = value; }
   
 
-
-
+  /**
+   * @brief non-const accessor for the vertex coordinate
+   * 
+   * @tparam INDEX_TYPE The type of the index
+   * @param[in] a The value of the vertex index
+   * @return CoordType& A reference to the vertex coordinate object
+   */
   template< typename INDEX_TYPE >
   void setVertexCoord( INDEX_TYPE const & a, CoordType const & value ) 
   { 
     m_vertexCoords[ linearIndex(a) ][0] = value[0]; 
     m_vertexCoords[ linearIndex(a) ][1] = value[1]; 
     m_vertexCoords[ linearIndex(a) ][2] = value[1]; 
-}
+  }
 
-
-
-
-
-
+  /**
+   */
+   * @tparam FUNCTION_TYPE 
+   * @param func 
+   */
   template< typename FUNCTION_TYPE >
   void forVertices( FUNCTION_TYPE && func ) const
   {
