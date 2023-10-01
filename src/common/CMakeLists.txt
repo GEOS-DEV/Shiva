@@ -1,6 +1,7 @@
 
 set( common_headers
      MathUtilities.hpp
+     SequenceUtilities.hpp
      ShivaMacros.hpp
      )
 
@@ -28,4 +29,4 @@ install( TARGETS common
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
 
-#add_subdirectory( unitTests )
+add_subdirectory( unitTests )
