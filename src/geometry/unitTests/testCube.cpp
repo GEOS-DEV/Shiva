@@ -13,7 +13,7 @@ template< typename REAL_TYPE >
 auto makeCube( REAL_TYPE const h )
 {
   Cube< REAL_TYPE > cell;
-  cell.setLength(h);
+  cell.setLength( h );
 
   return cell;
 }
@@ -53,12 +53,12 @@ TEST( testCube, testInvJacobianFunctionModifyLvalueRefArg )
   double const h = 3.14;
   auto cell = makeCube( h );
 
-  typename std::remove_reference_t<decltype(cell)>::JacobianType::type invJ;
+  typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ;
   double detJ;
   inverseJacobian( cell, invJ, detJ );
   EXPECT_EQ( detJ, 0.125*h*h*h );
   EXPECT_EQ( invJ, ( 2 / h ) );
- }
+}
 
 TEST( testCube, testInvJacobianFunctionReturnByValue )
 {
