@@ -34,6 +34,12 @@ macro(shiva_add_code_checks)
 
     blt_add_code_checks( PREFIX    ${arg_PREFIX}
                          SOURCES   ${_sources}
-                         UNCRUSTIFY_CFG_FILE ${PROJECT_SOURCE_DIR}/uncrustify.cfg
+                         UNCRUSTIFY_CFG_FILE ${PROJECT_SOURCE_DIR}/src/uncrustify.cfg
+                         )
+
+    blt_add_code_checks( PREFIX    ${arg_PREFIX}
+                         SOURCES   ${_sources}
+                         CLANGFORMAT_CFG_FILE ${PROJECT_SOURCE_DIR}/src/.clang-format
                        )
+
 endmacro(shiva_add_code_checks)

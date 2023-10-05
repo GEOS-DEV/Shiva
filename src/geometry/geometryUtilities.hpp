@@ -7,7 +7,7 @@ namespace geometry
 namespace utilities
 {
 
-template< template<typename> typename SHAPE_TYPE, typename REAL_TYPE >
+template< template< typename > typename SHAPE_TYPE, typename REAL_TYPE >
 auto jacobian( SHAPE_TYPE< REAL_TYPE > const & cell )
 {
   typename SHAPE_TYPE< REAL_TYPE >::JacobianType J;
@@ -15,7 +15,7 @@ auto jacobian( SHAPE_TYPE< REAL_TYPE > const & cell )
   return J;
 }
 
-template< template<typename> typename SHAPE_TYPE, typename REAL_TYPE >
+template< template< typename > typename SHAPE_TYPE, typename REAL_TYPE >
 auto inverseJacobian( SHAPE_TYPE< REAL_TYPE > const & cell )
 {
   typename SHAPE_TYPE< REAL_TYPE >::JacobianType invJ;
@@ -24,7 +24,7 @@ auto inverseJacobian( SHAPE_TYPE< REAL_TYPE > const & cell )
   return make_tuple( detJ, invJ );
 }
 
-template< template<typename> typename SHAPE_TYPE, typename REAL_TYPE >
+template< template< typename > typename SHAPE_TYPE, typename REAL_TYPE >
 auto jacobian( SHAPE_TYPE< REAL_TYPE > const & cell,
                REAL_TYPE const (&parentCoords)[3] )
 {
@@ -33,7 +33,7 @@ auto jacobian( SHAPE_TYPE< REAL_TYPE > const & cell,
   return J;
 }
 
-template< template<typename> typename SHAPE_TYPE, typename REAL_TYPE >
+template< template< typename > typename SHAPE_TYPE, typename REAL_TYPE >
 auto inverseJacobian( SHAPE_TYPE< REAL_TYPE > const & cell,
                       REAL_TYPE const (&parentCoords)[3] )
 {
@@ -42,7 +42,6 @@ auto inverseJacobian( SHAPE_TYPE< REAL_TYPE > const & cell,
   inverseJacobian( cell, parentCoords, invJ.data, detJ );
   return make_tuple( detJ, invJ );
 }
-
 
 
 

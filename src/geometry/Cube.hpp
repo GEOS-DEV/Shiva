@@ -13,7 +13,7 @@ class Cube
 {
 public:
   constexpr static int Dimension() {return 3;};
-  using JacobianType = Scalar<REAL_TYPE>;
+  using JacobianType = Scalar< REAL_TYPE >;
   using DataType = REAL_TYPE;
   using CoordType = REAL_TYPE[3];
   using IndexType = MultiIndexRange<int, 2,2,2>;
@@ -22,7 +22,7 @@ public:
 
   DataType const & getLength() const { return m_length; }
 
-  void setLength( DataType const & h ) 
+  void setLength( DataType const & h )
   { m_length = h; }
 
 
@@ -35,7 +35,7 @@ namespace utilities
 {
 
 template< typename REAL_TYPE >
-void jacobian( Cube< REAL_TYPE > const & cell, 
+void jacobian( Cube< REAL_TYPE > const & cell,
                typename Cube< REAL_TYPE >::JacobianType::type & J )
 {
   typename Cube< REAL_TYPE >::DataType const & h = cell.getLength();
@@ -44,7 +44,7 @@ void jacobian( Cube< REAL_TYPE > const & cell,
 
 
 template< typename REAL_TYPE >
-void inverseJacobian( Cube< REAL_TYPE > const & cell, 
+void inverseJacobian( Cube< REAL_TYPE > const & cell,
                       typename Cube< REAL_TYPE >::JacobianType::type & invJ,
                       REAL_TYPE & detJ )
 {

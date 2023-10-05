@@ -13,7 +13,7 @@ namespace finiteElementMethod
 
 namespace basis
 {
-template< typename REAL_TYPE, int ORDER, template<typename,int> typename SPACING_TYPE  >
+template< typename REAL_TYPE, int ORDER, template< typename, int > typename SPACING_TYPE >
 class LagrangeBasis : public SPACING_TYPE< REAL_TYPE, ORDER+1 >
 {
 public:
@@ -24,13 +24,13 @@ public:
   template< int BF_INDEX >
   constexpr static REAL_TYPE value( const REAL_TYPE coord )
   {
-    return valueHelper<BF_INDEX>( coord, std::make_integer_sequence<int,numSupportPoints>{} );
+    return valueHelper< BF_INDEX >( coord, std::make_integer_sequence< int, numSupportPoints >{} );
   }
 
   template< int BF_INDEX >
   constexpr static REAL_TYPE gradient( const REAL_TYPE coord )
   {
-    return gradientHelper<BF_INDEX>( coord, std::make_integer_sequence<int,numSupportPoints>{} );
+    return gradientHelper< BF_INDEX >( coord, std::make_integer_sequence< int, numSupportPoints >{} );
   }
 
 
@@ -44,19 +44,19 @@ private:
     }
     else
     {
-      return (                                                               coord - SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate<FACTOR_INDEX>() ) /
-             ( SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate<BF_INDEX>() - SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate<FACTOR_INDEX>() );
+      return (                                                               coord - SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate< FACTOR_INDEX >() ) /
+             ( SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate< BF_INDEX >() - SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate< FACTOR_INDEX >() );
     }
   }
 
   template< int BF_INDEX, int ... INDICES >
   constexpr static REAL_TYPE valueHelper( const REAL_TYPE coord,
-                                         std::integer_sequence<int, INDICES...> )
+                                          std::integer_sequence< int, INDICES... > )
   {
-      return ( valueFactor<BF_INDEX,INDICES>( coord ) * ... );
+    return ( valueFactor< BF_INDEX, INDICES >( coord ) * ... );
   }
 
-  template< int BF_INDEX, int FACTOR_INDEX>
+  template< int BF_INDEX, int FACTOR_INDEX >
   constexpr static REAL_TYPE gradientFactor()
   {
     if constexpr ( BF_INDEX == FACTOR_INDEX )
@@ -65,22 +65,22 @@ private:
     }
     else
     {
-      return 1.0 / ( SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate<BF_INDEX>() - SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate<FACTOR_INDEX>() );
+      return 1.0 / ( SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate< BF_INDEX >() - SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate< FACTOR_INDEX >() );
     }
   }
 
   template< int BF_INDEX, int DERIVATIVE_INDEX, int ... FACTOR_INDICES >
   constexpr static REAL_TYPE gradientChainRuleTerm( const REAL_TYPE coord,
-                                                  std::integer_sequence<int, FACTOR_INDICES...> )
+                                                    std::integer_sequence< int, FACTOR_INDICES... > )
   {
-      return gradientFactor<BF_INDEX,DERIVATIVE_INDEX>() * ( valueFactor<BF_INDEX,FACTOR_INDICES,DERIVATIVE_INDEX>( coord ) * ... );
+    return gradientFactor< BF_INDEX, DERIVATIVE_INDEX >() * ( valueFactor< BF_INDEX, FACTOR_INDICES, DERIVATIVE_INDEX >( coord ) * ... );
   }
 
   template< int BF_INDEX, int ... DERIVATIVE_INDICES >
   constexpr static REAL_TYPE gradientHelper( const REAL_TYPE coord,
-                                             std::integer_sequence<int, DERIVATIVE_INDICES...> )
+                                             std::integer_sequence< int, DERIVATIVE_INDICES... > )
   {
-      return ( gradientChainRuleTerm<BF_INDEX,DERIVATIVE_INDICES>( coord, std::make_integer_sequence<int,numSupportPoints>{} ) + ... );
+    return ( gradientChainRuleTerm< BF_INDEX, DERIVATIVE_INDICES >( coord, std::make_integer_sequence< int, numSupportPoints >{} ) + ... );
   }
 
 }; // class LagrangeBasis
