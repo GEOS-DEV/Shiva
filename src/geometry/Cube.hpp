@@ -12,14 +12,14 @@ template< typename REAL_TYPE >
 class Cube
 {
 public:
-  using JacobianType = Scalar<REAL_TYPE>;
+  using JacobianType = Scalar< REAL_TYPE >;
   using DataType = REAL_TYPE;
 
   constexpr static bool jacobianIsConstInCell() { return true; }
 
   DataType const & getLength() const { return m_length; }
 
-  void setLength( DataType const & h ) 
+  void setLength( DataType const & h )
   { m_length = h; }
 
 
@@ -32,7 +32,7 @@ namespace utilities
 {
 
 template< typename REAL_TYPE >
-void jacobian( Cube< REAL_TYPE > const & cell, 
+void jacobian( Cube< REAL_TYPE > const & cell,
                typename Cube< REAL_TYPE >::JacobianType::type & J )
 {
   typename Cube< REAL_TYPE >::DataType const & h = cell.getLength();
@@ -41,7 +41,7 @@ void jacobian( Cube< REAL_TYPE > const & cell,
 
 
 template< typename REAL_TYPE >
-void inverseJacobian( Cube< REAL_TYPE > const & cell, 
+void inverseJacobian( Cube< REAL_TYPE > const & cell,
                       typename Cube< REAL_TYPE >::JacobianType::type & invJ,
                       REAL_TYPE & detJ )
 {

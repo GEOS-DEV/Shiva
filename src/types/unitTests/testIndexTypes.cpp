@@ -6,13 +6,13 @@
 using namespace shiva;
 
 TEST( testIndexTypes, testLinearIndexType )
-{ 
+{
   int i=0;
-  LinearIndex<int> a=0;
-  for( a=0, i=0; a<10; ++a, ++i )
+  LinearIndex< int > a=0;
+  for ( a=0, i=0; a<10; ++a, ++i )
   {
     EXPECT_EQ( a, i );
-    EXPECT_EQ( linearIndex(a), i );
+    EXPECT_EQ( linearIndex( a ), i );
   }
 }
 
@@ -20,19 +20,19 @@ TEST( testIndexTypes, testLinearIndexType )
 
 TEST( testIndexTypes, testMultiIndexManualLoop )
 {
-  MultiIndexRange<int, 2,2,2 > index{ { 1,0,0 } };
+  MultiIndexRange< int, 2, 2, 2 > index{ { 1, 0, 0 } };
 
   int & a = index.data[0];
   int & b = index.data[1];
   int & c = index.data[2];
-  for( a = 0; a<2; ++a )
+  for ( a = 0; a<2; ++a )
   {
-    for( b = 0; b<2; ++b )
+    for ( b = 0; b<2; ++b )
     {
-      for( c = 0; c<2; ++c )
+      for ( c = 0; c<2; ++c )
       {
-          int li = linearIndex(index);
-          EXPECT_EQ( li, 4*a+2*b+c );
+        int li = linearIndex( index );
+        EXPECT_EQ( li, 4*a+2*b+c );
       }
     }
   }
@@ -41,11 +41,11 @@ TEST( testIndexTypes, testMultiIndexManualLoop )
 
 TEST( testIndexTypes, testMultiIndexForRange )
 {
-  MultiIndexRange<int, 2,2,2 > index{ { 1,0,0 } };
+  MultiIndexRange< int, 2, 2, 2 > index{ { 1, 0, 0 } };
 
-  forRange( index={0,0,0}, []( auto const & index )
+  forRange( index={0, 0, 0}, []( auto const & index )
   {
-    int li = linearIndex(index);
+    int li = linearIndex( index );
     EXPECT_EQ( li, 4*index.data[0]+2*index.data[1]+index.data[2] );
   } );
 

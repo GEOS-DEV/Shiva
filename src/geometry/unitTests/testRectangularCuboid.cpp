@@ -20,7 +20,7 @@ auto makeRectangularCuboid( REAL_TYPE const (&h)[3] )
 
 TEST( testRectangularCuboid, testConstructionAndSetters )
 {
-  double const h[3] = { 10, 20, 30 } ;
+  double const h[3] = { 10, 20, 30 };
   auto cell = makeRectangularCuboid( h );
 
   auto const & constData = cell.getLengths();
@@ -31,10 +31,10 @@ TEST( testRectangularCuboid, testConstructionAndSetters )
 
 TEST( testRectangularCuboid, testJacobianFunctionModifyLvalueRefArg )
 {
-  double const h[3] = { 10, 20, 30 } ;
+  double const h[3] = { 10, 20, 30 };
   auto cell = makeRectangularCuboid( h );
 
-  typename std::remove_reference_t<decltype(cell)>::JacobianType::type J ;
+  typename std::remove_reference_t< decltype(cell) >::JacobianType::type J;
   jacobian( cell, J );
   EXPECT_EQ( J[0], ( h[0] / 2 ) );
   EXPECT_EQ( J[1], ( h[1] / 2 ) );
@@ -43,7 +43,7 @@ TEST( testRectangularCuboid, testJacobianFunctionModifyLvalueRefArg )
 
 TEST( testRectangularCuboid, testJacobianFunctionReturnByValue )
 {
-  double const h[3] = { 10, 20, 30 } ;
+  double const h[3] = { 10, 20, 30 };
   auto cell = makeRectangularCuboid( h );
 
   auto J = jacobian( cell );
@@ -55,13 +55,13 @@ TEST( testRectangularCuboid, testJacobianFunctionReturnByValue )
 
 TEST( testRectangularCuboid, testInvJacobianFunctionModifyLvalueRefArg )
 {
-  double const h[3] = { 10, 20, 30 } ;
+  double const h[3] = { 10, 20, 30 };
   auto cell = makeRectangularCuboid( h );
 
-  typename std::remove_reference_t<decltype(cell)>::JacobianType::type invJ;
+  typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ;
   double detJ;
   inverseJacobian( cell, invJ, detJ );
-    
+
   EXPECT_EQ( detJ, 0.125*h[0]*h[1]*h[2] );
   EXPECT_EQ( invJ[0], ( 2 / h[0] ) );
   EXPECT_EQ( invJ[1], ( 2 / h[1] ) );
@@ -70,7 +70,7 @@ TEST( testRectangularCuboid, testInvJacobianFunctionModifyLvalueRefArg )
 
 TEST( testRectangularCuboid, testInvJacobianFunctionReturnByValue )
 {
-  double const h[3] = { 10, 20, 30 } ;
+  double const h[3] = { 10, 20, 30 };
   auto cell = makeRectangularCuboid( h );
 
   auto const [ detJ, invJ ] = inverseJacobian( cell );
