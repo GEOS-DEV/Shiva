@@ -1,5 +1,8 @@
 #pragma once
 
+#include "common/SequenceUtilities.hpp"
+
+
 #include <utility>
 
 namespace shiva
@@ -22,21 +25,46 @@ public:
   constexpr static int numSupportPoints = ORDER + 1;
 
   template< int BF_INDEX >
-  constexpr static REAL_TYPE value( const REAL_TYPE coord )
+  constexpr static REAL_TYPE value( REAL_TYPE const & coord )
   {
-    return valueHelper< BF_INDEX >( coord, std::make_integer_sequence< int, numSupportPoints >{} );
+    return executeSequence<numSupportPoints>( [&]< int ... a>() constexpr
+    {
+      return ( valueFactor< BF_INDEX, a >( coord ) * ... );
+    } );
   }
 
   template< int BF_INDEX >
-  constexpr static REAL_TYPE gradient( const REAL_TYPE coord )
+  constexpr static REAL_TYPE gradient( REAL_TYPE const & coord )
   {
-    return gradientHelper< BF_INDEX >( coord, std::make_integer_sequence< int, numSupportPoints >{} );
+#if 1
+    return executeSequence<numSupportPoints>( [&coord]< int ... a >() constexpr
+    {
+      return 
+      ( executeSequence<numSupportPoints>( [&coord, aa=std::integral_constant<int,a>{} ]< int ... b >() constexpr { return gradientFactor< BF_INDEX, aa >() * ( valueFactor< BF_INDEX, b, aa >( coord ) * ... ); } 
+                                         ) + ... );
+//      return ( gradientChainRuleTerm< BF_INDEX, a >( coord, std::make_integer_sequence< int, numSupportPoints >{} ) + ... );
+    } );
+#else
+    REAL_TYPE rval = 0.0;
+    forSequence<numSupportPoints>( 
+    [&]( auto const a ) constexpr
+    {
+      double term = gradientFactor<BF_INDEX, a >();
+      forSequence<numSupportPoints>( 
+      [&]( auto const b ) constexpr
+      {
+        term *= valueFactor<BF_INDEX, b, a>( coord );
+      });
+      rval += term;
+    } );
+    return rval;
+#endif
   }
 
 
 private:
   template< int BF_INDEX, int FACTOR_INDEX, int DERIVATIVE_INDEX=-1 >
-  constexpr static REAL_TYPE valueFactor( const REAL_TYPE coord )
+  constexpr static REAL_TYPE valueFactor( REAL_TYPE const & coord )
   {
     if constexpr ( BF_INDEX == FACTOR_INDEX || FACTOR_INDEX==DERIVATIVE_INDEX )
     {
@@ -47,13 +75,6 @@ private:
       return (                                                               coord - SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate< FACTOR_INDEX >() ) /
              ( SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate< BF_INDEX >() - SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate< FACTOR_INDEX >() );
     }
-  }
-
-  template< int BF_INDEX, int ... INDICES >
-  constexpr static REAL_TYPE valueHelper( const REAL_TYPE coord,
-                                          std::integer_sequence< int, INDICES... > )
-  {
-    return ( valueFactor< BF_INDEX, INDICES >( coord ) * ... );
   }
 
   template< int BF_INDEX, int FACTOR_INDEX >
@@ -70,17 +91,10 @@ private:
   }
 
   template< int BF_INDEX, int DERIVATIVE_INDEX, int ... FACTOR_INDICES >
-  constexpr static REAL_TYPE gradientChainRuleTerm( const REAL_TYPE coord,
+  constexpr static REAL_TYPE gradientChainRuleTerm( REAL_TYPE const & coord,
                                                     std::integer_sequence< int, FACTOR_INDICES... > )
   {
     return gradientFactor< BF_INDEX, DERIVATIVE_INDEX >() * ( valueFactor< BF_INDEX, FACTOR_INDICES, DERIVATIVE_INDEX >( coord ) * ... );
-  }
-
-  template< int BF_INDEX, int ... DERIVATIVE_INDICES >
-  constexpr static REAL_TYPE gradientHelper( const REAL_TYPE coord,
-                                             std::integer_sequence< int, DERIVATIVE_INDICES... > )
-  {
-    return ( gradientChainRuleTerm< BF_INDEX, DERIVATIVE_INDICES >( coord, std::make_integer_sequence< int, numSupportPoints >{} ) + ... );
   }
 
 }; // class LagrangeBasis

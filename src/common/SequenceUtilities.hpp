@@ -19,27 +19,27 @@ struct SequenceExpansion< std::integer_sequence<int, DIMENSION_INDICES...> >
   template< typename FUNC, typename ... ARGS >
   constexpr static auto execute( FUNC && func, ARGS && ... args )
   {
-    if constexpr ( !std::is_invocable_v<FUNC,int,ARGS...> )
-    {
-      return func.template operator()< DIMENSION_INDICES... >(std::forward<ARGS>(args)...);
-    }
-    else
+    if constexpr ( std::is_invocable_v<FUNC, std::integral_constant<int,DIMENSION_INDICES>...,ARGS...> )
     {
       return func( std::integral_constant<int,DIMENSION_INDICES>{}...,
                    std::forward<ARGS>(args)...);
+    }
+    else
+    {
+      return func.template operator()< DIMENSION_INDICES... >(std::forward<ARGS>(args)...);
     }
   }
 
   template< typename FUNC >
   constexpr static auto staticFor( FUNC && func )
   {
-    if constexpr ( !std::is_invocable_v<FUNC,int> )
+    if constexpr ( std::is_invocable_v<FUNC,std::integral_constant<int,0> > )
     {
-      return (func.template operator()<DIMENSION_INDICES>(),...);
+      return (func( std::integral_constant<int,DIMENSION_INDICES>{} ),...);
     }
     else
     {
-      return (func( std::integral_constant<int,DIMENSION_INDICES>{} ),...);
+      return (func.template operator()<DIMENSION_INDICES>(),...);
     }
   }
 };
