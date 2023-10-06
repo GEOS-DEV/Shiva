@@ -62,7 +62,7 @@ TEST( testRectangularCuboid, testInvJacobianFunctionModifyLvalueRefArg )
   double detJ;
   inverseJacobian( cell, invJ, detJ );
 
-  EXPECT_EQ( detJ, 0.125*h[0]*h[1]*h[2] );
+  EXPECT_EQ( detJ, 0.125 * h[0] * h[1] * h[2] );
   EXPECT_EQ( invJ[0], ( 2 / h[0] ) );
   EXPECT_EQ( invJ[1], ( 2 / h[1] ) );
   EXPECT_EQ( invJ[2], ( 2 / h[2] ) );
@@ -74,7 +74,7 @@ TEST( testRectangularCuboid, testInvJacobianFunctionReturnByValue )
   auto cell = makeRectangularCuboid( h );
 
   auto const [ detJ, invJ ] = inverseJacobian( cell );
-  EXPECT_EQ( detJ, 0.125*h[0]*h[1]*h[2] );
+  EXPECT_EQ( detJ, 0.125 * h[0] * h[1] * h[2] );
   EXPECT_EQ( invJ.data[0], ( 2 / h[0] ) );
   EXPECT_EQ( invJ.data[1], ( 2 / h[1] ) );
   EXPECT_EQ( invJ.data[2], ( 2 / h[2] ) );

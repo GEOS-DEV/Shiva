@@ -56,7 +56,7 @@ public:
   {
     IndexType index{ { 1, 0, 0 } };
 
-    forRange( index={0, 0, 0}, [this, func]( auto const & i )
+    forRange( index = {0, 0, 0}, [this, func] ( auto const & i )
     {
       func( i, this->getVertexCoord( i ) );
     } );
@@ -80,7 +80,7 @@ void jacobian( Cuboid< REAL_TYPE > const & cell,
                typename Cuboid< REAL_TYPE >::JacobianType::type & J )
 {
 
-  cell.forVertices( [&J, pointCoordsParent ]( auto const & index, REAL_TYPE const (&vertexCoord)[3] )
+  cell.forVertices( [&J, pointCoordsParent ] ( auto const & index, REAL_TYPE const (&vertexCoord)[3] )
   {
 
     constexpr int vertexCoordsParent[2] = { -1, 1 }; // this is provided by the Basis
@@ -91,9 +91,9 @@ void jacobian( Cuboid< REAL_TYPE > const & cell,
     int const a = index.data[0];
     int const b = index.data[1];
     int const c = index.data[2];
-    REAL_TYPE const dNdXi[3] = { 0.125 *                              vertexCoordsParent[a] * ( 1 + vertexCoordsParent[b]*pointCoordsParent[1] ) * ( 1 + vertexCoordsParent[c]*pointCoordsParent[2] ),
-                                 0.125 * ( 1 + vertexCoordsParent[a]*pointCoordsParent[0] ) *                              vertexCoordsParent[b] * ( 1 + vertexCoordsParent[c]*pointCoordsParent[2] ),
-                                 0.125 * ( 1 + vertexCoordsParent[a]*pointCoordsParent[0] ) * ( 1 + vertexCoordsParent[b]*pointCoordsParent[1] ) *                              vertexCoordsParent[c] };
+    REAL_TYPE const dNdXi[3] = { 0.125 *                              vertexCoordsParent[a] * ( 1 + vertexCoordsParent[b] * pointCoordsParent[1] ) * ( 1 + vertexCoordsParent[c] * pointCoordsParent[2] ),
+                                 0.125 * ( 1 + vertexCoordsParent[a] * pointCoordsParent[0] ) *                              vertexCoordsParent[b] * ( 1 + vertexCoordsParent[c] * pointCoordsParent[2] ),
+                                 0.125 * ( 1 + vertexCoordsParent[a] * pointCoordsParent[0] ) * ( 1 + vertexCoordsParent[b] * pointCoordsParent[1] ) *                              vertexCoordsParent[c] };
 
     for ( int i = 0; i < 3; ++i )
     {

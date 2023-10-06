@@ -68,14 +68,14 @@ auto makeCuboid( REAL_TYPE const (&X)[8][3] )
   Cuboid< REAL_TYPE > cell;
   typename decltype(cell)::IndexType index;
 
-  forRange( index={0, 0, 0}, [&cell, &X]( auto const & i )
+  forRange( index = {0, 0, 0}, [&cell, &X] ( auto const & i )
   {
     int const a = i.data[0];
     int const b = i.data[1];
     int const c = i.data[2];
-    for ( int j=0; j<3; ++j )
+    for ( int j = 0; j < 3; ++j )
     {
-      cell.setVertexCoord( i, j, X[ a + 2*b + 4*c ][j] );
+      cell.setVertexCoord( i, j, X[ a + 2 * b + 4 * c ][j] );
     }
   } );
 
@@ -87,15 +87,15 @@ TEST( testCuboid, testConstructionAndSetters )
   auto const cell = makeCuboid( Xref );
   typename decltype(cell)::IndexType index;
 
-  forRange( index={0, 0, 0}, [&cell]( auto const & i )
+  forRange( index = {0, 0, 0}, [&cell] ( auto const & i )
   {
     int const a = i.data[0];
     int const b = i.data[1];
     int const c = i.data[2];
 
-    for ( int j=0; j<3; ++j )
+    for ( int j = 0; j < 3; ++j )
     {
-      EXPECT_DOUBLE_EQ( cell.getVertexCoord( i, j ), Xref[ a + 2*b + 4*c ][j] );
+      EXPECT_DOUBLE_EQ( cell.getVertexCoord( i, j ), Xref[ a + 2 * b + 4 * c ][j] );
     }
   } );
 }
@@ -105,13 +105,13 @@ TEST( testCuboid, testJacobianFunctionModifyLvalueRefArg )
   auto cell = makeCuboid( Xref );
 
 
-  for ( int q=0; q<8; ++q )
+  for ( int q = 0; q < 8; ++q )
   {
-    typename std::remove_reference_t< decltype(cell) >::JacobianType::type J = {{0}};
+    typename std::remove_reference_t< decltype(cell) >::JacobianType::type J = { {0} };
     jacobian( cell, qCoords[q], J );
-    for ( int i=0; i<3; ++i )
+    for ( int i = 0; i < 3; ++i )
     {
-      for ( int j=0; j<3; ++j )
+      for ( int j = 0; j < 3; ++j )
       {
         EXPECT_NEAR( J[i][j], Jref[q][i][j], abs( Jref[q][i][j] ) * 1e-13 );
       }
@@ -123,12 +123,12 @@ TEST( testCuboid, testJacobianFunctionReturnByValue )
 {
   auto cell = makeCuboid( Xref );
 
-  for ( int q=0; q<8; ++q )
+  for ( int q = 0; q < 8; ++q )
   {
     auto J = jacobian( cell, qCoords[q] );
-    for ( int i=0; i<3; ++i )
+    for ( int i = 0; i < 3; ++i )
     {
-      for ( int j=0; j<3; ++j )
+      for ( int j = 0; j < 3; ++j )
       {
         EXPECT_NEAR( J.data[i][j], Jref[q][i][j], abs( Jref[q][i][j] ) * 1e-13 );
       }
@@ -143,17 +143,17 @@ TEST( testCuboid, testInvJacobianFunctionModifyLvalueRefArg )
   auto cell = makeCuboid( Xref );
 
 
-  for ( int q=0; q<8; ++q )
+  for ( int q = 0; q < 8; ++q )
   {
-    typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ ={{0}};
+    typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ = { {0} };
     double detJ;
 
     inverseJacobian( cell, qCoords[q], invJ, detJ );
 
     EXPECT_NEAR( detJ, detJref[q], detJref[q] * 1e-13 );
-    for ( int i=0; i<3; ++i )
+    for ( int i = 0; i < 3; ++i )
     {
-      for ( int j=0; j<3; ++j )
+      for ( int j = 0; j < 3; ++j )
       {
         EXPECT_NEAR( invJ[i][j], invJref[q][i][j], abs( invJref[q][i][j] ) * 1e-13 );
       }
@@ -166,14 +166,14 @@ TEST( testCuboid, testInvJacobianFunctionReturnByValue )
 {
   auto cell = makeCuboid( Xref );
 
-  for ( int q=0; q<8; ++q )
+  for ( int q = 0; q < 8; ++q )
   {
     auto const [ detJ, invJ ] = inverseJacobian( cell, qCoords[q] );
 
     EXPECT_NEAR( detJ, detJref[q], detJref[q] * 1e-13 );
-    for ( int i=0; i<3; ++i )
+    for ( int i = 0; i < 3; ++i )
     {
-      for ( int j=0; j<3; ++j )
+      for ( int j = 0; j < 3; ++j )
       {
         EXPECT_NEAR( invJ.data[i][j], invJref[q][i][j], abs( invJref[q][i][j] ) * 1e-13 );
       }

@@ -23,7 +23,7 @@ constexpr int
 stride( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
-  return detail::strideHelper( std::make_integer_sequence< int, (IndexType::NUM_INDICES-1) - INDEX >{},
+  return detail::strideHelper( std::make_integer_sequence< int, (IndexType::NUM_INDICES - 1) - INDEX >{},
                                &(index.ranges[0]) );
 }
 
@@ -43,10 +43,10 @@ void forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start
                      FUNC && func )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
-  if constexpr ( DIM==(IndexType::NUM_INDICES-1) )
+  if constexpr ( DIM == (IndexType::NUM_INDICES - 1) )
   {
     int & a = index.data[DIM];
-    for ( a = start.data[DIM]; a<index.ranges[DIM]; ++a )
+    for ( a = start.data[DIM]; a < index.ranges[DIM]; ++a )
     {
       func( index );
     }
@@ -54,9 +54,9 @@ void forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start
   else
   {
     int & a = index.data[DIM];
-    for ( a = start.data[DIM]; a<index.ranges[DIM]; ++a )
+    for ( a = start.data[DIM]; a < index.ranges[DIM]; ++a )
     {
-      forRangeHelper< DIM+1 >( start, index, func );
+      forRangeHelper< DIM + 1 >( start, index, func );
     }
   }
 }
@@ -87,7 +87,7 @@ void forRange( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > & index, FUNC && fu
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
   IndexType const start = index;
-  detail::forRangeHelper< 0 >( start, index, std::forward< FUNC&& >( func ) );
+  detail::forRangeHelper< 0 >( start, index, std::forward< FUNC && >( func ) );
 }
 
 

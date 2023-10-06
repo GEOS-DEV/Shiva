@@ -16,8 +16,8 @@ public:
   using JacobianType = Scalar< REAL_TYPE >;
   using DataType = REAL_TYPE;
   using CoordType = REAL_TYPE[3];
-  using IndexType = MultiIndexRange<int, 2,2,2>;
-  
+  using IndexType = MultiIndexRange< int, 2, 2, 2 >;
+
   constexpr static bool jacobianIsConstInCell() { return true; }
 
   DataType const & getLength() const { return m_length; }

@@ -56,7 +56,7 @@ TEST( testCube, testInvJacobianFunctionModifyLvalueRefArg )
   typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ;
   double detJ;
   inverseJacobian( cell, invJ, detJ );
-  EXPECT_EQ( detJ, 0.125*h*h*h );
+  EXPECT_EQ( detJ, 0.125 * h * h * h );
   EXPECT_EQ( invJ, ( 2 / h ) );
 }
 
@@ -66,7 +66,7 @@ TEST( testCube, testInvJacobianFunctionReturnByValue )
   auto cell = makeCube( h );
 
   auto const [ detJ, invJ ] = inverseJacobian( cell );
-  EXPECT_EQ( detJ, 0.125*h*h*h );
+  EXPECT_EQ( detJ, 0.125 * h * h * h );
   EXPECT_EQ( invJ.data, ( 2 / h ) );
 }
 
