@@ -43,10 +43,10 @@ TEST( testIndexTypes, testMultiIndexForRange )
 {
   MultiIndexRange< int, 2, 2, 2 > index{ { 1, 0, 0 } };
 
-  forRange( index={0, 0, 0}, []( auto const & index )
+  forRange( index={0, 0, 0}, []( auto const & i )
   {
-    int li = linearIndex( index );
-    EXPECT_EQ( li, 4*index.data[0]+2*index.data[1]+index.data[2] );
+    int li = linearIndex( i );
+    EXPECT_EQ( li, 4*i.data[0]+2*i.data[1]+i.data[2] );
   } );
 
 }

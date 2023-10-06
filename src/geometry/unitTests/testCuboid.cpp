@@ -68,14 +68,14 @@ auto makeCuboid( REAL_TYPE const (&X)[8][3] )
   Cuboid< REAL_TYPE > cell;
   typename decltype(cell)::IndexType index;
 
-  forRange( index={0, 0, 0}, [&cell, &X]( auto const & index )
+  forRange( index={0, 0, 0}, [&cell, &X]( auto const & i )
   {
-    int const a = index.data[0];
-    int const b = index.data[1];
-    int const c = index.data[2];
+    int const a = i.data[0];
+    int const b = i.data[1];
+    int const c = i.data[2];
     for ( int j=0; j<3; ++j )
     {
-      cell.setVertexCoord( index, j, X[ a + 2*b + 4*c ][j] );
+      cell.setVertexCoord( i, j, X[ a + 2*b + 4*c ][j] );
     }
   } );
 
@@ -87,15 +87,15 @@ TEST( testCuboid, testConstructionAndSetters )
   auto const cell = makeCuboid( Xref );
   typename decltype(cell)::IndexType index;
 
-  forRange( index={0, 0, 0}, [&cell]( auto const & index )
+  forRange( index={0, 0, 0}, [&cell]( auto const & i )
   {
-    int const a = index.data[0];
-    int const b = index.data[1];
-    int const c = index.data[2];
+    int const a = i.data[0];
+    int const b = i.data[1];
+    int const c = i.data[2];
 
     for ( int j=0; j<3; ++j )
     {
-      EXPECT_DOUBLE_EQ( cell.getVertexCoord( index, j ), Xref[ a + 2*b + 4*c ][j] );
+      EXPECT_DOUBLE_EQ( cell.getVertexCoord( i, j ), Xref[ a + 2*b + 4*c ][j] );
     }
   } );
 }

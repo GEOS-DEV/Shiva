@@ -21,8 +21,8 @@ struct SequenceExpansion< std::integer_sequence<int, DIMENSION_INDICES...> >
   {
     if constexpr ( std::is_invocable_v<FUNC, std::integral_constant<int,DIMENSION_INDICES>...,ARGS...> )
     {
-      return func( std::integral_constant<int,DIMENSION_INDICES>{}...,
-                   std::forward<ARGS>(args)...);
+      return func( std::forward<ARGS>(args)..., 
+                   std::integral_constant<int,DIMENSION_INDICES>{}...);
     }
     else
     {

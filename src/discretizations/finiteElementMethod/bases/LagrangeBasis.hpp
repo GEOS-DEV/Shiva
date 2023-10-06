@@ -36,14 +36,46 @@ public:
   template< int BF_INDEX >
   constexpr static REAL_TYPE gradient( REAL_TYPE const & coord )
   {
-#if 1
-    return executeSequence<numSupportPoints>( [&coord]< int ... a >() constexpr
+//#define LAGRANGE_BASIS_USE_FOR_SEQUENCE
+#if !defined(LAGRANGE_BASIS_USE_FOR_SEQUENCE)
+#if __cplusplus >= 202002L
+    return executeSequence<numSupportPoints>( [&coord]<int ... a>() constexpr
     {
-      return 
-      ( executeSequence<numSupportPoints>( [&coord, aa=std::integral_constant<int,a>{} ]< int ... b >() constexpr { return gradientFactor< BF_INDEX, aa >() * ( valueFactor< BF_INDEX, b, aa >( coord ) * ... ); } 
-                                         ) + ... );
-//      return ( gradientChainRuleTerm< BF_INDEX, a >( coord, std::make_integer_sequence< int, numSupportPoints >{} ) + ... );
+      return ( executeSequence<numSupportPoints>( [&coord]<int ...b>( auto aa ) constexpr 
+                                                  { 
+                                                    constexpr int aVal = decltype(aa)::value;
+                                                    return gradientFactor< BF_INDEX, aVal >() * 
+                                                           ( valueFactor< BF_INDEX, b, aVal >( coord ) * ... ); 
+                                                  },
+                                                  std::integral_constant<int,a>{} ) + ... );
     } );
+#else
+    return executeSequence<numSupportPoints>( [&coord]( auto const && ... a ) constexpr
+    {
+      return ( executeSequence<numSupportPoints>( [&coord]( auto a, auto ... b ) constexpr 
+                                                  { 
+                                                    constexpr int aVal = decltype(a)::value;
+                                                    return gradientFactor< BF_INDEX, aVal >() * 
+                                                           ( valueFactor< BF_INDEX, decltype(b)::value, aVal >( coord ) * ... ); 
+                                                  },
+                                                  a ) + ... );
+    } );
+#endif
+#else
+#if __cplusplus >= 202002L
+    REAL_TYPE rval = 0.0;
+    forSequence<numSupportPoints>( 
+    [&]<int a>() constexpr
+    {
+      double term = gradientFactor<BF_INDEX, a >();
+      forSequence<numSupportPoints>( 
+      [&]<int b>() constexpr
+      {
+        term *= valueFactor<BF_INDEX, b, a>( coord );
+      });
+      rval += term;
+    } );
+    return rval;
 #else
     REAL_TYPE rval = 0.0;
     forSequence<numSupportPoints>( 
@@ -59,6 +91,9 @@ public:
     } );
     return rval;
 #endif
+#endif
+
+#undef USE_FOR_SEQUENCE
   }
 
 
@@ -88,13 +123,6 @@ private:
     {
       return 1.0 / ( SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate< BF_INDEX >() - SPACING_TYPE< REAL_TYPE, ORDER+1 >::template coordinate< FACTOR_INDEX >() );
     }
-  }
-
-  template< int BF_INDEX, int DERIVATIVE_INDEX, int ... FACTOR_INDICES >
-  constexpr static REAL_TYPE gradientChainRuleTerm( REAL_TYPE const & coord,
-                                                    std::integer_sequence< int, FACTOR_INDICES... > )
-  {
-    return gradientFactor< BF_INDEX, DERIVATIVE_INDEX >() * ( valueFactor< BF_INDEX, FACTOR_INDICES, DERIVATIVE_INDEX >( coord ) * ... );
   }
 
 }; // class LagrangeBasis

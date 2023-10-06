@@ -56,9 +56,9 @@ public:
   {
     IndexType index{ { 1, 0, 0 } };
 
-    forRange( index={0, 0, 0}, [this, func]( auto const & index )
+    forRange( index={0, 0, 0}, [this, func]( auto const & i )
     {
-      func( index, this->getVertexCoord( index ) );
+      func( i, this->getVertexCoord( i ) );
     } );
   }
 
@@ -79,11 +79,11 @@ void jacobian( Cuboid< REAL_TYPE > const & cell,
                REAL_TYPE const (&pointCoordsParent)[3],
                typename Cuboid< REAL_TYPE >::JacobianType::type & J )
 {
-  constexpr int vertexCoordsParent[2] = { -1, 1 }; // this is provided by the Basis
 
   cell.forVertices( [&J, pointCoordsParent ]( auto const & index, REAL_TYPE const (&vertexCoord)[3] )
   {
 
+    constexpr int vertexCoordsParent[2] = { -1, 1 }; // this is provided by the Basis
     // dNdXi is provided by the Basis, which will take in the generic "index" type.
     // it will probably look like:
     // CArray1d<REAL_TYPE, 3> const dNdXi = basis.dNdXi( index, pointCoordsParent );
