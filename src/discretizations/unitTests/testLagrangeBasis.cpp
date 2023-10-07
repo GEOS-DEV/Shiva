@@ -61,7 +61,7 @@ constexpr void compileTimeCheck()
 }
 
 template< typename BASIS_HELPER_TYPE >
-constexpr void runTimeCheck()
+void runTimeCheck()
 {
   using BasisType = typename BASIS_HELPER_TYPE::BasisType;
   constexpr int order = BASIS_HELPER_TYPE::order;
