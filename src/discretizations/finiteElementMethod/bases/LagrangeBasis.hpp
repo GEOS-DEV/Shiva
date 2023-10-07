@@ -16,7 +16,7 @@ namespace finiteElementMethod
 
 namespace basis
 {
-template< typename REAL_TYPE, int ORDER, template< typename, int > typename SPACING_TYPE >
+template< typename REAL_TYPE, int ORDER, template< typename, int > typename SPACING_TYPE, bool USE_FOR_SEQUENCE = false >
 class LagrangeBasis : public SPACING_TYPE< REAL_TYPE, ORDER + 1 >
 {
 public:
@@ -27,69 +27,80 @@ public:
   template< int BF_INDEX >
   constexpr static REAL_TYPE value( REAL_TYPE const & coord )
   {
+#if __cplusplus >= 202002L
     return executeSequence< numSupportPoints >( [&]< int ... a > () constexpr
     {
       return ( valueFactor< BF_INDEX, a >( coord ) * ... );
     } );
+#else
+    return executeSequence< numSupportPoints >( [&] ( auto const ... a ) constexpr
+    {
+      return ( valueFactor< BF_INDEX, decltype(a)::value >( coord ) * ... );
+    } );
+#endif
   }
 
   template< int BF_INDEX >
   constexpr static REAL_TYPE gradient( REAL_TYPE const & coord )
   {
-//#define LAGRANGE_BASIS_USE_FOR_SEQUENCE
-#if !defined(LAGRANGE_BASIS_USE_FOR_SEQUENCE)
+
 #if __cplusplus >= 202002L
-    return executeSequence< numSupportPoints >( [&coord]< int ... a > () constexpr
+    if constexpr ( USE_FOR_SEQUENCE )
     {
-      auto func = [&coord]< int ... b > ( auto aa ) constexpr
+      REAL_TYPE rval = 0.0;
+      forSequence< numSupportPoints >( [&]< int a > () constexpr
       {
-        constexpr int aVal = decltype(aa)::value;
-        return gradientFactor< BF_INDEX, aVal >() * ( valueFactor< BF_INDEX, b, aVal >( coord ) * ... );
-      };
-
-      return ( executeSequence< numSupportPoints >( func, std::integral_constant< int, a >{} ) + ... );
-    } );
-#else
-    return executeSequence< numSupportPoints >( [&coord] ( auto const && ... a ) constexpr
-    {
-      auto func = [&coord] ( auto a, auto ... b ) constexpr
-      {
-        constexpr int aVal = decltype(a)::value;
-        return gradientFactor< BF_INDEX, aVal >() * ( valueFactor< BF_INDEX, decltype(b)::value, aVal >( coord ) * ... );
-      };
-
-      return ( executeSequence< numSupportPoints >( func, a ) + ... );
-    } );
-#endif
-#else
-#if __cplusplus >= 202002L
-    REAL_TYPE rval = 0.0;
-    forSequence< numSupportPoints >( [&]< int a > () constexpr
-    {
-      double term = gradientFactor< BF_INDEX, a >();
-      forSequence< numSupportPoints >( [&]< int b > () constexpr
-      {
-        term *= valueFactor< BF_INDEX, b, a >( coord );
+        double term = gradientFactor< BF_INDEX, a >();
+        forSequence< numSupportPoints >( [&]< int b > () constexpr
+        {
+          term *= valueFactor< BF_INDEX, b, a >( coord );
+        } );
+        rval += term;
       } );
-      rval += term;
-    } );
-    return rval;
-#else
-    REAL_TYPE rval = 0.0;
-    forSequence< numSupportPoints >( [&] ( auto const a ) constexpr
+      return rval;
+    }
+    else
     {
-      double term = gradientFactor< BF_INDEX, a >();
-      forSequence< numSupportPoints >( [&] ( auto const b ) constexpr
+      return executeSequence< numSupportPoints >( [&coord]< int ... a > () constexpr
       {
-        term *= valueFactor< BF_INDEX, b, a >( coord );
-      } );
-      rval += term;
-    } );
-    return rval;
-#endif
-#endif
+        auto func = [&coord]< int ... b > ( auto aa ) constexpr
+        {
+          constexpr int aVal = decltype(aa)::value;
+          return gradientFactor< BF_INDEX, aVal >() * ( valueFactor< BF_INDEX, b, aVal >( coord ) * ... );
+        };
 
-#undef USE_FOR_SEQUENCE
+        return ( executeSequence< numSupportPoints >( func, std::integral_constant< int, a >{} ) + ... );
+      } );
+    }
+#else
+    if constexpr ( USE_FOR_SEQUENCE )
+    {
+      REAL_TYPE rval = 0.0;
+      forSequence< numSupportPoints >( [&] ( auto const a ) constexpr
+      {
+        double term = gradientFactor< BF_INDEX, a >();
+        forSequence< numSupportPoints >( [&] ( auto const b ) constexpr
+        {
+          term *= valueFactor< BF_INDEX, b, a >( coord );
+        } );
+        rval += term;
+      } );
+      return rval;
+    }
+    else
+    {
+      return executeSequence< numSupportPoints >( [&coord] ( auto const && ... a ) constexpr
+      {
+        auto func = [&coord] ( auto a, auto ... b ) constexpr
+        {
+          constexpr int aVal = decltype(a)::value;
+          return gradientFactor< BF_INDEX, aVal >() * ( valueFactor< BF_INDEX, decltype(b)::value, aVal >( coord ) * ... );
+        };
+
+        return ( executeSequence< numSupportPoints >( func, a ) + ... );
+      } );
+    }
+#endif
   }
 
 

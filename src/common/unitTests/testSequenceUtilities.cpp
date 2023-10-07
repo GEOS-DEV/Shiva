@@ -35,7 +35,7 @@ TEST( testSequenceUtilities, testNestedSequenceExpansionLambda )
   constexpr int sum_of_h = 354025;
 
   constexpr int staticSum0 = executeSequence< 10 >(
-    [&]< int ... a > () constexpr
+    [&] ( auto const ... a ) constexpr
   {
     return
       ( executeSequence< 10 >
@@ -48,7 +48,7 @@ TEST( testSequenceUtilities, testNestedSequenceExpansionLambda )
   static_assert( staticSum0 == sum_of_h );
 
   int const staticSum1 = executeSequence< 10 >(
-    [&]< int ... a > () constexpr
+    [&] ( auto const ... a ) constexpr
   {
     return
       ( executeSequence< 10 >
