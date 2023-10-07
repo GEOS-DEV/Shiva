@@ -27,6 +27,7 @@ struct Scalar
 template< typename T, int N >
 struct CArray1d
 {
+  constexpr inline T operator[] ( int const i ) const { return data[i]; }
   using type = T[N];
   T data[N];
 };

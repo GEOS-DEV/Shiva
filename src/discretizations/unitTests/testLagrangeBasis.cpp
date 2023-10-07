@@ -2,6 +2,7 @@
 #include "../finiteElementMethod/bases/LagrangeBasis.hpp"
 #include "../spacing/Spacing.hpp"
 #include "../../common/ShivaMacros.hpp"
+#include "types/types.hpp"
 
 #include <gtest/gtest.h>
 #include <cmath>
@@ -9,9 +10,9 @@
 using namespace shiva;
 using namespace shiva::discretizations::finiteElementMethod::basis;
 
-constexpr bool check( double const a, double const b, double const tolerance = 1e-13 )
+constexpr bool check( double const a, double const b, double const tolerance )
 {
-  return ( a / b - 1.0 ) < tolerance;
+  return ( ( a / b - 1.0 ) < tolerance ) && ( ( a / b - 1.0 ) > -tolerance );
 }
 
 
@@ -41,15 +42,16 @@ struct TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, USE_FOR_S
 
 
 template< typename BASIS_HELPER_TYPE >
-constexpr void testBasis()
+constexpr void compileTimeCheck()
 {
   using BasisType = typename BASIS_HELPER_TYPE::BasisType;
   constexpr int order = BASIS_HELPER_TYPE::order;
+
   constexpr double coord = BASIS_HELPER_TYPE::coord;
 
   executeSequence< order + 1 >( [&] ( auto ... BF_INDEX ) constexpr
   {
-    constexpr double values[order + 1] = { BasisType::template value< BF_INDEX >( coord )... };
+    constexpr double    values[order + 1] = { BasisType::template value< BF_INDEX >( coord )... };
     constexpr double gradients[order + 1] = { BasisType::template gradient< BF_INDEX >( coord )... };
     constexpr double tolerance = 1.0e-12;
 
@@ -58,26 +60,55 @@ constexpr void testBasis()
   } );
 }
 
+template< typename BASIS_HELPER_TYPE >
+constexpr void runTimeCheck()
+{
+  using BasisType = typename BASIS_HELPER_TYPE::BasisType;
+  constexpr int order = BASIS_HELPER_TYPE::order;
+
+  double coord = BASIS_HELPER_TYPE::coord;
+
+  executeSequence< order + 1 >( [&] ( auto ... BF_INDEX ) constexpr
+  {
+    double    values[order + 1] = { BasisType::template value< BF_INDEX >( coord )... };
+    double gradients[order + 1] = { BasisType::template gradient< BF_INDEX >( coord )... };
+    constexpr double tolerance = 1.0e-10;
+
+    for ( int a = 0; a < order + 1; ++a )
+    {
+      EXPECT_NEAR( values[a], BASIS_HELPER_TYPE::refValues[a], fabs( BASIS_HELPER_TYPE::refValues[a] * tolerance ) );
+      EXPECT_NEAR( gradients[a], BASIS_HELPER_TYPE::refGradients[a], fabs( BASIS_HELPER_TYPE::refGradients[a] * tolerance ) );
+    }
+  } );
+}
 
 TEST( testSpacing, testLagrangeBasisEqualSpacing )
 {
-  testBasis< TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, false > > >();
+  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, false > >;
+  compileTimeCheck< BasisHelperType >();
+  runTimeCheck< BasisHelperType >();
 }
 
 TEST( testSpacing, testLagrangeBasisEqualSpacingUseForSequence )
 {
-  testBasis< TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, true > > >();
+  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, true > >;
+  compileTimeCheck< BasisHelperType >();
+  runTimeCheck< BasisHelperType >();
 }
 
 
 TEST( testSpacing, testLagrangeBasisGaussLobattoSpacing )
 {
-  testBasis< TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, false > > >();
+  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, false > >;
+  compileTimeCheck< BasisHelperType >();
+  runTimeCheck< BasisHelperType >();
 }
 
 TEST( testSpacing, testLagrangeBasisGaussLobattoSpacingUseForSequence )
 {
-  testBasis< TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, true > > >();
+  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, false > >;
+  compileTimeCheck< BasisHelperType >();
+  runTimeCheck< BasisHelperType >();
 }
 
 
