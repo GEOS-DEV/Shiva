@@ -12,7 +12,7 @@ using namespace shiva::discretizations::finiteElementMethod::basis;
 
 constexpr bool check( double const a, double const b, double const tolerance )
 {
-  return ( ( a / b - 1.0 ) < tolerance ) && ( ( a / b - 1.0 ) > -tolerance );
+  return ( a - b )*( a - b ) < tolerance*tolerance;
 }
 
 
