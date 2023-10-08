@@ -19,7 +19,7 @@ using namespace shiva::geometry;
 
 constexpr bool check( double const a, double const b, double const tolerance )
 {
-  return ( a - b )*( a - b ) < tolerance*tolerance;
+  return ( a - b ) * ( a - b ) < tolerance * tolerance;
 }
 
 
@@ -35,8 +35,8 @@ constexpr void compileTimeCheck()
     {
       forSequence< order + 2 >( [&] ( auto const k ) constexpr
       {
-        constexpr double coord[3] = { TestParentElementHelperType::testParentCoords[i], 
-                                      TestParentElementHelperType::testParentCoords[j], 
+        constexpr double coord[3] = { TestParentElementHelperType::testParentCoords[i],
+                                      TestParentElementHelperType::testParentCoords[j],
                                       TestParentElementHelperType::testParentCoords[k] };
 
         forSequence< order + 1 >( [&] ( auto const a ) constexpr
@@ -49,10 +49,10 @@ constexpr void compileTimeCheck()
               constexpr CArray1d< double, 3 > gradient = ParentElementType::template gradient< a, b, c >( coord );
               constexpr double tolerance = 1.0e-12;
 
-              static_assert( check( value,           TestParentElementHelperType::referenceValues[i][j][k][a][b][c], tolerance ) );
-              static_assert( check( gradient[0],  TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][0], tolerance ) );
-              static_assert( check( gradient[1],  TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][1], tolerance ) );
-              static_assert( check( gradient[2],  TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][2], tolerance ) );
+              static_assert( check( value, TestParentElementHelperType::referenceValues[i][j][k][a][b][c], tolerance ) );
+              static_assert( check( gradient[0], TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][0], tolerance ) );
+              static_assert( check( gradient[1], TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][1], tolerance ) );
+              static_assert( check( gradient[2], TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][2], tolerance ) );
             } );
           } );
         } );
@@ -75,9 +75,9 @@ constexpr void runTimeCheck()
     {
       for ( int k = 0; k < order + 2; ++k )
       {
-       double const coord[3] = { TestParentElementHelperType::testParentCoords[i], 
-                                 TestParentElementHelperType::testParentCoords[j], 
-                                 TestParentElementHelperType::testParentCoords[k] };
+        double const coord[3] = { TestParentElementHelperType::testParentCoords[i],
+                                  TestParentElementHelperType::testParentCoords[j],
+                                  TestParentElementHelperType::testParentCoords[k] };
 
         forSequence< order + 1 >( [&] ( auto const a ) constexpr
         {
@@ -89,13 +89,13 @@ constexpr void runTimeCheck()
               CArray1d< double, 3 > const gradient = ParentElementType::template gradient< a, b, c >( coord );
               constexpr double tolerance = 1.0e-12;
 
-              EXPECT_NEAR( value,             TestParentElementHelperType::referenceValues[i][j][k][a][b][c], fabs(value*tolerance) );
-              EXPECT_NEAR( gradient[0], TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][0], fabs(gradient[0]*tolerance) );
-              EXPECT_NEAR( gradient[1], TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][1], fabs(gradient[1]*tolerance) );
-              EXPECT_NEAR( gradient[2], TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][2], fabs(gradient[2]*tolerance) );
-            });
-          });
-        });
+              EXPECT_NEAR( value, TestParentElementHelperType::referenceValues[i][j][k][a][b][c], fabs( value * tolerance ) );
+              EXPECT_NEAR( gradient[0], TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][0], fabs( gradient[0] * tolerance ) );
+              EXPECT_NEAR( gradient[1], TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][1], fabs( gradient[1] * tolerance ) );
+              EXPECT_NEAR( gradient[2], TestParentElementHelperType::referenceGradients[i][j][k][a][b][c][2], fabs( gradient[2] * tolerance ) );
+            } );
+          } );
+        } );
 
       }
     }
@@ -116,15 +116,15 @@ TEST( testParentElement, testBasicUsage )
 TEST( testParentElement, testCubeLagrangeBasisGaussLobatto_O1 )
 {
   using ParentElementType = ParentElement< double,
-                                         Cube,
-                                         LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                                         LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                                         LagrangeBasis< double, 1, GaussLobattoSpacing >
-                                         >;
+                                           Cube,
+                                           LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                           LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                           LagrangeBasis< double, 1, GaussLobattoSpacing >
+                                           >;
   using TestParentElementHelperType = TestParentElementHelper< ParentElementType >;
 
-  compileTimeCheck<TestParentElementHelperType>();
-  runTimeCheck<TestParentElementHelperType>();
+  compileTimeCheck< TestParentElementHelperType >();
+  runTimeCheck< TestParentElementHelperType >();
 }
 
 TEST( testParentElement, testCubeLagrangeBasisGaussLobatto_O3 )
@@ -137,8 +137,8 @@ TEST( testParentElement, testCubeLagrangeBasisGaussLobatto_O3 )
                                            >;
   using TestParentElementHelperType = TestParentElementHelper< ParentElementType >;
 
-  compileTimeCheck<TestParentElementHelperType>();
-  runTimeCheck<TestParentElementHelperType>();
+  compileTimeCheck< TestParentElementHelperType >();
+  runTimeCheck< TestParentElementHelperType >();
 }
 
 
