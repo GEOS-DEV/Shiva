@@ -1,6 +1,9 @@
 #pragma once
 
 #include "types/types.hpp"
+#include "common/SequenceUtilities.hpp"
+
+
 #include <utility>
 
 namespace shiva
@@ -34,59 +37,67 @@ public:
   constexpr static RealType value( CoordType const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == Dimension, "Wrong number of basis function indicies specified" );
-    return SequenceUnpacker< std::make_integer_sequence< int, Dimension > >::template value< BASIS_FUNCTION_INDICES... >( parentCoord );
+
+    return
+#if __cplusplus >= 202002L
+      executeSequence< Dimension >( [&]< int ... DIMENSION_INDICES > () constexpr
+    {
+      return ( BASIS_TYPE::template value< BASIS_FUNCTION_INDICES >( parentCoord[DIMENSION_INDICES] ) * ... );
+    } );
+#else
+      executeSequence< Dimension >( [&] ( auto ... DIMENSION_INDICES ) constexpr
+    {
+      return ( BASIS_TYPE::template value< BASIS_FUNCTION_INDICES >( parentCoord[decltype(DIMENSION_INDICES)::value] ) * ... );
+    } );
+
+#endif
   }
 
   template< int ... BASIS_FUNCTION_INDICES >
   constexpr static CArray1d< RealType, Dimension > gradient( CoordType const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == Dimension, "Wrong number of basis function indicies specified" );
-    return SequenceUnpacker< std::make_integer_sequence< int, Dimension > >::template gradient< BASIS_FUNCTION_INDICES... >( parentCoord );
+
+#if __cplusplus >= 202002L
+    return executeSequence< Dimension >( [&]< int ... i >() constexpr -> CArray1d< RealType, Dimension >
+    {
+      auto gradientComponent = [&] ( auto const iGrad, auto const  ... BASIS_FUNCTION_INDEX ) constexpr
+      {
+        return ( gradientComponentHelper< BASIS_TYPE,
+                                          decltype(iGrad)::value,
+                                          BASIS_FUNCTION_INDICES,
+                                          BASIS_FUNCTION_INDEX >( parentCoord ) * ... );
+      };
+
+      return { (executeSequence< Dimension >( gradientComponent, std::integral_constant< int, i >{} ) )...  };
+    } );
+#else
+    return executeSequence< Dimension >( [&] ( auto ... a ) constexpr -> CArray1d< RealType, Dimension >
+    {
+      auto gradientComponent = [&] ( auto GRADIENT_COMPONENT, auto ... BASIS_FUNCTION_INDEX ) constexpr
+      {
+        return ( gradientComponentHelper< BASIS_TYPE, GRADIENT_COMPONENT, BASIS_FUNCTION_INDICES, BASIS_FUNCTION_INDEX >( parentCoord ) * ... );
+      };
+
+      return { (executeSequence< Dimension >( gradientComponent, a ) )...  };
+    } );
+#endif
   }
 
 
 private:
-  template< typename ... INTEGER_SEQUENCES >
-  struct SequenceUnpacker
-  {};
-
-  template< int ... DIMENSION_INDICES >
-  struct SequenceUnpacker< std::integer_sequence< int, DIMENSION_INDICES... > >
+  template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COMPONENT_INDEX >
+  constexpr static RealType gradientComponentHelper( CoordType const & parentCoord )
   {
-    template< int ... BASIS_FUNCTION_INDICES >
-    constexpr static RealType value( CoordType const & parentCoord )
+    if constexpr ( GRADIENT_COMPONENT == COMPONENT_INDEX )
     {
-      return ( BASIS_TYPE::template value< BASIS_FUNCTION_INDICES >( parentCoord[DIMENSION_INDICES] ) * ... );
+      return BASIS_FUNCTION::template gradient< BASIS_FUNCTION_INDEX >( parentCoord[COMPONENT_INDEX] );
     }
-
-
-    template< int ... BASIS_FUNCTION_INDICES >
-    constexpr static CArray1d< RealType, Dimension > gradient( CoordType const & parentCoord )
+    else
     {
-      return { gradientComponent< DIMENSION_INDICES, BASIS_FUNCTION_INDICES... >( parentCoord )... };
+      return ( BASIS_FUNCTION::template value< BASIS_FUNCTION_INDEX >( parentCoord[COMPONENT_INDEX] ) );
     }
-
-    template< int GRADIENT_COMPONENT, int ... BASIS_FUNCTION_INDICES >
-    constexpr static RealType gradientComponent( CoordType const & parentCoord )
-    {
-//        printf( "gradientComponent<%d>() \n", GRADIENT_COMPONENT );
-      return ( gradientComponentHelper< BASIS_TYPE, GRADIENT_COMPONENT, BASIS_FUNCTION_INDICES, DIMENSION_INDICES >( parentCoord ) * ... );
-    }
-
-    template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COMPONENT_INDEX >
-    constexpr static RealType gradientComponentHelper( CoordType const & parentCoord )
-    {
-//        printf( "%d, %d \n", GRADIENT_COMPONENT, COMPONENT_INDEX );
-      if constexpr ( GRADIENT_COMPONENT == COMPONENT_INDEX )
-      {
-        return BASIS_FUNCTION::template gradient< BASIS_FUNCTION_INDEX >( parentCoord[COMPONENT_INDEX] );
-      }
-      else
-      {
-        return ( BASIS_FUNCTION::template value< BASIS_FUNCTION_INDEX >( parentCoord[COMPONENT_INDEX] ) );
-      }
-    }
-  };
+  }
 
 
 
