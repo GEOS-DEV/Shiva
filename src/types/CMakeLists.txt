@@ -9,6 +9,8 @@ set( types_headers
 set( types_sources
      )
 
+set( types_dependencies common )
+
 blt_add_library( NAME             types
 #                 SOURCES          ${types_sources}
                  HEADERS          ${types_headers}

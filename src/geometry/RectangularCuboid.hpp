@@ -14,7 +14,7 @@ public:
   using JacobianType = CArray1d< REAL_TYPE, 3 >;
   using DataType = REAL_TYPE[3];
 
-  constexpr static bool jacobianIsConstInCell() { return true; }
+  static SHIVA_FORCE_INLINE constexpr bool jacobianIsConstInCell() { return true; }
 
   REAL_TYPE const & getLength( int const i ) const { return m_length[i]; }
 

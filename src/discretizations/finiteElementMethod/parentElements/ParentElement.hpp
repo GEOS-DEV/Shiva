@@ -2,6 +2,7 @@
 
 #include "types/types.hpp"
 #include "common/SequenceUtilities.hpp"
+#include "common/ShivaMacros.hpp"
 
 
 #include <utility>
@@ -28,13 +29,13 @@ public:
 
   using BasisType = pack< BASIS_TYPE ... >;
 
-  static constexpr int Dimension = sizeof...(BASIS_TYPE);
+  static inline constexpr int Dimension = sizeof...(BASIS_TYPE);
 
 
   static_assert( Dimension == CellType::Dimension(), "Dimension mismatch between cell and number of basis specified" );
 
   template< int ... BASIS_FUNCTION_INDICES >
-  constexpr static RealType value( CoordType const & parentCoord )
+  static SHIVA_FORCE_INLINE constexpr RealType value( CoordType const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == Dimension, "Wrong number of basis function indicies specified" );
 
@@ -54,7 +55,7 @@ public:
   }
 
   template< int ... BASIS_FUNCTION_INDICES >
-  constexpr static CArray1d< RealType, Dimension > gradient( CoordType const & parentCoord )
+  static SHIVA_FORCE_INLINE constexpr CArray1d< RealType, Dimension > gradient( CoordType const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == Dimension, "Wrong number of basis function indicies specified" );
 
@@ -87,7 +88,7 @@ public:
 
 private:
   template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COMPONENT_INDEX >
-  constexpr static RealType gradientComponentHelper( CoordType const & parentCoord )
+  static SHIVA_FORCE_INLINE constexpr RealType gradientComponentHelper( CoordType const & parentCoord )
   {
     if constexpr ( GRADIENT_COMPONENT == COMPONENT_INDEX )
     {

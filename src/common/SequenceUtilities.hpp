@@ -1,5 +1,8 @@
 #pragma once
 
+#include "common/ShivaMacros.hpp"
+
+
 #include <type_traits>
 #include <utility>
 
@@ -17,7 +20,7 @@ template< int ... DIMENSION_INDICES >
 struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
 {
   template< typename FUNC, typename ... ARGS >
-  constexpr static auto execute( FUNC && func, ARGS && ... args )
+  static SHIVA_FORCE_INLINE constexpr auto execute( FUNC && func, ARGS && ... args )
   {
     if constexpr ( std::is_invocable_v< FUNC, std::integral_constant< int, DIMENSION_INDICES >..., ARGS ... > )
     {
@@ -31,7 +34,7 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
   }
 
   template< typename FUNC >
-  constexpr static auto staticFor( FUNC && func )
+  static SHIVA_FORCE_INLINE constexpr auto staticFor( FUNC && func )
   {
     if constexpr ( std::is_invocable_v< FUNC, std::integral_constant< int, 0 > > )
     {

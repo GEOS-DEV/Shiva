@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/SequenceUtilities.hpp"
+#include "common/ShivaMacros.hpp"
 
 
 #include <utility>
@@ -21,11 +22,11 @@ class LagrangeBasis : public SPACING_TYPE< REAL_TYPE, ORDER + 1 >
 {
 public:
   /// The number of support points for the basis
-  constexpr static int order = ORDER;
-  constexpr static int numSupportPoints = ORDER + 1;
+  static inline constexpr int order = ORDER;
+  static inline constexpr int numSupportPoints = ORDER + 1;
 
   template< int BF_INDEX >
-  constexpr static REAL_TYPE value( REAL_TYPE const & coord )
+  static SHIVA_FORCE_INLINE constexpr REAL_TYPE value( REAL_TYPE const & coord )
   {
 #if __cplusplus >= 202002L
     return executeSequence< numSupportPoints >( [&]< int ... a > () constexpr
@@ -41,7 +42,7 @@ public:
   }
 
   template< int BF_INDEX >
-  constexpr static REAL_TYPE gradient( REAL_TYPE const & coord )
+  static SHIVA_FORCE_INLINE constexpr REAL_TYPE gradient( REAL_TYPE const & coord )
   {
 
 #if __cplusplus >= 202002L
@@ -106,7 +107,7 @@ public:
 
 private:
   template< int BF_INDEX, int FACTOR_INDEX, int DERIVATIVE_INDEX = -1 >
-  constexpr static REAL_TYPE valueFactor( REAL_TYPE const & coord )
+  static SHIVA_FORCE_INLINE constexpr REAL_TYPE valueFactor( REAL_TYPE const & coord )
   {
     if constexpr ( BF_INDEX == FACTOR_INDEX || FACTOR_INDEX == DERIVATIVE_INDEX )
     {
@@ -120,7 +121,7 @@ private:
   }
 
   template< int BF_INDEX, int FACTOR_INDEX >
-  constexpr static REAL_TYPE gradientFactor()
+  static SHIVA_FORCE_INLINE constexpr REAL_TYPE gradientFactor()
   {
     if constexpr ( BF_INDEX == FACTOR_INDEX )
     {

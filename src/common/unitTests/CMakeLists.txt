@@ -6,7 +6,7 @@ set( unit_tests_sources
      testSequenceUtilities.cpp
      )
 
-set( dependencyList ${parallelDeps} gtest )
+set( dependencyList ${parallelDeps} gtest common )
 
 #
 # Add gtest C++ based tests

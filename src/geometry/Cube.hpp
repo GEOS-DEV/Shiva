@@ -12,13 +12,13 @@ template< typename REAL_TYPE >
 class Cube
 {
 public:
-  constexpr static int Dimension() {return 3;};
+  static SHIVA_FORCE_INLINE constexpr int Dimension() {return 3;};
   using JacobianType = Scalar< REAL_TYPE >;
   using DataType = REAL_TYPE;
   using CoordType = REAL_TYPE[3];
   using IndexType = MultiIndexRange< int, 2, 2, 2 >;
 
-  constexpr static bool jacobianIsConstInCell() { return true; }
+  static SHIVA_FORCE_INLINE constexpr bool jacobianIsConstInCell() { return true; }
 
   DataType const & getLength() const { return m_length; }
 

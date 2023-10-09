@@ -21,7 +21,7 @@ public:
   using CoordType = REAL_TYPE[3];
   using IndexType = MultiIndexRange< int, 2, 2, 2 >;
 
-  constexpr static bool jacobianIsConstInCell() { return false; }
+  static SHIVA_FORCE_INLINE constexpr bool jacobianIsConstInCell() { return false; }
 
 
 

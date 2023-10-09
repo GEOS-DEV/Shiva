@@ -6,7 +6,7 @@ set( unit_tests_sources
      testIndexTypes.cpp
      )
 
-set( dependencyList ${parallelDeps} gtest )
+set( dependencyList ${parallelDeps} gtest types )
 
 #
 # Add gtest C++ based tests
