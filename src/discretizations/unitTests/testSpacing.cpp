@@ -1,15 +1,16 @@
 
+
 #include "../spacing/Spacing.hpp"
 #include "common/SequenceUtilities.hpp"
 #include "common/ShivaMacros.hpp"
-
+#include "ShivaConfig.hpp"
 
 #include <gtest/gtest.h>
 #include <cmath>
 
 using namespace shiva;
 
-constexpr bool check( double const a, double const b, double const tolerance )
+static constexpr bool check( double const a, double const b, double const tolerance )
 {
   return ( a - b ) * ( a - b ) < tolerance * tolerance;
 }
@@ -97,21 +98,50 @@ struct ReferenceSolution< GaussLobattoSpacing<REAL_TYPE,5> >
 
 
 template< template< typename, int > typename SPACING, typename REAL_TYPE, int N >
-void testSpacingRT()
+SHIVA_GLOBAL void runtimeValuesKernel( REAL_TYPE * const values )
+{
+  for ( int a = 0; a < N; ++a )
+  {
+    values[a] = SPACING< REAL_TYPE, N >::coordinate( a );
+  }
+}
+
+template< template< typename, int > typename SPACING, typename REAL_TYPE, int N >
+void testSpacingValuesAtRuntime()
 {
   using SpacingType = SPACING< REAL_TYPE, N >;
   using Ref = ReferenceSolution< SpacingType >;
 
-  constexpr REAL_TYPE tolerance = 1e-13;
-  for ( int a = 0; a < N; ++a )
+#if defined(SHIVA_USE_DEVICE)
+  constexpr int bytes = N*sizeof(REAL_TYPE);
+  REAL_TYPE *values;
+  cudaMallocManaged( &values, bytes );
+  runtimeValuesKernel< SPACING, REAL_TYPE, N><<<1,1>>>( values );
+  cudaDeviceSynchronize();
+#else
+  REAL_TYPE values[N];
+  runtimeValuesKernel< SPACING, REAL_TYPE, N>( values );
+#endif
+  
+  for( int a=0; a<N; ++a )
   {
-    EXPECT_NEAR( SpacingType::coordinate( a ), Ref::coords[a], abs( Ref::coords[a] ) * tolerance );
+    EXPECT_NEAR( values[a], Ref::coords[a], 1e-14 );
   }
+  
+#if defined(SHIVA_USE_DEVICE)
+  cudaFree(values);
+#endif
 }
 
-template< template< typename, int > typename SPACING, typename REAL_TYPE, std::size_t ... I, int N = sizeof...(I) >
-static constexpr void testSpacingCT( std::index_sequence< I... > )
+
+
+
+
+
+template< template< typename, int > typename SPACING, typename REAL_TYPE, std::size_t ... I >
+SHIVA_GLOBAL void compileTimeValuesKernel( std::index_sequence< I... > )
 {
+  constexpr int N = sizeof...(I);
   using SpacingType = SPACING< REAL_TYPE, N >;
   using Ref = ReferenceSolution< SpacingType >;
 
@@ -122,52 +152,67 @@ static constexpr void testSpacingCT( std::index_sequence< I... > )
   } );
 }
 
+template< template< typename, int > typename SPACING, typename REAL_TYPE, typename INDEX_SEQUENCE >
+void testSpacingValuesAtCompileTime( INDEX_SEQUENCE iSeq )
+{
+#if defined(SHIVA_USE_DEVICE)
+  compileTimeValuesKernel<SPACING,REAL_TYPE><<<1,1>>>( iSeq );
+#else
+  compileTimeValuesKernel<SPACING,REAL_TYPE>( iSeq );
+#endif
+}
+
+
+
+
+
 
 TEST( testSpacing, testEqualSpacingRT )
 {
-  testSpacingRT< EqualSpacing, double, 2 >( );
-  testSpacingRT< EqualSpacing, double, 3 >(  );
-  testSpacingRT< EqualSpacing, double, 4 >( );
-  testSpacingRT< EqualSpacing, double, 5 >(  );
+  testSpacingValuesAtRuntime< EqualSpacing, double, 2>( );
+  testSpacingValuesAtRuntime< EqualSpacing, double, 3>( );
+  testSpacingValuesAtRuntime< EqualSpacing, double, 4>( );
+  testSpacingValuesAtRuntime< EqualSpacing, double, 5>( );
+
 }
 
 TEST( testSpacing, testEqualSpacingCT )
 {
-  testSpacingCT< EqualSpacing, double >( std::make_index_sequence< 2 >{} );
-  testSpacingCT< EqualSpacing, double >( std::make_index_sequence< 3 >{} );
-  testSpacingCT< EqualSpacing, double >( std::make_index_sequence< 4 >{} );
-  testSpacingCT< EqualSpacing, double >( std::make_index_sequence< 5 >{} );
+  testSpacingValuesAtCompileTime< EqualSpacing, double >( std::make_index_sequence< 2 >{} );
+  testSpacingValuesAtCompileTime< EqualSpacing, double >( std::make_index_sequence< 3 >{} );
+  testSpacingValuesAtCompileTime< EqualSpacing, double >( std::make_index_sequence< 4 >{} );
+  testSpacingValuesAtCompileTime< EqualSpacing, double >( std::make_index_sequence< 5 >{} );
 }
 
 
 TEST( testSpacing, testGaussLegendreSpacingRT )
 {
-  testSpacingRT< GaussLegendreSpacing, double, 2 >( );
-  testSpacingRT< GaussLegendreSpacing, double, 3 >( );
-  testSpacingRT< GaussLegendreSpacing, double, 4 >( );
+  testSpacingValuesAtRuntime< GaussLegendreSpacing, double, 2 >( );
+  testSpacingValuesAtRuntime< GaussLegendreSpacing, double, 3 >( );
+  testSpacingValuesAtRuntime< GaussLegendreSpacing, double, 4 >( );
 }
 
 TEST( testSpacing, testGaussLegendreSpacingCT )
 {
-  testSpacingCT< GaussLegendreSpacing, double >( std::make_index_sequence< 2 >{} );
-  testSpacingCT< GaussLegendreSpacing, double >( std::make_index_sequence< 3 >{} );
-  testSpacingCT< GaussLegendreSpacing, double >( std::make_index_sequence< 4 >{} );
+  testSpacingValuesAtCompileTime< GaussLegendreSpacing, double >( std::make_index_sequence< 2 >{} );
+  testSpacingValuesAtCompileTime< GaussLegendreSpacing, double >( std::make_index_sequence< 3 >{} );
+  testSpacingValuesAtCompileTime< GaussLegendreSpacing, double >( std::make_index_sequence< 4 >{} );
 }
 
 TEST( testSpacing, testGaussLobattoSpacingRT )
 {
-  testSpacingRT< GaussLobattoSpacing, double, 2 >(  );
-  testSpacingRT< GaussLobattoSpacing, double, 3 >(  );
-  testSpacingRT< GaussLobattoSpacing, double, 4 >(   );
-  testSpacingRT< GaussLobattoSpacing, double, 5 >(   );
+  testSpacingValuesAtRuntime< GaussLobattoSpacing, double, 2 >( );
+  testSpacingValuesAtRuntime< GaussLobattoSpacing, double, 3 >( );
+  testSpacingValuesAtRuntime< GaussLobattoSpacing, double, 4 >( );
+  testSpacingValuesAtRuntime< GaussLobattoSpacing, double, 5 >( );
 }
 
 TEST( testSpacing, testGaussLobattoSpacingCT )
 {
-  testSpacingCT< GaussLobattoSpacing, double >( std::make_index_sequence< 2 >{} );
-  testSpacingCT< GaussLobattoSpacing, double >( std::make_index_sequence< 3 >{} );
-  testSpacingCT< GaussLobattoSpacing, double >( std::make_index_sequence< 4 >{} );
-  testSpacingCT< GaussLobattoSpacing, double >( std::make_index_sequence< 5 >{} );
+  testSpacingValuesAtCompileTime< GaussLobattoSpacing, double >( std::make_index_sequence< 2 >{} );
+  testSpacingValuesAtCompileTime< GaussLobattoSpacing, double >( std::make_index_sequence< 3 >{} );
+  testSpacingValuesAtCompileTime< GaussLobattoSpacing, double >( std::make_index_sequence< 4 >{} );
+  testSpacingValuesAtCompileTime< GaussLobattoSpacing, double >( std::make_index_sequence< 5 >{} );
 }
 
 

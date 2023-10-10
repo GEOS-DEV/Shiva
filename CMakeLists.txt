@@ -24,7 +24,7 @@ if( NOT is_submodule )
 
     project( Shiva LANGUAGES CXX )
 
-    set( BLT_CXX_STD "c++20" CACHE STRING "Version of C++ standard" FORCE )
+    set( BLT_CXX_STD "c++17" CACHE STRING "Version of C++ standard" FORCE )
     set( ENABLE_WARNINGS_AS_ERRORS "ON" CACHE PATH "" )
 
     option( SHIVA_ENABLE_UNIT_TESTS "Builds tests" ON )

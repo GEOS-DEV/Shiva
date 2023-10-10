@@ -9,7 +9,7 @@ set( unit_tests_sources
      testQuadrature.cpp
      )
 
-set( dependencyList ${parallelDeps} discretizations gtest )
+set( dependencyList ${parallelDeps} discretizations gtest cuda )
 
 #
 # Add gtest C++ based tests

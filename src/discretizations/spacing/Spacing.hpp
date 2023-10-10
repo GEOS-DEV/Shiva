@@ -10,12 +10,12 @@ struct EqualSpacing
 {
   static inline constexpr int numPoints = N;
 
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE interval() { return 2.0 / (numPoints - 1); }
+  SHIVA_S_CEXPR_HD_I REAL_TYPE interval() { return 2.0 / (numPoints - 1); }
 
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE coordinate( int const index ) { return -1 + index * interval(); }
+  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate( int const index ) { return -1 + index * interval(); }
 
   template< int INDEX >
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE coordinate() { return -1.0 + INDEX * interval(); }
+  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate() { return -1.0 + INDEX * interval(); }
 };
 
 template< typename REAL_TYPE, int N >
@@ -23,12 +23,10 @@ struct GaussLegendreSpacing
 {
   static inline constexpr REAL_TYPE invSqrt3 = 0.57735026918962576450914878050195745565;  //1/sqrt(3)
   static inline constexpr REAL_TYPE sqrt3div5 = 0.77459666924148337703585307995647992217; //sqrt(3/5)
-  static inline constexpr REAL_TYPE c4[2] = { 0.8611363115940525752239464888928095051,         //sqrt((15+2*sqrt(30))/35)
-                                       0.3399810435848562648026657591032446872 };       //sqrt((15-2*sqrt(30))/35)
 
   static inline constexpr int numPoints = N;
 
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE coordinate( int const index )
+  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate( int const index )
   {
     if constexpr ( N == 2 )
     {
@@ -40,13 +38,15 @@ struct GaussLegendreSpacing
     }
     else if constexpr ( N == 4 )
     {
+      constexpr REAL_TYPE c4[2] = { 0.8611363115940525752239464888928095051,         //sqrt((15+2*sqrt(30))/35)
+                                    0.3399810435848562648026657591032446872 };       //sqrt((15-2*sqrt(30))/35)
       return c4[ ( ((index + 1) & 2) >> 1) ] * ((index & 2) - 1);
     }
     return 0;
   }
 
   template< int INDEX >
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE coordinate()
+  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate()
   {
     if constexpr ( N == 2 )
     {
@@ -58,6 +58,8 @@ struct GaussLegendreSpacing
     }
     else if constexpr ( N == 4 )
     {
+      constexpr REAL_TYPE c4[2] = { 0.8611363115940525752239464888928095051,         //sqrt((15+2*sqrt(30))/35)
+                                    0.3399810435848562648026657591032446872 };       //sqrt((15-2*sqrt(30))/35)
       if constexpr ( INDEX == 0 ) return -c4[0];
       if constexpr ( INDEX == 1 ) return -c4[1];
       if constexpr ( INDEX == 2 ) return c4[1];
@@ -77,7 +79,7 @@ struct GaussLobattoSpacing
 
   static inline constexpr int numPoints = N;
 
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE coordinate( int const index )
+  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate( int const index )
   {
     if constexpr ( N == 2 )
     {
@@ -109,7 +111,7 @@ struct GaussLobattoSpacing
   }
 
   template< int INDEX >
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE coordinate()
+  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate()
   {
     if constexpr ( N == 2 )
     {
