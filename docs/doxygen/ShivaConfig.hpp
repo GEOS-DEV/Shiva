@@ -10,6 +10,6 @@
 
 /* #undef SHIVA_USE_CUDA */
 
-/* #undef SHIVA_USE_HIP */
+#define SHIVA_USE_HIP
 
 /* #undef SHIVA_USE_CALIPER */

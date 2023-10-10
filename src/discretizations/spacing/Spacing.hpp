@@ -24,7 +24,7 @@ struct GaussLegendreSpacing
   static inline constexpr REAL_TYPE invSqrt3 = 0.57735026918962576450914878050195745565;  //1/sqrt(3)
   static inline constexpr REAL_TYPE sqrt3div5 = 0.77459666924148337703585307995647992217; //sqrt(3/5)
 
-  static inline constexpr int numPoints = N;
+  static inline constexpr int numPoints = N; 
 
   SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate( int const index )
   {

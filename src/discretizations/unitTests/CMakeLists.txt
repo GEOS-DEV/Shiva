@@ -9,7 +9,15 @@ set( unit_tests_sources
      testQuadrature.cpp
      )
 
-set( dependencyList ${parallelDeps} discretizations gtest cuda )
+set( dependencyList ${parallelDeps} discretizations gtest )
+
+if( ENABLE_HIP )
+    list( APPEND dependencyList blt::hip )
+endif()
+
+if( ENABLE_CUDA )
+    list( APPEND dependencyList cuda )
+endif()
 
 #
 # Add gtest C++ based tests

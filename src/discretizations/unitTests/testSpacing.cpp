@@ -2,8 +2,7 @@
 
 #include "../spacing/Spacing.hpp"
 #include "common/SequenceUtilities.hpp"
-#include "common/ShivaMacros.hpp"
-#include "ShivaConfig.hpp"
+#include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 #include <cmath>
@@ -115,9 +114,9 @@ void testSpacingValuesAtRuntime()
 #if defined(SHIVA_USE_DEVICE)
   constexpr int bytes = N*sizeof(REAL_TYPE);
   REAL_TYPE *values;
-  cudaMallocManaged( &values, bytes );
+  deviceMallocManaged( &values, bytes );
   runtimeValuesKernel< SPACING, REAL_TYPE, N><<<1,1>>>( values );
-  cudaDeviceSynchronize();
+  deviceDeviceSynchronize();
 #else
   REAL_TYPE values[N];
   runtimeValuesKernel< SPACING, REAL_TYPE, N>( values );
@@ -129,7 +128,7 @@ void testSpacingValuesAtRuntime()
   }
   
 #if defined(SHIVA_USE_DEVICE)
-  cudaFree(values);
+  deviceFree(values);
 #endif
 }
 

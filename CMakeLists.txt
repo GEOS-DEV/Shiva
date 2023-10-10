@@ -21,8 +21,8 @@ else()
 endif()
 
 if( NOT is_submodule )
-
-    project( Shiva LANGUAGES CXX )
+    message( "not a submodule")
+    project( Shiva LANGUAGES CXX C )
 
     set( BLT_CXX_STD "c++17" CACHE STRING "Version of C++ standard" FORCE )
     set( ENABLE_WARNINGS_AS_ERRORS "ON" CACHE PATH "" )

@@ -1,6 +1,7 @@
 
 set( common_headers
      MathUtilities.hpp
+     pmpl.hpp
      SequenceUtilities.hpp
      ShivaMacros.hpp
      )
