@@ -8,7 +8,8 @@ namespace shiva
 template< typename REAL_TYPE, int N >
 struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
 {
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE weight( int const index )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  weight( int const index )
   {
     if constexpr ( N == 2 )
     {
@@ -31,7 +32,8 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
   }
 
   template< int INDEX >
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE weight()
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  weight()
   {
     if constexpr ( N == 2 )
     {
@@ -57,7 +59,8 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
 template< typename REAL_TYPE, int N >
 struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
 {
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE weight( int const index )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  weight( int const index )
   {
     if constexpr ( N == 2 )
     {
@@ -86,7 +89,8 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
   }
 
   template< int INDEX >
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE weight()
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  weight()
   {
     if constexpr ( N == 2 )
     {

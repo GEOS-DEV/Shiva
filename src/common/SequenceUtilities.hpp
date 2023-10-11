@@ -20,7 +20,7 @@ template< int ... DIMENSION_INDICES >
 struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
 {
   template< typename FUNC, typename ... ARGS >
-  static SHIVA_FORCE_INLINE constexpr auto execute( FUNC && func, ARGS && ... args )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto execute( FUNC && func, ARGS && ... args )
   {
     if constexpr ( std::is_invocable_v< FUNC, std::integral_constant< int, DIMENSION_INDICES >..., ARGS ... > )
     {
@@ -34,7 +34,7 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
   }
 
   template< typename FUNC >
-  static SHIVA_FORCE_INLINE constexpr auto staticFor( FUNC && func )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto staticFor( FUNC && func )
   {
     if constexpr ( std::is_invocable_v< FUNC, std::integral_constant< int, 0 > > )
     {
@@ -49,7 +49,7 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
 }
 
 template< int END, typename FUNC, typename ... ARGS >
-constexpr auto executeSequence( FUNC && func,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto executeSequence( FUNC && func,
                                 ARGS && ... args )
 {
   return
@@ -59,7 +59,7 @@ constexpr auto executeSequence( FUNC && func,
 }
 
 template< int END, typename FUNC >
-constexpr auto forSequence( FUNC && func )
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto forSequence( FUNC && func )
 {
   return
     detail::SequenceExpansion< std::make_integer_sequence< int, END > >::

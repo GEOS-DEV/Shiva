@@ -15,4 +15,10 @@ namespace shiva
     #define deviceFree( PTR ) hipFree(PTR);
   #endif
 #endif
+
+static constexpr bool check( double const a, double const b, double const tolerance )
+{
+  return ( a - b ) * ( a - b ) < tolerance * tolerance;
+}
+
 }

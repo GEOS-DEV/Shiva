@@ -10,12 +10,12 @@ struct EqualSpacing
 {
   static inline constexpr int numPoints = N;
 
-  SHIVA_S_CEXPR_HD_I REAL_TYPE interval() { return 2.0 / (numPoints - 1); }
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE interval() { return 2.0 / (numPoints - 1); }
 
-  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate( int const index ) { return -1 + index * interval(); }
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE coordinate( int const index ) { return -1 + index * interval(); }
 
   template< int INDEX >
-  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate() { return -1.0 + INDEX * interval(); }
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE coordinate() { return -1.0 + INDEX * interval(); }
 };
 
 template< typename REAL_TYPE, int N >
@@ -26,7 +26,7 @@ struct GaussLegendreSpacing
 
   static inline constexpr int numPoints = N; 
 
-  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate( int const index )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE coordinate( int const index )
   {
     if constexpr ( N == 2 )
     {
@@ -46,7 +46,7 @@ struct GaussLegendreSpacing
   }
 
   template< int INDEX >
-  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate()
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE coordinate()
   {
     if constexpr ( N == 2 )
     {
@@ -79,7 +79,7 @@ struct GaussLobattoSpacing
 
   static inline constexpr int numPoints = N;
 
-  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate( int const index )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE coordinate( int const index )
   {
     if constexpr ( N == 2 )
     {
@@ -111,7 +111,7 @@ struct GaussLobattoSpacing
   }
 
   template< int INDEX >
-  SHIVA_S_CEXPR_HD_I REAL_TYPE coordinate()
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE coordinate()
   {
     if constexpr ( N == 2 )
     {

@@ -9,10 +9,7 @@
 
 using namespace shiva;
 
-static constexpr bool check( double const a, double const b, double const tolerance )
-{
-  return ( a - b ) * ( a - b ) < tolerance * tolerance;
-}
+
 
 
 template< typename ... T >
