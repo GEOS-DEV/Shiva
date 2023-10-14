@@ -42,73 +42,91 @@ struct TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, USE_FOR_S
 
 
 template< typename BASIS_HELPER_TYPE >
-constexpr void compileTimeCheck()
+SHIVA_GLOBAL void compileTimeKernel()
 {
   using BasisType = typename BASIS_HELPER_TYPE::BasisType;
   constexpr int order = BASIS_HELPER_TYPE::order;
 
   constexpr double coord = BASIS_HELPER_TYPE::coord;
 
-  executeSequence< order + 1 >( [&] ( auto ... BF_INDEX ) constexpr
+  forSequence< order + 1 >( [&] ( auto const BF_INDEX ) constexpr
   {
-    constexpr double    values[order + 1] = { BasisType::template value< BF_INDEX >( coord )... };
-    constexpr double gradients[order + 1] = { BasisType::template gradient< BF_INDEX >( coord )... };
+    constexpr double    value = BasisType::template value< BF_INDEX >( coord );
+    constexpr double gradient = BasisType::template gradient< BF_INDEX >( coord );
     constexpr double tolerance = 1.0e-12;
 
-    static_assert( ( check( values[BF_INDEX], BASIS_HELPER_TYPE::refValues[BF_INDEX], tolerance ), ... ) );
-    static_assert( ( check( gradients[BF_INDEX], BASIS_HELPER_TYPE::refGradients[BF_INDEX], tolerance ), ... ) );
+    static_assert( check( value, BASIS_HELPER_TYPE::refValues[BF_INDEX], tolerance ) );
+    static_assert( check( gradient, BASIS_HELPER_TYPE::refGradients[BF_INDEX], tolerance ) );
   } );
 }
 
 template< typename BASIS_HELPER_TYPE >
-void runTimeCheck()
+void testBasisAtCompileTime()
+{
+#if defined(SHIVA_USE_DEVICE)
+  compileTimeKernel<BASIS_HELPER_TYPE><<<1,1>>>();
+#else
+  compileTimeKernel<BASIS_HELPER_TYPE>();
+#endif
+}
+
+
+template< typename BASIS_HELPER_TYPE >
+SHIVA_GLOBAL void runTimeKernel()
 {
   using BasisType = typename BASIS_HELPER_TYPE::BasisType;
   constexpr int order = BASIS_HELPER_TYPE::order;
 
   double coord = BASIS_HELPER_TYPE::coord;
 
-  executeSequence< order + 1 >( [&] ( auto ... BF_INDEX ) constexpr
+  forSequence< order + 1 >( [&] ( auto const BF_INDEX ) constexpr
   {
-    double    values[order + 1] = { BasisType::template value< BF_INDEX >( coord )... };
-    double gradients[order + 1] = { BasisType::template gradient< BF_INDEX >( coord )... };
+    double    value = BasisType::template value< BF_INDEX >( coord );
+    double gradient = BasisType::template gradient< BF_INDEX >( coord );
     constexpr double tolerance = 1.0e-10;
 
-    for ( int a = 0; a < order + 1; ++a )
-    {
-      EXPECT_NEAR( values[a], BASIS_HELPER_TYPE::refValues[a], fabs( BASIS_HELPER_TYPE::refValues[a] * tolerance ) );
-      EXPECT_NEAR( gradients[a], BASIS_HELPER_TYPE::refGradients[a], fabs( BASIS_HELPER_TYPE::refGradients[a] * tolerance ) );
-    }
+    EXPECT_NEAR( value, BASIS_HELPER_TYPE::refValues[BF_INDEX], fabs( BASIS_HELPER_TYPE::refValues[BF_INDEX] * tolerance ) );
+    EXPECT_NEAR( gradient, BASIS_HELPER_TYPE::refGradients[BF_INDEX], fabs( BASIS_HELPER_TYPE::refGradients[BF_INDEX] * tolerance ) );
   } );
+}
+
+template< typename BASIS_HELPER_TYPE >
+void testBasisAtRunTime()
+{
+#if defined(SHIVA_USE_DEVICE)
+  runTimeKernel<BASIS_HELPER_TYPE><<<1,1>>>();
+#else
+  runTimeKernel<BASIS_HELPER_TYPE>();
+#endif
 }
 
 TEST( testSpacing, testLagrangeBasisEqualSpacing )
 {
   using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, false > >;
-  compileTimeCheck< BasisHelperType >();
-  runTimeCheck< BasisHelperType >();
+  testBasisAtCompileTime< BasisHelperType >();
+  testBasisAtRunTime< BasisHelperType >();
 }
 
 TEST( testSpacing, testLagrangeBasisEqualSpacingUseForSequence )
 {
   using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, true > >;
-  compileTimeCheck< BasisHelperType >();
-  runTimeCheck< BasisHelperType >();
+  testBasisAtCompileTime< BasisHelperType >();
+  testBasisAtRunTime< BasisHelperType >();
 }
 
 
 TEST( testSpacing, testLagrangeBasisGaussLobattoSpacing )
 {
   using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, false > >;
-  compileTimeCheck< BasisHelperType >();
-  runTimeCheck< BasisHelperType >();
+  testBasisAtCompileTime< BasisHelperType >();
+  testBasisAtRunTime< BasisHelperType >();
 }
 
 TEST( testSpacing, testLagrangeBasisGaussLobattoSpacingUseForSequence )
 {
   using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, false > >;
-  compileTimeCheck< BasisHelperType >();
-  runTimeCheck< BasisHelperType >();
+  testBasisAtCompileTime< BasisHelperType >();
+  testBasisAtRunTime< BasisHelperType >();
 }
 
 

@@ -35,18 +35,19 @@ public:
   static_assert( Dimension == CellType::Dimension(), "Dimension mismatch between cell and number of basis specified" );
 
   template< int ... BASIS_FUNCTION_INDICES >
-  static SHIVA_FORCE_INLINE constexpr RealType value( CoordType const & parentCoord )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType 
+  value( CoordType const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == Dimension, "Wrong number of basis function indicies specified" );
 
     return
 #if __cplusplus >= 202002L
-      executeSequence< Dimension >( [&]< int ... DIMENSION_INDICES > () constexpr
+    executeSequence< Dimension >( [&]< int ... DIMENSION_INDICES > () constexpr
     {
       return ( BASIS_TYPE::template value< BASIS_FUNCTION_INDICES >( parentCoord[DIMENSION_INDICES] ) * ... );
     } );
 #else
-      executeSequence< Dimension >( [&] ( auto ... DIMENSION_INDICES ) constexpr
+    executeSequence< Dimension >( [&] ( auto ... DIMENSION_INDICES ) constexpr
     {
       return ( BASIS_TYPE::template value< BASIS_FUNCTION_INDICES >( parentCoord[decltype(DIMENSION_INDICES)::value] ) * ... );
     } );
@@ -55,7 +56,8 @@ public:
   }
 
   template< int ... BASIS_FUNCTION_INDICES >
-  static SHIVA_FORCE_INLINE constexpr CArray1d< RealType, Dimension > gradient( CoordType const & parentCoord )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray1d< RealType, Dimension > 
+  gradient( CoordType const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == Dimension, "Wrong number of basis function indicies specified" );
 
@@ -88,7 +90,8 @@ public:
 
 private:
   template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COMPONENT_INDEX >
-  static SHIVA_FORCE_INLINE constexpr RealType gradientComponentHelper( CoordType const & parentCoord )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType 
+  gradientComponentHelper( CoordType const & parentCoord )
   {
     if constexpr ( GRADIENT_COMPONENT == COMPONENT_INDEX )
     {

@@ -26,7 +26,8 @@ public:
   static inline constexpr int numSupportPoints = ORDER + 1;
 
   template< int BF_INDEX >
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE value( REAL_TYPE const & coord )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  value( REAL_TYPE const & coord )
   {
 #if __cplusplus >= 202002L
     return executeSequence< numSupportPoints >( [&]< int ... a > () constexpr
@@ -42,7 +43,8 @@ public:
   }
 
   template< int BF_INDEX >
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE gradient( REAL_TYPE const & coord )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  gradient( REAL_TYPE const & coord )
   {
 
 #if __cplusplus >= 202002L
@@ -90,7 +92,7 @@ public:
     }
     else
     {
-      return executeSequence< numSupportPoints >( [&coord] ( auto const && ... a ) constexpr
+      return executeSequence< numSupportPoints >( [&coord] ( auto const ... a ) constexpr
       {
         auto func = [&coord] ( auto a, auto ... b ) constexpr
         {
@@ -107,7 +109,8 @@ public:
 
 private:
   template< int BF_INDEX, int FACTOR_INDEX, int DERIVATIVE_INDEX = -1 >
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE valueFactor( REAL_TYPE const & coord )
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  valueFactor( REAL_TYPE const & coord )
   {
     if constexpr ( BF_INDEX == FACTOR_INDEX || FACTOR_INDEX == DERIVATIVE_INDEX )
     {
@@ -115,13 +118,15 @@ private:
     }
     else
     {
-      return (                                                               coord - SPACING_TYPE< REAL_TYPE, ORDER + 1 >::template coordinate< FACTOR_INDEX >() ) /
-             ( SPACING_TYPE< REAL_TYPE, ORDER + 1 >::template coordinate< BF_INDEX >() - SPACING_TYPE< REAL_TYPE, ORDER + 1 >::template coordinate< FACTOR_INDEX >() );
+      constexpr REAL_TYPE coordinate_FI = SPACING_TYPE< REAL_TYPE, ORDER + 1 >::template coordinate< FACTOR_INDEX >();
+      constexpr REAL_TYPE coordinate_BF = SPACING_TYPE< REAL_TYPE, ORDER + 1 >::template coordinate< BF_INDEX >();
+      return ( coord - coordinate_FI ) / ( coordinate_BF - coordinate_FI );
     }
   }
 
   template< int BF_INDEX, int FACTOR_INDEX >
-  static SHIVA_FORCE_INLINE constexpr REAL_TYPE gradientFactor()
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  gradientFactor()
   {
     if constexpr ( BF_INDEX == FACTOR_INDEX )
     {
@@ -129,7 +134,9 @@ private:
     }
     else
     {
-      return 1.0 / ( SPACING_TYPE< REAL_TYPE, ORDER + 1 >::template coordinate< BF_INDEX >() - SPACING_TYPE< REAL_TYPE, ORDER + 1 >::template coordinate< FACTOR_INDEX >() );
+      constexpr REAL_TYPE coordinate_FI = SPACING_TYPE< REAL_TYPE, ORDER + 1 >::template coordinate< FACTOR_INDEX >();
+      constexpr REAL_TYPE coordinate_BF = SPACING_TYPE< REAL_TYPE, ORDER + 1 >::template coordinate< BF_INDEX >();
+      return 1.0 / ( coordinate_BF - coordinate_FI );
     }
   }
 
