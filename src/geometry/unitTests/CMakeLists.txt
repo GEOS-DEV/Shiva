@@ -10,6 +10,14 @@ set( unit_tests_sources
 
 set( dependencyList ${parallelDeps} gtest geometry )
 
+if( ENABLE_HIP )
+    list( APPEND dependencyList blt::hip )
+endif()
+
+if( ENABLE_CUDA )
+    list( APPEND dependencyList cuda )
+endif()
+
 #
 # Add gtest C++ based tests
 #

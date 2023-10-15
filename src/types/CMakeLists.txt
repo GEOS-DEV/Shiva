@@ -9,12 +9,20 @@ set( types_headers
 set( types_sources
      )
 
-set( types_dependencies common )
+set( dependencyList common )
+
+if( ENABLE_HIP )
+    list( APPEND dependencyList blt::hip )
+endif()
+
+if( ENABLE_CUDA )
+    list( APPEND dependencyList cuda )
+endif()
 
 blt_add_library( NAME             types
 #                 SOURCES          ${types_sources}
                  HEADERS          ${types_headers}
-                 DEPENDS_ON       ${types_dependencies}
+                 DEPENDS_ON       ${dependencyList}
                  )
 
 target_include_directories( types 

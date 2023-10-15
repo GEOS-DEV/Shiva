@@ -79,11 +79,13 @@ public:
     if constexpr ( USE_FOR_SEQUENCE )
     {
       REAL_TYPE rval = 0.0;
-      forSequence< numSupportPoints >( [&] ( auto const a ) constexpr
+      forSequence< numSupportPoints >( [&] ( auto const ica ) constexpr
       {
+        constexpr int a = decltype(ica)::value;
         double term = gradientFactor< BF_INDEX, a >();
-        forSequence< numSupportPoints >( [&] ( auto const b ) constexpr
+        forSequence< numSupportPoints >( [&] ( auto const icb ) constexpr
         {
+          constexpr int b = decltype(icb)::value;
           term *= valueFactor< BF_INDEX, b, a >( coord );
         } );
         rval += term;

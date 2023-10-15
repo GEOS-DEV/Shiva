@@ -34,7 +34,7 @@
 
 
 template< typename ... ARGS >
-SHIVA_HOST_DEVICE inline constexpr
+constexpr SHIVA_HOST_DEVICE inline
 void i_g_n_o_r_e( ARGS const & ... ) {}
 
 /// Mark an unused variable and silence compiler warnings.

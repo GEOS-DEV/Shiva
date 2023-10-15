@@ -2,8 +2,9 @@
 #include "../finiteElementMethod/parentElements/ParentElement.hpp"
 #include "../finiteElementMethod/bases/LagrangeBasis.hpp"
 #include "../spacing/Spacing.hpp"
-#include "../../geometry/Cube.hpp"
-#include "../../common/ShivaMacros.hpp"
+#include "geometry/Cube.hpp"
+#include "common/ShivaMacros.hpp"
+#include "common/pmpl.hpp"
 
 
 
@@ -17,10 +18,6 @@ using namespace shiva::geometry;
 
 #include "testParentElementSolutions.hpp"
 
-constexpr bool check( double const a, double const b, double const tolerance )
-{
-  return ( a - b ) * ( a - b ) < tolerance * tolerance;
-}
 
 
 template< typename TEST_PARENT_ELEMENT_HELPER >
@@ -29,16 +26,21 @@ SHIVA_GLOBAL void compileTimeKernel()
   using ParentElementType = typename TEST_PARENT_ELEMENT_HELPER::ParentElementType;
   constexpr int order = TEST_PARENT_ELEMENT_HELPER::order;
 
-  constexpr double coord[3] = { TEST_PARENT_ELEMENT_HELPER::testParentCoords[0],
-                                TEST_PARENT_ELEMENT_HELPER::testParentCoords[1],
-                                TEST_PARENT_ELEMENT_HELPER::testParentCoords[2] };
 
-  forSequence< order + 1 >( [&] ( auto const a ) constexpr
+  forSequence< order + 1 >( [] ( auto ica ) constexpr
   {
-    forSequence< order + 1 >( [&] ( auto const b ) constexpr
+    constexpr int a = decltype(ica)::value;
+    forSequence< order + 1 >( [] ( auto icb ) constexpr
     {
-      forSequence< order + 1 >( [&] ( auto const c ) constexpr
+      constexpr int b = decltype(icb)::value;
+      forSequence< order + 1 >( [] ( auto icc ) constexpr
       {
+        constexpr int c = decltype(icc)::value;
+
+        constexpr double coord[3] = { TEST_PARENT_ELEMENT_HELPER::testParentCoords[0],
+                                      TEST_PARENT_ELEMENT_HELPER::testParentCoords[1],
+                                      TEST_PARENT_ELEMENT_HELPER::testParentCoords[2] };
+
         constexpr double value = ParentElementType::template value< a, b, c >( coord );
         constexpr CArray1d< double, 3 > gradient = ParentElementType::template gradient< a, b, c >( coord );
         constexpr double tolerance = 1.0e-12;
@@ -51,6 +53,7 @@ SHIVA_GLOBAL void compileTimeKernel()
     } );
   } );
 }
+
 template< typename TEST_PARENT_ELEMENT_HELPER >
 void testParentElementAtCompileTime()
 {
@@ -63,30 +66,34 @@ void testParentElementAtCompileTime()
 
 
 template< typename TEST_PARENT_ELEMENT_HELPER >
-SHIVA_GLOBAL void runTimeKernel()
+SHIVA_GLOBAL void runTimeKernel( double * const values, 
+                                 double * const gradients )
 {
   using ParentElementType = typename TEST_PARENT_ELEMENT_HELPER::ParentElementType;
   constexpr int order = TEST_PARENT_ELEMENT_HELPER::order;
+  constexpr int N = order + 1;
 
 
   double const coord[3] = { TEST_PARENT_ELEMENT_HELPER::testParentCoords[0],
                             TEST_PARENT_ELEMENT_HELPER::testParentCoords[1],
                             TEST_PARENT_ELEMENT_HELPER::testParentCoords[2] };
 
-  forSequence< order + 1 >( [&] ( auto const a ) constexpr
+  forSequence< N >( [&] ( auto const ica ) constexpr
   {
-    forSequence< order + 1 >( [&] ( auto const b ) constexpr
+    constexpr int a = decltype(ica)::value;
+    forSequence< N >( [&] ( auto const icb ) constexpr
     {
-      forSequence< order + 1 >( [&] ( auto const c ) constexpr
+    constexpr int b = decltype(icb)::value;
+      forSequence< N >( [&] ( auto const icc ) constexpr
       {
+        constexpr int c = decltype(icc)::value;
         double const value = ParentElementType::template value< a, b, c >( coord );
         CArray1d< double, 3 > const gradient = ParentElementType::template gradient< a, b, c >( coord );
-        constexpr double tolerance = 1.0e-12;
 
-        EXPECT_NEAR( value, TEST_PARENT_ELEMENT_HELPER::referenceValues[a][b][c], fabs( value * tolerance ) );
-        EXPECT_NEAR( gradient[0], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][0], fabs( gradient[0] * tolerance ) );
-        EXPECT_NEAR( gradient[1], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][1], fabs( gradient[1] * tolerance ) );
-        EXPECT_NEAR( gradient[2], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][2], fabs( gradient[2] * tolerance ) );
+        values[ a*N*N + b*N + c ] = value;
+        gradients[ 3*(a*N*N + b*N + c) + 0 ] = gradient[0];
+        gradients[ 3*(a*N*N + b*N + c) + 1 ] = gradient[1];
+        gradients[ 3*(a*N*N + b*N + c) + 2 ] = gradient[2];
       } );
     } );
   } );
@@ -95,11 +102,38 @@ SHIVA_GLOBAL void runTimeKernel()
 template< typename TEST_PARENT_ELEMENT_HELPER >
 void testParentElementAtRunTime()
 {
+  constexpr int order = TEST_PARENT_ELEMENT_HELPER::order;
+  constexpr int N = order + 1;
+
 #if defined(SHIVA_USE_DEVICE)
-  runTimeKernel<TEST_PARENT_ELEMENT_HELPER><<<1,1>>>();
+  constexpr int bytes = N*N*N*sizeof(double);
+  double * values;
+  double * gradients;
+  deviceMallocManaged( &values, bytes );
+  deviceMallocManaged( &gradients, 3*bytes );
+  runTimeKernel<TEST_PARENT_ELEMENT_HELPER><<<1,1>>>( values, gradients );
+  deviceDeviceSynchronize();
 #else
-  runTimeKernel<TEST_PARENT_ELEMENT_HELPER>();
+  double values[N*N*N];
+  double gradients[N*N*N*3];
+  runTimeKernel<TEST_PARENT_ELEMENT_HELPER>( values, gradients );
 #endif
+
+  constexpr double tolerance = 1.0e-12;
+  for( int a=0; a<N; ++a )
+  {
+    for( int b=0; b<N; ++b )
+    {
+      for( int c=0; c<N; ++c)
+      {
+        EXPECT_NEAR( values[ a*N*N + b*N + c ], TEST_PARENT_ELEMENT_HELPER::referenceValues[a][b][c], fabs( TEST_PARENT_ELEMENT_HELPER::referenceValues[a][b][c] * tolerance ) );
+        EXPECT_NEAR( gradients[ 3*(a*N*N + b*N + c) + 0 ], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][0], fabs( TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][0] * tolerance ) );
+        EXPECT_NEAR( gradients[ 3*(a*N*N + b*N + c) + 1 ], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][1], fabs( TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][1] * tolerance ) );
+        EXPECT_NEAR( gradients[ 3*(a*N*N + b*N + c) + 2 ], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][2], fabs( TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][2] * tolerance ) );
+      }
+    }
+  }
+
 }
 
 
@@ -139,8 +173,8 @@ TEST( testParentElement, testCubeLagrangeBasisGaussLobatto_O3 )
                                            >;
   using TEST_PARENT_ELEMENT_HELPER = TestParentElementHelper< ParentElementType >;
 
-  testParentElementAtCompileTime< TEST_PARENT_ELEMENT_HELPER >();
-  testParentElementAtRunTime< TEST_PARENT_ELEMENT_HELPER >();
+ testParentElementAtCompileTime< TEST_PARENT_ELEMENT_HELPER >();
+ testParentElementAtRunTime< TEST_PARENT_ELEMENT_HELPER >();
 }
 
 

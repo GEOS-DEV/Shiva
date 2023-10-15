@@ -3,18 +3,13 @@
 #include "../spacing/Spacing.hpp"
 #include "../../common/ShivaMacros.hpp"
 #include "types/types.hpp"
+#include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 #include <cmath>
 
 using namespace shiva;
 using namespace shiva::discretizations::finiteElementMethod::basis;
-
-constexpr bool check( double const a, double const b, double const tolerance )
-{
-  return ( a - b ) * ( a - b ) < tolerance * tolerance;
-}
-
 
 template< typename ... T >
 struct TestBasisHelper;
@@ -46,7 +41,6 @@ SHIVA_GLOBAL void compileTimeKernel()
 {
   using BasisType = typename BASIS_HELPER_TYPE::BasisType;
   constexpr int order = BASIS_HELPER_TYPE::order;
-
   constexpr double coord = BASIS_HELPER_TYPE::coord;
 
   forSequence< order + 1 >( [&] ( auto const BF_INDEX ) constexpr
@@ -72,7 +66,8 @@ void testBasisAtCompileTime()
 
 
 template< typename BASIS_HELPER_TYPE >
-SHIVA_GLOBAL void runTimeKernel()
+SHIVA_GLOBAL void runTimeKernel( double * const values, 
+                                 double * const gradients)
 {
   using BasisType = typename BASIS_HELPER_TYPE::BasisType;
   constexpr int order = BASIS_HELPER_TYPE::order;
@@ -81,23 +76,37 @@ SHIVA_GLOBAL void runTimeKernel()
 
   forSequence< order + 1 >( [&] ( auto const BF_INDEX ) constexpr
   {
-    double    value = BasisType::template value< BF_INDEX >( coord );
-    double gradient = BasisType::template gradient< BF_INDEX >( coord );
-    constexpr double tolerance = 1.0e-10;
-
-    EXPECT_NEAR( value, BASIS_HELPER_TYPE::refValues[BF_INDEX], fabs( BASIS_HELPER_TYPE::refValues[BF_INDEX] * tolerance ) );
-    EXPECT_NEAR( gradient, BASIS_HELPER_TYPE::refGradients[BF_INDEX], fabs( BASIS_HELPER_TYPE::refGradients[BF_INDEX] * tolerance ) );
+    values[BF_INDEX]    = BasisType::template value< BF_INDEX >( coord );
+    gradients[BF_INDEX] = BasisType::template gradient< BF_INDEX >( coord );
   } );
 }
 
 template< typename BASIS_HELPER_TYPE >
 void testBasisAtRunTime()
 {
+  constexpr int order = BASIS_HELPER_TYPE::order;
+  constexpr int N = order + 1;
 #if defined(SHIVA_USE_DEVICE)
-  runTimeKernel<BASIS_HELPER_TYPE><<<1,1>>>();
+  constexpr int bytes = N*sizeof(double);
+  double * values;
+  double * gradients;
+  deviceMallocManaged( &values, bytes );
+  deviceMallocManaged( &gradients, bytes );
+  runTimeKernel<BASIS_HELPER_TYPE><<<1,1>>>( values, gradients );
+  deviceDeviceSynchronize();
 #else
-  runTimeKernel<BASIS_HELPER_TYPE>();
+  double values[N];
+  double gradients[N];
+  runTimeKernel<BASIS_HELPER_TYPE>( values, gradients );
 #endif
+
+  constexpr double tolerance = 1.0e-12;
+  for( int a=0; a<N; ++a )
+  {
+    EXPECT_NEAR( values[a], BASIS_HELPER_TYPE::refValues[a], fabs( BASIS_HELPER_TYPE::refValues[a] * tolerance ) );
+    EXPECT_NEAR( gradients[a], BASIS_HELPER_TYPE::refGradients[a], fabs( BASIS_HELPER_TYPE::refGradients[a] * tolerance ) );
+  }
+
 }
 
 TEST( testSpacing, testLagrangeBasisEqualSpacing )

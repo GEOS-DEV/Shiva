@@ -9,6 +9,14 @@ set( common_headers
 set( common_sources
      )
 
+if( ENABLE_HIP )
+    list( APPEND common_dependencies blt::hip )
+endif()
+
+if( ENABLE_CUDA )
+    list( APPEND common_dependencies cuda )
+endif()
+
 blt_add_library( NAME             common
 #                 SOURCES          ${common_sources}
                  HEADERS          ${common_headers}
