@@ -12,17 +12,17 @@ template< typename REAL_TYPE >
 class Cube
 {
 public:
-  static SHIVA_FORCE_INLINE constexpr int Dimension() {return 3;};
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int Dimension() {return 3;};
   using JacobianType = Scalar< REAL_TYPE >;
   using DataType = REAL_TYPE;
   using CoordType = REAL_TYPE[3];
   using IndexType = MultiIndexRange< int, 2, 2, 2 >;
 
-  static SHIVA_FORCE_INLINE constexpr bool jacobianIsConstInCell() { return true; }
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE bool jacobianIsConstInCell() { return true; }
 
-  DataType const & getLength() const { return m_length; }
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType const & getLength() const { return m_length; }
 
-  void setLength( DataType const & h )
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setLength( DataType const & h )
   { m_length = h; }
 
 
@@ -35,7 +35,7 @@ namespace utilities
 {
 
 template< typename REAL_TYPE >
-void jacobian( Cube< REAL_TYPE > const & cell,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( Cube< REAL_TYPE > const & cell,
                typename Cube< REAL_TYPE >::JacobianType::type & J )
 {
   typename Cube< REAL_TYPE >::DataType const & h = cell.getLength();
@@ -44,7 +44,7 @@ void jacobian( Cube< REAL_TYPE > const & cell,
 
 
 template< typename REAL_TYPE >
-void inverseJacobian( Cube< REAL_TYPE > const & cell,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void inverseJacobian( Cube< REAL_TYPE > const & cell,
                       typename Cube< REAL_TYPE >::JacobianType::type & invJ,
                       REAL_TYPE & detJ )
 {

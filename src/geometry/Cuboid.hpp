@@ -21,28 +21,28 @@ public:
   using CoordType = REAL_TYPE[3];
   using IndexType = MultiIndexRange< int, 2, 2, 2 >;
 
-  static SHIVA_FORCE_INLINE constexpr bool jacobianIsConstInCell() { return false; }
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE bool jacobianIsConstInCell() { return false; }
 
 
 
   template< typename INDEX_TYPE >
-  REAL_TYPE const & getVertexCoord( INDEX_TYPE const & a, int const i ) const
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE REAL_TYPE const & getVertexCoord( INDEX_TYPE const & a, int const i ) const
   { return m_vertexCoords[ linearIndex( a ) ][i]; }
 
 
   template< typename INDEX_TYPE >
-  CoordType const & getVertexCoord( INDEX_TYPE const & a ) const
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE CoordType const & getVertexCoord( INDEX_TYPE const & a ) const
   { return m_vertexCoords[ linearIndex( a ) ]; }
 
 
   template< typename INDEX_TYPE >
-  void setVertexCoord( INDEX_TYPE const & a, int const i, REAL_TYPE const & value )
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setVertexCoord( INDEX_TYPE const & a, int const i, REAL_TYPE const & value )
   { m_vertexCoords[ linearIndex( a ) ][i] = value; }
 
 
 
   template< typename INDEX_TYPE >
-  void setVertexCoord( INDEX_TYPE const & a, CoordType const & value )
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setVertexCoord( INDEX_TYPE const & a, CoordType const & value )
   {
     m_vertexCoords[ linearIndex( a ) ][0] = value[0];
     m_vertexCoords[ linearIndex( a ) ][1] = value[1];
@@ -52,7 +52,7 @@ public:
 
 
   template< typename FUNCTION_TYPE >
-  void forVertices( FUNCTION_TYPE && func ) const
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void forVertices( FUNCTION_TYPE && func ) const
   {
     IndexType index{ { 1, 0, 0 } };
 
@@ -70,12 +70,12 @@ namespace utilities
 {
 
 template< typename REAL_TYPE >
-void jacobian( Cuboid< REAL_TYPE > const &,//cell,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( Cuboid< REAL_TYPE > const &,//cell,
                typename Cuboid< REAL_TYPE >::JacobianType::type & )//J )
 {}
 
 template< typename REAL_TYPE >
-void jacobian( Cuboid< REAL_TYPE > const & cell,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( Cuboid< REAL_TYPE > const & cell,
                REAL_TYPE const (&pointCoordsParent)[3],
                typename Cuboid< REAL_TYPE >::JacobianType::type & J )
 {
@@ -106,7 +106,7 @@ void jacobian( Cuboid< REAL_TYPE > const & cell,
 }
 
 template< typename REAL_TYPE >
-void inverseJacobian( Cuboid< REAL_TYPE > const & cell,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void inverseJacobian( Cuboid< REAL_TYPE > const & cell,
                       REAL_TYPE const (&parentCoords)[3],
                       typename Cuboid< REAL_TYPE >::JacobianType::type & invJ,
                       REAL_TYPE & detJ )

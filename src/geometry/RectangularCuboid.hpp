@@ -14,16 +14,16 @@ public:
   using JacobianType = CArray1d< REAL_TYPE, 3 >;
   using DataType = REAL_TYPE[3];
 
-  static SHIVA_FORCE_INLINE constexpr bool jacobianIsConstInCell() { return true; }
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE bool jacobianIsConstInCell() { return true; }
 
-  REAL_TYPE const & getLength( int const i ) const { return m_length[i]; }
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE REAL_TYPE const & getLength( int const i ) const { return m_length[i]; }
 
-  DataType const & getLengths() const { return m_length; }
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType const & getLengths() const { return m_length; }
 
-  void setLength( int const i, REAL_TYPE const & h_i )
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setLength( int const i, REAL_TYPE const & h_i )
   { m_length[i] = h_i; }
 
-  void setLength( DataType const & h )
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setLength( DataType const & h )
   {
     m_length[0] = h[0];
     m_length[1] = h[1];
@@ -40,7 +40,7 @@ namespace utilities
 {
 
 template< typename REAL_TYPE >
-void jacobian( RectangularCuboid< REAL_TYPE > const & cell,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( RectangularCuboid< REAL_TYPE > const & cell,
                typename RectangularCuboid< REAL_TYPE >::JacobianType::type & J )
 {
   typename RectangularCuboid< REAL_TYPE >::DataType const & h = cell.getLengths();
@@ -52,7 +52,7 @@ void jacobian( RectangularCuboid< REAL_TYPE > const & cell,
 
 
 template< typename REAL_TYPE >
-void inverseJacobian( RectangularCuboid< REAL_TYPE > const & cell,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void inverseJacobian( RectangularCuboid< REAL_TYPE > const & cell,
                       typename RectangularCuboid< REAL_TYPE >::JacobianType::type & invJ,
                       REAL_TYPE & detJ )
 {

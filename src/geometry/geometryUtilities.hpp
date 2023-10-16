@@ -8,7 +8,8 @@ namespace utilities
 {
 
 template< template< typename > typename SHAPE_TYPE, typename REAL_TYPE >
-auto jacobian( SHAPE_TYPE< REAL_TYPE > const & cell )
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto 
+jacobian( SHAPE_TYPE< REAL_TYPE > const & cell )
 {
   typename SHAPE_TYPE< REAL_TYPE >::JacobianType J;
   jacobian( cell, J.data );
@@ -16,7 +17,8 @@ auto jacobian( SHAPE_TYPE< REAL_TYPE > const & cell )
 }
 
 template< template< typename > typename SHAPE_TYPE, typename REAL_TYPE >
-auto inverseJacobian( SHAPE_TYPE< REAL_TYPE > const & cell )
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto 
+inverseJacobian( SHAPE_TYPE< REAL_TYPE > const & cell )
 {
   typename SHAPE_TYPE< REAL_TYPE >::JacobianType invJ;
   REAL_TYPE detJ;
@@ -25,7 +27,8 @@ auto inverseJacobian( SHAPE_TYPE< REAL_TYPE > const & cell )
 }
 
 template< template< typename > typename SHAPE_TYPE, typename REAL_TYPE >
-auto jacobian( SHAPE_TYPE< REAL_TYPE > const & cell,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto 
+jacobian( SHAPE_TYPE< REAL_TYPE > const & cell,
                REAL_TYPE const (&parentCoords)[3] )
 {
   typename SHAPE_TYPE< REAL_TYPE >::JacobianType J{ { {0} } };
@@ -34,7 +37,8 @@ auto jacobian( SHAPE_TYPE< REAL_TYPE > const & cell,
 }
 
 template< template< typename > typename SHAPE_TYPE, typename REAL_TYPE >
-auto inverseJacobian( SHAPE_TYPE< REAL_TYPE > const & cell,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto 
+inverseJacobian( SHAPE_TYPE< REAL_TYPE > const & cell,
                       REAL_TYPE const (&parentCoords)[3] )
 {
   typename SHAPE_TYPE< REAL_TYPE >::JacobianType invJ{ { {0} } };

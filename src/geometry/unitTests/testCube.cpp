@@ -9,6 +9,22 @@ using namespace shiva::geometry;
 using namespace shiva::geometry::utilities;
 
 
+template< typename LAMBDA >
+SHIVA_GLOBAL void genericKernel( LAMBDA && func )
+{
+  func();
+}
+
+template< typename LAMBDA >
+SHIVA_GLOBAL void genericKernelWrapper( LAMBDA && func )
+{
+#if defined(SHIVA_USE_DEVICE)
+  genericKernel<<<1,1>>>( func );
+#else
+  genericKernel( func );
+#endif
+}
+
 template< typename REAL_TYPE >
 auto makeCube( REAL_TYPE const h )
 {
