@@ -52,14 +52,14 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
   {
     // This checks to see if the function is invocable with the parameter pack 
     // provided as a template parameter. In other words, if the FUNC is a 
-    // templated function that takes the parameter pack as a template argument.
+    // function that takes the parameter pack as a function argument.
     if constexpr ( std::is_invocable_v< FUNC, std::integral_constant< int, DIMENSION_INDICES >..., ARGS ... > )
     {
       return func( std::forward< ARGS >( args )...,
                    std::integral_constant< int, DIMENSION_INDICES >{} ... );
     }
-    // Otherwise, the function is not templated on the parameter pack, so we 
-    // pass the parameter pack as a function argument.
+    // Otherwise, the function is templated on the parameter pack, so we 
+    // pass the parameter pack as a template argument.
     else
     {
       return func.template operator()< DIMENSION_INDICES... >(std::forward< ARGS >( args )...);
@@ -78,15 +78,15 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto staticFor( FUNC && func )
   {
     // This checks to see if the function is invocable with an element of the
-    // parameter pack provided (i.e. int) as a template parameter. In other 
-    // words, if the FUNC is a templated function that takes a single element 
-    // of the integer parameter pack as a template argument.
+    // parameter pack provided (i.e. int) as a function parameter. In other 
+    // words, if the FUNC expects the DIMENSION_INDICES in the argument list, 
+    // then make the appropriate call.
     if constexpr ( std::is_invocable_v< FUNC, std::integral_constant< int, 0 > > )
     {
       return (func( std::integral_constant< int, DIMENSION_INDICES >{} ), ...);
     }
-    // Otherwise, the function is not templated on an integer, so we 
-    // pass the element of the integer parameter pack as a function argument.
+    // Otherwise, the function is templated on an integer, so we 
+    // pass the element of the integer parameter pack as a template argument.
     else
     {
       return (func.template operator()< DIMENSION_INDICES >(), ...);
