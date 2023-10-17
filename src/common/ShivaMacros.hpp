@@ -1,26 +1,44 @@
 #pragma once
 
+#include "ShivaConfig.hpp"
+
+#if defined( SHIVA_USE_HIP )
+#include <hip/hip_runtime.h>
+#endif
+
+#if defined(SHIVA_USE_CUDA) || defined(SHIVA_USE_HIP)
+#define SHIVA_USE_DEVICE
+#endif
 
 #if defined(SHIVA_USE_DEVICE)
 #define SHIVA_HOST __host__
 #define SHIVA_DEVICE __device__
 #define SHIVA_HOST_DEVICE __host__ __device__
 #define SHIVA_FORCE_INLINE __forceinline__
+#define SHIVA_GLOBAL __global__
 #else
-/// Marks a host-only function.
 #define SHIVA_HOST
-/// Marks a device-only function.
 #define SHIVA_DEVICE
-/// Marks a host-device function.
 #define SHIVA_HOST_DEVICE
-/// Marks a function or lambda for inlining
 #define SHIVA_FORCE_INLINE inline
-/// Compiler directive specifying to unroll the loop.
+#define SHIVA_GLOBAL
 #endif
 
+#define SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE
+#define SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE static constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE
+#if __cplusplus >= 202302L
+#define SHIVA_S_CEVAL_HD_I static consteval SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE
+#else
+#define SHIVA_S_CEVAL_HD_I SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+#endif
+
+
 template< typename ... ARGS >
-SHIVA_HOST_DEVICE inline constexpr
+constexpr SHIVA_HOST_DEVICE inline
 void i_g_n_o_r_e( ARGS const & ... ) {}
 
 /// Mark an unused variable and silence compiler warnings.
 #define SHIVA_UNUSED_VAR( ... ) i_g_n_o_r_e( __VA_ARGS__ )
+
+
+

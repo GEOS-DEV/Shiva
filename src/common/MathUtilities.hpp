@@ -2,13 +2,15 @@
 
 #pragma once
 
+#include "common/ShivaMacros.hpp"
+
 namespace shiva
 {
 namespace mathUtilities
 {
 template< typename REAL_TYPE >
-inline
-static void inverse( REAL_TYPE (&matrix)[3][3], REAL_TYPE & det )
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void 
+inverse( REAL_TYPE (&matrix)[3][3], REAL_TYPE & det )
 {
 
   REAL_TYPE const srcMatrix00 = matrix[ 0 ][ 0 ];

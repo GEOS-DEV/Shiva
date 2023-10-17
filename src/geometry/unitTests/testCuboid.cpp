@@ -1,6 +1,7 @@
 
 #include "../Cuboid.hpp"
 #include "../geometryUtilities.hpp"
+#include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 
@@ -9,18 +10,34 @@ using namespace shiva::geometry;
 using namespace shiva::geometry::utilities;
 
 
-static double const Xref[8][3] =
-{ { -1.31, -1.15, -1.23 },
-  {  1.38, -1.22, -1.17 },
-  { -1.31, 1.12, -1.31 },
-  {  1.32, 1.17, -1.37 },
-  { -1.23, -1.25, 1.27 },
-  {  1.27, -1.34, 1.24 },
-  { -1.29, 1.28, 1.41 },
-  {  1.39, 1.24, 1.36 } };
+  constexpr SHIVA_DEVICE double 
+  Xref[8][3] =
+  { { -1.31, -1.15, -1.23 },
+    {  1.38, -1.22, -1.17 },
+    { -1.31, 1.12, -1.31 },
+    {  1.32, 1.17, -1.37 },
+    { -1.23, -1.25, 1.27 },
+    {  1.27, -1.34, 1.24 },
+    { -1.29, 1.28, 1.41 },
+    {  1.39, 1.24, 1.36 } };
 
+double Xreference( int const a, int const i )
+{
+  static constexpr double 
+  Xref[8][3] =
+  { { -1.31, -1.15, -1.23 },
+    {  1.38, -1.22, -1.17 },
+    { -1.31, 1.12, -1.31 },
+    {  1.32, 1.17, -1.37 },
+    { -1.23, -1.25, 1.27 },
+    {  1.27, -1.34, 1.24 },
+    { -1.29, 1.28, 1.41 },
+    {  1.39, 1.24, 1.36 } };
 
-static double const qCoords[8][3] =
+  return Xref[a][i];
+}
+
+constexpr SHIVA_DEVICE double qCoords[8][3] =
 { { -0.9, -0.5, -0.6 },
   { -0.9, -0.5, 0.6 },
   { -0.9, 0.5, -0.6 },
@@ -31,7 +48,7 @@ static double const qCoords[8][3] =
   {  0.9, 0.5, 0.6 } };
 
 
-static double const Jref[8][3][3] =
+constexpr double Jref[8][3][3] =
 { { { 1.3245, -6.3e-3, 2.925e-2 }, { -2.375e-2, 1.16365, -1.84375e-2 }, {   8.5e-3, -2.05e-2, 1.275875 } },
   { { 1.2855, -2.07e-2, 2.925e-2 }, {   -3.5e-2, 1.2406, -1.84375e-2 }, {  -1.1e-2, 4.7e-2, 1.275875 } },
   { { 1.3215, -6.3e-3, 1.725e-2 }, {   2.75e-3, 1.16365, 4.56875e-2 }, { -1.65e-2, -2.05e-2, 1.332125 } },
@@ -42,7 +59,7 @@ static double const Jref[8][3][3] =
   { { 1.3185, 3.87e-2, 1.275e-2 }, {   -1.9e-2, 1.2694, 1.30625e-2 }, {  -2.1e-2, 2.9e-2, 1.325375 } } };
 
 
-static double const invJref[8][3][3] =
+constexpr double invJref[8][3][3] =
 { { { 7.5518050317544e-1, 3.7845098812477e-3, -1.725815837519e-2 }, { 1.5337360823102e-2, 8.5966062432681e-1, 1.2071225595728e-2 }, { -4.784652399426e-3, 1.3787302411842e-2, 7.8408476886129e-1 } },
   { { 7.7812816372463e-1, 1.3651790001633e-2, -1.7641652913326e-2 }, { 2.2040308761543e-2, 8.0600721432107e-1, 1.1142219247787e-2 }, { 5.8967495163542e-3, -2.957356275738e-2, 7.8321329088924e-1 } },
   { { 7.565836884692e-1, 3.9211774440993e-3, -9.931663635598e-3 }, { -2.1546321329131e-3, 8.5883484385508e-1, -2.9427305638987e-2 }, { 9.338058291089e-3, 1.3265131820855e-2, 7.501044329807e-1 } },
@@ -53,7 +70,7 @@ static double const invJref[8][3][3] =
   { { 7.5799440223966e-1, -2.2947438633317e-2, -7.0656815704294e-3 }, { 1.1224373599541e-2, 7.8761135930028e-1, -7.8704397957213e-3 },
     { 1.1764501075278e-2, -1.7597001324914e-2, 7.5456369966319e-1 } } };
 
-static double const detJref[8] = { 1.9654823830313,
+constexpr double detJref[8] = { 1.9654823830313,
                                    2.035290793125,
                                    2.0500889374688,
                                    2.17609699875,
@@ -63,123 +80,230 @@ static double const detJref[8] = { 1.9654823830313,
                                    2.219082631125 };
 
 template< typename REAL_TYPE >
-auto makeCuboid( REAL_TYPE const (&X)[8][3] )
+SHIVA_HOST_DEVICE auto makeCuboid( REAL_TYPE const (&X)[8][3] )
 {
   Cuboid< REAL_TYPE > cell;
   typename decltype(cell)::IndexType index;
 
-  forRange( index={0, 0, 0}, [&cell, &X]( auto const & index )
+  forRange( index = {0, 0, 0}, [&cell, &X] ( auto const & i )
   {
-    int const a = index.data[0];
-    int const b = index.data[1];
-    int const c = index.data[2];
-    for ( int j=0; j<3; ++j )
+    int const a = i.data[0];
+    int const b = i.data[1];
+    int const c = i.data[2];
+    for ( int j = 0; j < 3; ++j )
     {
-      cell.setVertexCoord( index, j, X[ a + 2*b + 4*c ][j] );
+      cell.setVertexCoord( i, j, X[ a + 2 * b + 4 * c ][j] );
     }
   } );
 
   return cell;
 }
 
+void testConstructionAndSettersHelper()
+{
+  double * data;
+  pmpl::genericKernelWrapper( 8*3, data, [] SHIVA_DEVICE ( double * const kernelData )
+  {
+    auto const cell = makeCuboid( Xref );
+    typename decltype(cell)::IndexType index{0, 0, 0};
+
+    forRange( index, [&cell,&kernelData] ( auto const & i )
+    {
+      int const a = i.data[0];
+      int const b = i.data[1];
+      int const c = i.data[2];
+
+      for ( int j = 0; j < 3; ++j )
+      {
+        kernelData[ 3*( a + 2 * b + 4 * c ) + j ] = cell.getVertexCoord( i, j );
+      }
+    } );
+  } );
+
+
+  for( int a=0; a<2; ++a )
+  {
+    for( int b=0; b<2; ++b )
+    {
+      for( int c=0; c<2; ++c )
+      {
+        for( int j=0; j<3; ++j )
+        {
+          EXPECT_DOUBLE_EQ( data[ 3*( a + 2 * b + 4 * c ) + j ], 
+                            Xreference( a + 2 * b + 4 * c, j ) );
+        }
+      }
+    }
+  }
+  pmpl::deallocateData( data );
+}
 TEST( testCuboid, testConstructionAndSetters )
 {
-  auto const cell = makeCuboid( Xref );
-  typename decltype(cell)::IndexType index;
+  testConstructionAndSettersHelper();
+}
 
-  forRange( index={0, 0, 0}, [&cell]( auto const & index )
+
+void testJacobianFunctionModifyLvalueRefArgHelper()
+{
+  double * data;
+  pmpl::genericKernelWrapper( 9*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
-    int const a = index.data[0];
-    int const b = index.data[1];
-    int const c = index.data[2];
+    auto cell = makeCuboid( Xref );
 
-    for ( int j=0; j<3; ++j )
+    for ( int q = 0; q < 8; ++q )
     {
-      EXPECT_DOUBLE_EQ( cell.getVertexCoord( index, j ), Xref[ a + 2*b + 4*c ][j] );
+      typename std::remove_reference_t< decltype(cell) >::JacobianType::type J = { {0} };
+      jacobian( cell, qCoords[q], J );
+      for ( int i = 0; i < 3; ++i )
+      {
+        for ( int j = 0; j < 3; ++j )
+        {
+          kernelData[ 9*q + 3*i + j ] = J[i][j];
+        }
+      }
     }
   } );
+
+  for ( int q = 0; q < 8; ++q )
+  {
+    for ( int i = 0; i < 3; ++i )
+    {
+      for ( int j = 0; j < 3; ++j )
+      {
+        EXPECT_NEAR( data[ 9*q + 3*i + j ], Jref[q][i][j], abs( Jref[q][i][j] ) * 1e-13 );
+      }
+    }
+  }
+  pmpl::deallocateData( data );
 }
 
 TEST( testCuboid, testJacobianFunctionModifyLvalueRefArg )
 {
-  auto cell = makeCuboid( Xref );
+  testJacobianFunctionModifyLvalueRefArgHelper();
+}
 
 
-  for ( int q=0; q<8; ++q )
+void testJacobianFunctionReturnByValueHelper()
+{
+  double * data;
+  pmpl::genericKernelWrapper( 9*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
-    typename std::remove_reference_t< decltype(cell) >::JacobianType::type J = {{0}};
-    jacobian( cell, qCoords[q], J );
-    for ( int i=0; i<3; ++i )
+    auto cell = makeCuboid( Xref );
+    for ( int q = 0; q < 8; ++q )
     {
-      for ( int j=0; j<3; ++j )
+      auto J = jacobian( cell, qCoords[q] );
+      for ( int i = 0; i < 3; ++i )
       {
-        EXPECT_NEAR( J[i][j], Jref[q][i][j], abs( Jref[q][i][j] ) * 1e-13 );
+        for ( int j = 0; j < 3; ++j )
+        {
+          kernelData[ 9*q + 3*i + j ] = J.data[i][j];
+        }
+      }
+    }
+  } );
+
+  for ( int q = 0; q < 8; ++q )
+  {
+    for ( int i = 0; i < 3; ++i )
+    {
+      for ( int j = 0; j < 3; ++j )
+      {
+        EXPECT_NEAR( data[ 9*q + 3*i + j ], Jref[q][i][j], abs( Jref[q][i][j] ) * 1e-13 );
       }
     }
   }
-}
+  pmpl::deallocateData( data );
+}    
 
 TEST( testCuboid, testJacobianFunctionReturnByValue )
 {
-  auto cell = makeCuboid( Xref );
-
-  for ( int q=0; q<8; ++q )
-  {
-    auto J = jacobian( cell, qCoords[q] );
-    for ( int i=0; i<3; ++i )
-    {
-      for ( int j=0; j<3; ++j )
-      {
-        EXPECT_NEAR( J.data[i][j], Jref[q][i][j], abs( Jref[q][i][j] ) * 1e-13 );
-      }
-    }
-  }
-  ;
+  testJacobianFunctionReturnByValueHelper();
 }
 
 
-TEST( testCuboid, testInvJacobianFunctionModifyLvalueRefArg )
+void testInvJacobianFunctionModifyLvalueRefArgHelper()
 {
-  auto cell = makeCuboid( Xref );
-
-
-  for ( int q=0; q<8; ++q )
+  double * data;
+  pmpl::genericKernelWrapper( 10*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
-    typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ ={{0}};
-    double detJ;
-
-    inverseJacobian( cell, qCoords[q], invJ, detJ );
-
-    EXPECT_NEAR( detJ, detJref[q], detJref[q] * 1e-13 );
-    for ( int i=0; i<3; ++i )
+    auto cell = makeCuboid( Xref );
+    for ( int q = 0; q < 8; ++q )
     {
-      for ( int j=0; j<3; ++j )
+      typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ = { {0} };
+      double detJ;
+
+      inverseJacobian( cell, qCoords[q], invJ, detJ );
+
+      kernelData[ 10*q ] = detJ;
+      for ( int i = 0; i < 3; ++i )
       {
-        EXPECT_NEAR( invJ[i][j], invJref[q][i][j], abs( invJref[q][i][j] ) * 1e-13 );
+        for ( int j = 0; j < 3; ++j )
+        {
+          kernelData[ 10*q + 3*i + j + 1 ] = invJ[i][j];
+        }
       }
     }
+  } );
 
+  for ( int q = 0; q < 8; ++q )
+  {
+    EXPECT_NEAR( data[ 10*q ], detJref[q], detJref[q] * 1e-13 );
+    for ( int i = 0; i < 3; ++i )
+    {
+      for ( int j = 0; j < 3; ++j )
+      {
+        EXPECT_NEAR( data[ 10*q + 3*i + j + 1 ], invJref[q][i][j], abs( invJref[q][i][j] ) * 1e-13 );
+      }
+    }
   }
+  pmpl::deallocateData( data );
+
+}
+
+TEST( testCuboid, testInvJacobianFunctionModifyLvalueRefArg )
+{
+  testInvJacobianFunctionModifyLvalueRefArgHelper();
+}
+
+
+void testInvJacobianFunctionReturnByValueHelper()
+{
+  double * data;
+  pmpl::genericKernelWrapper( 10*8, data, [] SHIVA_DEVICE ( double * const kernelData )
+  {
+    auto cell = makeCuboid( Xref );
+    for ( int q = 0; q < 8; ++q )
+    {
+      auto [ detJ, invJ ] = inverseJacobian( cell, qCoords[q] );
+
+      kernelData[ 10*q ] = detJ;
+      for ( int i = 0; i < 3; ++i )
+      {
+        for ( int j = 0; j < 3; ++j )
+        {
+          kernelData[ 10*q + 3*i + j + 1 ] = invJ.data[i][j];
+        }
+      }
+    }
+  } );
+
+  for ( int q = 0; q < 8; ++q )
+  {
+    EXPECT_NEAR( data[ 10*q ], detJref[q], detJref[q] * 1e-13 );
+    for ( int i = 0; i < 3; ++i )
+    {
+      for ( int j = 0; j < 3; ++j )
+      {
+        EXPECT_NEAR( data[ 10*q + 3*i + j + 1 ], invJref[q][i][j], abs( invJref[q][i][j] ) * 1e-13 );
+      }
+    }
+  }
+  pmpl::deallocateData( data );
 }
 
 TEST( testCuboid, testInvJacobianFunctionReturnByValue )
 {
-  auto cell = makeCuboid( Xref );
-
-  for ( int q=0; q<8; ++q )
-  {
-    auto const [ detJ, invJ ] = inverseJacobian( cell, qCoords[q] );
-
-    EXPECT_NEAR( detJ, detJref[q], detJref[q] * 1e-13 );
-    for ( int i=0; i<3; ++i )
-    {
-      for ( int j=0; j<3; ++j )
-      {
-        EXPECT_NEAR( invJ.data[i][j], invJref[q][i][j], abs( invJref[q][i][j] ) * 1e-13 );
-      }
-    }
-
-  }
+  testInvJacobianFunctionReturnByValueHelper();
 }
 
 

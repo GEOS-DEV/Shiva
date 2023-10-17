@@ -3,12 +3,10 @@
 #
 
 set( unit_tests_sources
-     testCube.cpp
-     testCuboid.cpp
-     testRectangularCuboid.cpp
+     testSequenceUtilities.cpp
      )
 
-set( dependencyList ${parallelDeps} gtest geometry )
+set( dependencyList ${parallelDeps} gtest common )
 
 if( ENABLE_HIP )
     list( APPEND dependencyList blt::hip )
@@ -31,7 +29,7 @@ foreach(test ${unit_tests_sources})
     get_filename_component( test_name ${test} NAME_WE )
     blt_add_executable( NAME ${test_name}
                         SOURCES ${test}
-                        HEADERS ${header} ../geometryUtilities.hpp
+                        HEADERS ${header}
                         OUTPUT_DIR ${TEST_OUTPUT_DIRECTORY}
                         DEPENDS_ON ${dependencyList}
                         )

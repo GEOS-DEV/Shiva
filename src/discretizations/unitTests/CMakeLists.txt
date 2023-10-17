@@ -4,11 +4,20 @@
 
 set( unit_tests_sources
      testLagrangeBasis.cpp
+     testParentElement.cpp
      testSpacing.cpp
      testQuadrature.cpp
      )
 
-set( dependencyList ${parallelDeps} gtest )
+set( dependencyList ${parallelDeps} discretizations gtest )
+
+if( ENABLE_HIP )
+    list( APPEND dependencyList blt::hip )
+endif()
+
+if( ENABLE_CUDA )
+    list( APPEND dependencyList cuda )
+endif()
 
 #
 # Add gtest C++ based tests
