@@ -6,8 +6,15 @@ set( unit_tests_sources
      testIndexTypes.cpp
      )
 
-set( dependencyList ${parallelDeps} gtest )
+set( dependencyList ${parallelDeps} gtest types )
 
+if( ENABLE_HIP )
+    list( APPEND dependencyList blt::hip )
+endif()
+
+if( ENABLE_CUDA )
+    list( APPEND dependencyList cuda )
+endif()
 #
 # Add gtest C++ based tests
 #

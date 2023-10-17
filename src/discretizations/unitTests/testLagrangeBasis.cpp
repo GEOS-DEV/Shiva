@@ -2,50 +2,147 @@
 #include "../finiteElementMethod/bases/LagrangeBasis.hpp"
 #include "../spacing/Spacing.hpp"
 #include "../../common/ShivaMacros.hpp"
+#include "types/types.hpp"
+#include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 #include <cmath>
 
 using namespace shiva;
-using namespace shiva::finiteElement::basis;
+using namespace shiva::discretizations::finiteElementMethod::basis;
 
+template< typename ... T >
+struct TestBasisHelper;
 
-
-template< typename REAL_TYPE, int ORDER, template<typename,int> typename SPACING, int ... BF_INDEX >
-void testBasisCT( REAL_TYPE const coord,
-                  REAL_TYPE const (&referenceValue)[ORDER+1],
-                  REAL_TYPE const (&referenceGradient)[ORDER+1],
-                  std::integer_sequence<int, BF_INDEX...> )
+template< bool USE_FOR_SEQUENCE >
+struct TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, USE_FOR_SEQUENCE > >
 {
+  using BasisType = LagrangeBasis< double, 5, EqualSpacing, USE_FOR_SEQUENCE >;
+  static constexpr int order = 5;
+  static constexpr double coord = 0.3;
+  static constexpr double refValues[order + 1] = {-0.0076904296875, 0.0555419921875, -0.199951171875, 0.999755859375, 0.1666259765625, -0.0142822265625};
+  static constexpr double refGradients[order + 1] = {-0.064208984375, 0.44474283854167, -1.42333984375, -0.88134765625, 2.0747884114583, -0.150634765625};
+};
 
-  using BasisType = LagrangeBasis<REAL_TYPE,ORDER,SPACING>;
+template< bool USE_FOR_SEQUENCE >
+struct TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, USE_FOR_SEQUENCE > >
+{
+  using BasisType = LagrangeBasis< double, 5, GaussLobattoSpacing, USE_FOR_SEQUENCE >;
+  static constexpr int order = 5;
+  static constexpr double coord = 0.3;
+  static constexpr double refValues[order + 1] = {-0.0039331249999999, 0.011438606947084, -0.025205197129078, 0.99880774621932, 0.026196343962672, -0.0073043749999999};
+  static constexpr double refGradients[order + 1] = {-0.26265625, 0.76193547139425, -1.6595367733139, -0.16178550663066, 1.8258868085503, -0.50384375};
+};
 
-    double values[6] = { BasisType::template value<BF_INDEX>(coord)... };
-    double gradients[6] = { BasisType::template gradient<BF_INDEX>(coord)... };
 
-  for( int a=0; a<ORDER+1 ; ++a )
+
+template< typename BASIS_HELPER_TYPE >
+SHIVA_GLOBAL void compileTimeKernel()
+{
+  using BasisType = typename BASIS_HELPER_TYPE::BasisType;
+  constexpr int order = BASIS_HELPER_TYPE::order;
+  constexpr double coord = BASIS_HELPER_TYPE::coord;
+
+  forSequence< order + 1 >( [&] ( auto const BF_INDEX ) constexpr
   {
-    EXPECT_NEAR( values[a], referenceValue[a], abs(referenceValue[a]) * 1e-13 );
-    EXPECT_NEAR( gradients[a], referenceGradient[a], abs(referenceGradient[a]) * 1e-13 );
+    constexpr double    value = BasisType::template value< BF_INDEX >( coord );
+    constexpr double gradient = BasisType::template gradient< BF_INDEX >( coord );
+    constexpr double tolerance = 1.0e-12;
+
+    static_assert( pmpl::check( value, BASIS_HELPER_TYPE::refValues[BF_INDEX], tolerance ) );
+    static_assert( pmpl::check( gradient, BASIS_HELPER_TYPE::refGradients[BF_INDEX], tolerance ) );
+  } );
+}
+
+template< typename BASIS_HELPER_TYPE >
+void testBasisAtCompileTime()
+{
+#if defined(SHIVA_USE_DEVICE)
+  compileTimeKernel<BASIS_HELPER_TYPE><<<1,1>>>();
+#else
+  compileTimeKernel<BASIS_HELPER_TYPE>();
+#endif
+}
+
+
+template< typename BASIS_HELPER_TYPE >
+SHIVA_GLOBAL void runTimeKernel( double * const values, 
+                                 double * const gradients)
+{
+  using BasisType = typename BASIS_HELPER_TYPE::BasisType;
+  constexpr int order = BASIS_HELPER_TYPE::order;
+
+  double coord = BASIS_HELPER_TYPE::coord;
+
+  forSequence< order + 1 >( [&] ( auto const BF_INDEX ) constexpr
+  {
+    values[BF_INDEX]    = BasisType::template value< BF_INDEX >( coord );
+    gradients[BF_INDEX] = BasisType::template gradient< BF_INDEX >( coord );
+  } );
+}
+
+template< typename BASIS_HELPER_TYPE >
+void testBasisAtRunTime()
+{
+  constexpr int order = BASIS_HELPER_TYPE::order;
+  constexpr int N = order + 1;
+#if defined(SHIVA_USE_DEVICE)
+  constexpr int bytes = N*sizeof(double);
+  double * values;
+  double * gradients;
+  deviceMallocManaged( &values, bytes );
+  deviceMallocManaged( &gradients, bytes );
+  runTimeKernel<BASIS_HELPER_TYPE><<<1,1>>>( values, gradients );
+  deviceDeviceSynchronize();
+#else
+  double values[N];
+  double gradients[N];
+  runTimeKernel<BASIS_HELPER_TYPE>( values, gradients );
+#endif
+
+  constexpr double tolerance = 1.0e-12;
+  for( int a=0; a<N; ++a )
+  {
+    EXPECT_NEAR( values[a], BASIS_HELPER_TYPE::refValues[a], fabs( BASIS_HELPER_TYPE::refValues[a] * tolerance ) );
+    EXPECT_NEAR( gradients[a], BASIS_HELPER_TYPE::refGradients[a], fabs( BASIS_HELPER_TYPE::refGradients[a] * tolerance ) );
   }
 
+#if defined(SHIVA_USE_DEVICE)
+  deviceFree(values);
+  deviceFree(gradients);
+#endif
+
+
 }
 
-
-TEST( testSpacing, testLagrangeBasis )
+TEST( testSpacing, testLagrangeBasisEqualSpacing )
 {
-  testBasisCT< double, 5, EqualSpacing >( 0.3, 
-                                          {-0.0076904296875,0.0555419921875,-0.199951171875,0.999755859375,0.1666259765625,-0.0142822265625}, 
-                                          {-0.064208984375,0.44474283854167,-1.42333984375,-0.88134765625,2.0747884114583,-0.150634765625},
-                                          std::make_integer_sequence<int,6>{} );
-
-  testBasisCT< double, 5, GaussLobattoSpacing >( 0.3, 
-                                                {-0.0039331249999999,0.011438606947084,-0.025205197129078,0.99880774621932,0.026196343962672,-0.0073043749999999}, 
-                                                {-0.26265625,0.76193547139425,-1.6595367733139,-0.16178550663066,1.8258868085503,-0.50384375},
-                                                std::make_integer_sequence<int,6>{} );
-
+  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, false > >;
+  testBasisAtCompileTime< BasisHelperType >();
+  testBasisAtRunTime< BasisHelperType >();
 }
 
+TEST( testSpacing, testLagrangeBasisEqualSpacingUseForSequence )
+{
+  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, true > >;
+  testBasisAtCompileTime< BasisHelperType >();
+  testBasisAtRunTime< BasisHelperType >();
+}
+
+
+TEST( testSpacing, testLagrangeBasisGaussLobattoSpacing )
+{
+  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, false > >;
+  testBasisAtCompileTime< BasisHelperType >();
+  testBasisAtRunTime< BasisHelperType >();
+}
+
+TEST( testSpacing, testLagrangeBasisGaussLobattoSpacingUseForSequence )
+{
+  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, false > >;
+  testBasisAtCompileTime< BasisHelperType >();
+  testBasisAtRunTime< BasisHelperType >();
+}
 
 
 int main( int argc, char * * argv )

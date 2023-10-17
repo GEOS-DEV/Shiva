@@ -1,3 +1,6 @@
 [submodule "cmake/blt"]
 	path = cmake/blt
 	url = git@github.com:LLNL/blt.git
+[submodule "tpl/camp"]
+	path = tpl/camp
+	url = git@github.com:LLNL/camp.git
