@@ -144,7 +144,7 @@ SHIVA_GLOBAL void compileTimeValuesKernel( std::index_sequence< I... > )
   constexpr REAL_TYPE tolerance = 1e-13;
   forSequence< N >( [&] ( auto const a ) constexpr
   {
-    static_assert( check( SpacingType::template coordinate< a >(), Ref::coords[a], tolerance ) );
+    static_assert( pmpl::check( SpacingType::template coordinate< a >(), Ref::coords[a], tolerance ) );
   } );
 }
 

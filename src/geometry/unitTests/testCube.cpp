@@ -1,6 +1,7 @@
 
 #include "../Cube.hpp"
 #include "../geometryUtilities.hpp"
+#include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 
@@ -9,49 +10,54 @@ using namespace shiva::geometry;
 using namespace shiva::geometry::utilities;
 
 
-template< typename LAMBDA >
-SHIVA_GLOBAL void genericKernel( LAMBDA && func )
-{
-  func();
-}
 
-template< typename LAMBDA >
-SHIVA_GLOBAL void genericKernelWrapper( LAMBDA && func )
-{
-#if defined(SHIVA_USE_DEVICE)
-  genericKernel<<<1,1>>>( func );
-#else
-  genericKernel( func );
-#endif
-}
 
 template< typename REAL_TYPE >
-auto makeCube( REAL_TYPE const h )
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeCube( REAL_TYPE const h )
 {
   Cube< REAL_TYPE > cell;
   cell.setLength( h );
-
+  static_assert( decltype(cell)::jacobianIsConstInCell() == true );
   return cell;
+}
+
+
+void testConstructionAndSettersHelper()
+{
+  constexpr double h = 3.14;
+  double * data;
+  pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const data )
+  {
+    auto cell = makeCube( h );
+    data[0] = cell.getLength();
+  } );
+  EXPECT_EQ( data[0], h );
+  pmpl::deallocateData( data );
 }
 
 TEST( testCube, testConstructionAndSetters )
 {
-  double const h = 3.14;
-  auto cell = makeCube( h );
-
-  auto const & constData = cell.getLength();
-  EXPECT_EQ( constData, h );
-  static_assert( decltype(cell)::jacobianIsConstInCell() == true );
+  testConstructionAndSettersHelper();
 }
 
+
+void testJacobianFunctionModifyLvalueRefArgHelper()
+{
+  constexpr double h = 3.14;
+  double * data;
+  pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const data )
+  {
+    auto cell = makeCube( h );
+    typename Cube< double >::JacobianType::type J;
+    jacobian( cell, J );
+    data[0] = J;
+  } );
+  EXPECT_EQ( data[0], ( h / 2 ) );
+  pmpl::deallocateData( data );
+}
 TEST( testCube, testJacobianFunctionModifyLvalueRefArg )
 {
-  double const h = 3.14;
-  auto cell = makeCube( h );
-
-  typename Cube< double >::JacobianType::type J;
-  jacobian( cell, J );
-  EXPECT_EQ( J, ( h / 2 ) );
+  testJacobianFunctionModifyLvalueRefArgHelper();
 }
 
 
@@ -81,7 +87,7 @@ TEST( testCube, testInvJacobianFunctionReturnByValue )
   double const h = 3.14;
   auto cell = makeCube( h );
 
-  auto const [ detJ, invJ ] = inverseJacobian( cell );
+  auto [ detJ, invJ ] = inverseJacobian( cell );
   EXPECT_EQ( detJ, 0.125 * h * h * h );
   EXPECT_EQ( invJ.data, ( 2 / h ) );
 }

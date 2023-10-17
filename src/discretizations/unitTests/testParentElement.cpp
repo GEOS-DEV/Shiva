@@ -45,10 +45,10 @@ SHIVA_GLOBAL void compileTimeKernel()
         constexpr CArray1d< double, 3 > gradient = ParentElementType::template gradient< a, b, c >( coord );
         constexpr double tolerance = 1.0e-12;
         
-        static_assert( check( value, TEST_PARENT_ELEMENT_HELPER::referenceValues[a][b][c], tolerance ) );
-        static_assert( check( gradient[0], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][0], tolerance ) );
-        static_assert( check( gradient[1], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][1], tolerance ) );
-        static_assert( check( gradient[2], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][2], tolerance ) );
+        static_assert( pmpl::check( value, TEST_PARENT_ELEMENT_HELPER::referenceValues[a][b][c], tolerance ) );
+        static_assert( pmpl::check( gradient[0], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][0], tolerance ) );
+        static_assert( pmpl::check( gradient[1], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][1], tolerance ) );
+        static_assert( pmpl::check( gradient[2], TEST_PARENT_ELEMENT_HELPER::referenceGradients[a][b][c][2], tolerance ) );
       } );
     } );
   } );

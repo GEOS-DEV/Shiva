@@ -67,6 +67,7 @@ include( cmake/Config.cmake )
 
 
 add_subdirectory( src )
+add_subdirectory( tpl/camp )
 
 # if( SHIVA_ENABLE_DOCS )
 #     add_subdirectory( docs )

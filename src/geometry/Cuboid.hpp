@@ -54,9 +54,9 @@ public:
   template< typename FUNCTION_TYPE >
   constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void forVertices( FUNCTION_TYPE && func ) const
   {
-    IndexType index{ { 1, 0, 0 } };
+    IndexType index{0, 0, 0};
 
-    forRange( index = {0, 0, 0}, [this, func] ( auto const & i )
+    forRange( index, [this, func] ( auto const & i )
     {
       func( i, this->getVertexCoord( i ) );
     } );

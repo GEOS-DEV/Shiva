@@ -9,7 +9,7 @@ set( types_headers
 set( types_sources
      )
 
-set( dependencyList common )
+set( dependencyList common camp )
 
 if( ENABLE_HIP )
     list( APPEND dependencyList blt::hip )

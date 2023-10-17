@@ -11,7 +11,7 @@ namespace shiva
 namespace detail
 {
 template< int ... INDICES >
-constexpr int
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE int
 strideHelper( std::integer_sequence< int, INDICES... >,
               int const * const ranges )
 {
@@ -19,7 +19,7 @@ strideHelper( std::integer_sequence< int, INDICES... >,
 }
 
 template< int INDEX, typename BASE_INDEX_TYPE, BASE_INDEX_TYPE... RANGES >
-constexpr int
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE int
 stride( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
@@ -28,7 +28,7 @@ stride( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
 }
 
 template< typename T, int... INDICES >
-constexpr typename T::BaseIndexType
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE typename T::BaseIndexType
 linearIndexHelper( T const & index,
                    std::integer_sequence< int, INDICES... > )
 {
@@ -38,7 +38,7 @@ linearIndexHelper( T const & index,
 
 
 template< int DIM, typename BASE_INDEX_TYPE, BASE_INDEX_TYPE... RANGES, typename FUNC >
-void forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start,
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start,
                      MultiIndexRange< BASE_INDEX_TYPE, RANGES... > & index,
                      FUNC && func )
 {
@@ -46,7 +46,7 @@ void forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start
   if constexpr ( DIM == (IndexType::NUM_INDICES - 1) )
   {
     int & a = index.data[DIM];
-    for ( a = start.data[DIM]; a < index.ranges[DIM]; ++a )
+    for ( a = start.data[DIM]; a < index.range(DIM); ++a )
     {
       func( index );
     }
@@ -54,7 +54,7 @@ void forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start
   else
   {
     int & a = index.data[DIM];
-    for ( a = start.data[DIM]; a < index.ranges[DIM]; ++a )
+    for ( a = start.data[DIM]; a < index.range(DIM); ++a )
     {
       forRangeHelper< DIM + 1 >( start, index, func );
     }
@@ -66,7 +66,7 @@ void forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start
 
 
 template< typename BASE_INDEX_TYPE, BASE_INDEX_TYPE... RANGES >
-constexpr BASE_INDEX_TYPE
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE BASE_INDEX_TYPE
 linearIndex( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
@@ -74,7 +74,7 @@ linearIndex( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
 }
 
 template< typename INDEX_TYPE >
-constexpr INDEX_TYPE
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE INDEX_TYPE
 linearIndex( INDEX_TYPE const & index )
 {
   return index;
@@ -83,11 +83,11 @@ linearIndex( INDEX_TYPE const & index )
 
 
 template< typename BASE_INDEX_TYPE, BASE_INDEX_TYPE... RANGES, typename FUNC >
-void forRange( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > & index, FUNC && func )
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void forRange( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > & index, FUNC && func )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
   IndexType const start = index;
-  detail::forRangeHelper< 0 >( start, index, std::forward< FUNC && >( func ) );
+  detail::forRangeHelper< 0 >( start, index, std::forward< FUNC >( func ) );
 }
 
 

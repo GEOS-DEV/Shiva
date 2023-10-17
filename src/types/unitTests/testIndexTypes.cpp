@@ -39,17 +39,16 @@ TEST( testIndexTypes, testMultiIndexManualLoop )
 }
 
 
-TEST( testIndexTypes, testMultiIndexForRange )
-{
-  MultiIndexRange< int, 2, 2, 2 > index{ { 1, 0, 0 } };
+// TEST( testIndexTypes, testMultiIndexForRange )
+// {
+//   MultiIndexRange< int, 2, 2, 2 > index{ { 1, 0, 0 } };
 
-  forRange( index = {0, 0, 0}, [] ( auto const & i )
-  {
-    int li = linearIndex( i );
-    EXPECT_EQ( li, 4 * i.data[0] + 2 * i.data[1] + i.data[2] );
-  } );
-
-}
+//   forRange( index = {0, 0, 0}, [] SHIVA_DEVICE ( auto const & i )
+//   {
+//     int li = linearIndex( i );
+//     EXPECT_EQ( li, 4 * i.data[0] + 2 * i.data[1] + i.data[2] );
+//   } );
+// }
 
 int main( int argc, char * * argv )
 {

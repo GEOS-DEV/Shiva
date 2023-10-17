@@ -1,6 +1,11 @@
-
-
 #pragma once
+
+#include "common/ShivaMacros.hpp"
+
+#define SHIVA_USE_CAMP
+#if defined(SHIVA_USE_CAMP)
+#include <camp/camp.hpp>
+#else
 
 #if defined(SHIVA_USE_CUDA)
 #include <cuda/std/tuple>
@@ -8,9 +13,23 @@
 #include <tuple>
 #endif
 
+#endif
+
 namespace shiva
 {
 
+#if defined(SHIVA_USE_CAMP)
+
+template< typename ... T >
+using tuple = camp::tuple< T ... >;
+
+template< typename ... T >
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto make_tuple( T && ... t )
+{
+  return camp::make_tuple( std::forward< T >( t ) ... );
+}
+
+#else
 #if defined(SHIVA_USE_CUDA)
 template< typename ... T >
 using tuple = cuda::std::tuple< T ... >;
@@ -29,6 +48,7 @@ auto make_tuple( T && ... t )
 {
   return std::make_tuple( std::forward< T >( t ) ... );
 }
+#endif
 #endif
 
 template< int ... T >

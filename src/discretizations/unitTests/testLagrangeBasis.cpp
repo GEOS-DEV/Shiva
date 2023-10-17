@@ -49,8 +49,8 @@ SHIVA_GLOBAL void compileTimeKernel()
     constexpr double gradient = BasisType::template gradient< BF_INDEX >( coord );
     constexpr double tolerance = 1.0e-12;
 
-    static_assert( check( value, BASIS_HELPER_TYPE::refValues[BF_INDEX], tolerance ) );
-    static_assert( check( gradient, BASIS_HELPER_TYPE::refGradients[BF_INDEX], tolerance ) );
+    static_assert( pmpl::check( value, BASIS_HELPER_TYPE::refValues[BF_INDEX], tolerance ) );
+    static_assert( pmpl::check( gradient, BASIS_HELPER_TYPE::refGradients[BF_INDEX], tolerance ) );
   } );
 }
 
@@ -106,6 +106,12 @@ void testBasisAtRunTime()
     EXPECT_NEAR( values[a], BASIS_HELPER_TYPE::refValues[a], fabs( BASIS_HELPER_TYPE::refValues[a] * tolerance ) );
     EXPECT_NEAR( gradients[a], BASIS_HELPER_TYPE::refGradients[a], fabs( BASIS_HELPER_TYPE::refGradients[a] * tolerance ) );
   }
+
+#if defined(SHIVA_USE_DEVICE)
+  deviceFree(values);
+  deviceFree(gradients);
+#endif
+
 
 }
 
