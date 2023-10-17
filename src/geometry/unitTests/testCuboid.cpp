@@ -102,7 +102,7 @@ SHIVA_HOST_DEVICE auto makeCuboid( REAL_TYPE const (&X)[8][3] )
 void testConstructionAndSettersHelper()
 {
   double * data;
-  pmpl::genericKernelWrapper( 3, data, [] SHIVA_DEVICE ( double * const kernelData )
+  pmpl::genericKernelWrapper( 8*3, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto const cell = makeCuboid( Xref );
     typename decltype(cell)::IndexType index{0, 0, 0};
@@ -224,7 +224,7 @@ TEST( testCuboid, testJacobianFunctionReturnByValue )
 void testInvJacobianFunctionModifyLvalueRefArgHelper()
 {
   double * data;
-  pmpl::genericKernelWrapper( 9*8, data, [] SHIVA_DEVICE ( double * const kernelData )
+  pmpl::genericKernelWrapper( 10*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeCuboid( Xref );
     for ( int q = 0; q < 8; ++q )
@@ -234,7 +234,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
 
       inverseJacobian( cell, qCoords[q], invJ, detJ );
 
-      kernelData[ 9*q ] = detJ;
+      kernelData[ 10*q ] = detJ;
       for ( int i = 0; i < 3; ++i )
       {
         for ( int j = 0; j < 3; ++j )
@@ -269,14 +269,14 @@ TEST( testCuboid, testInvJacobianFunctionModifyLvalueRefArg )
 void testInvJacobianFunctionReturnByValueHelper()
 {
   double * data;
-  pmpl::genericKernelWrapper( 9*8, data, [] SHIVA_DEVICE ( double * const kernelData )
+  pmpl::genericKernelWrapper( 10*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeCuboid( Xref );
     for ( int q = 0; q < 8; ++q )
     {
       auto [ detJ, invJ ] = inverseJacobian( cell, qCoords[q] );
 
-      kernelData[ 9*q ] = detJ;
+      kernelData[ 10*q ] = detJ;
       for ( int i = 0; i < 3; ++i )
       {
         for ( int j = 0; j < 3; ++j )
