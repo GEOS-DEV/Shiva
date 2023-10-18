@@ -58,6 +58,8 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
     // function that takes the parameter pack as a function argument.
     if constexpr ( std::is_invocable_v< FUNC, std::integral_constant< int, DIMENSION_INDICES >..., ARGS ... > )
     {
+      // calling func with the parameter packs ( args..., DIMENSION_INDICES...)
+      // as arguments.
       return func( std::forward< ARGS >( args )...,
                    std::integral_constant< int, DIMENSION_INDICES >{} ... );
     }
@@ -65,6 +67,8 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
     // pass the parameter pack as a template argument.
     else
     {
+      // call func with DIMENSION_INDICES... as template arguments, and args...
+      // as function arguments.
       return func.template operator()< DIMENSION_INDICES... >(std::forward< ARGS >( args )...);
     }
   }
@@ -86,12 +90,18 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
     // then make the appropriate call.
     if constexpr ( std::is_invocable_v< FUNC, std::integral_constant< int, 0 > > )
     {
+      // fold that expands calls to func with each element of the parameter 
+      // pack DIMENSION_INDICES as an argument. The fold calls it for each 
+      // value of DIMENSION_INDICES.
       return (func( std::integral_constant< int, DIMENSION_INDICES >{} ), ...);
     }
     // Otherwise, the function is templated on an integer, so we 
     // pass the element of the integer parameter pack as a template argument.
     else
     {
+      // fold that expands calls to func with each element of the parameter 
+      // pack DIMENSION_INDICES as an template parameter. The fold calls it for
+      // each value of DIMENSION_INDICES.
       return (func.template operator()< DIMENSION_INDICES >(), ...);
     }
   }

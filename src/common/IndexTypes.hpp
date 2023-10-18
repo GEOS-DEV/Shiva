@@ -26,6 +26,7 @@ SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE int
 strideHelper( std::integer_sequence< int, INDICES... >,
               int const * const ranges )
 {
+  // return result of a fold expression that multiples all entries of the ranges array
   return ( ranges[INDICES] * ... *1);
 }
 
@@ -42,6 +43,9 @@ SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE BASE_INDEX_TYPE
 stride( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
+
+  // call strideHelper on an integer_sequence that ranges from 0...(NUM_INDICES - 1 - INDEX).
+  // This will result in a fold expression that multiples entries of the ranges array for the integer_sequence.
   return detail::strideHelper( std::make_integer_sequence< int, (IndexType::NUM_INDICES - 1) - INDEX >{},
                                &(index.ranges[0]) );
 }
@@ -58,6 +62,8 @@ SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE typename T::BaseIndexType
 linearIndexHelper( T const & index,
                    std::integer_sequence< int, INDICES... > )
 {
+  // return a fold expression that adds the index*stride for each component of
+  // the multi-index.
   return (  ( index.data[INDICES] * stride< INDICES >( index ) ) + ... );
 }
 
@@ -79,6 +85,7 @@ forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start,
                      FUNC && func )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
+  // if we are at the last dimension, then call func on index
   if constexpr ( DIM == (IndexType::NUM_INDICES - 1) )
   {
     int & a = index.data[DIM];
@@ -87,6 +94,7 @@ forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start,
       func( index );
     }
   }
+  // otherwise, recurse until we get to the last index
   else
   {
     int & a = index.data[DIM];
