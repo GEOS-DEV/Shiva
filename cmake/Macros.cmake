@@ -32,14 +32,20 @@ macro(shiva_add_code_checks)
         endforeach()
     endif()
 
+    set( CPPCHECK_FLAGS --std=c++17 
+                        --enable=all 
+                        --suppress=missingIncludeSystem 
+                        --suppress=missingInclude 
+                        --suppress=noConstructor 
+                        --suppress=unusedFunction 
+                        --suppress=constStatement 
+                        --suppress=unusedStructMember )
+                        
     blt_add_code_checks( PREFIX    ${arg_PREFIX}
                          SOURCES   ${_sources}
                          UNCRUSTIFY_CFG_FILE ${PROJECT_SOURCE_DIR}/src/uncrustify.cfg
+                         CPPCHECK_FLAGS ${CPPCHECK_FLAGS}
                          )
 
-    # blt_add_code_checks( PREFIX    ${arg_PREFIX}
-    #                      SOURCES   ${_sources}
-    #                      CLANGFORMAT_CFG_FILE ${PROJECT_SOURCE_DIR}/src/.clang-format
-    #                    )
 
 endmacro(shiva_add_code_checks)

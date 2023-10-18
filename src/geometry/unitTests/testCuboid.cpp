@@ -101,7 +101,7 @@ SHIVA_HOST_DEVICE auto makeCuboid( REAL_TYPE const (&X)[8][3] )
 
 void testConstructionAndSettersHelper()
 {
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 8*3, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto const cell = makeCuboid( Xref );
@@ -145,7 +145,7 @@ TEST( testCuboid, testConstructionAndSetters )
 
 void testJacobianFunctionModifyLvalueRefArgHelper()
 {
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 9*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeCuboid( Xref );
@@ -185,7 +185,7 @@ TEST( testCuboid, testJacobianFunctionModifyLvalueRefArg )
 
 void testJacobianFunctionReturnByValueHelper()
 {
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 9*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeCuboid( Xref );
@@ -223,7 +223,7 @@ TEST( testCuboid, testJacobianFunctionReturnByValue )
 
 void testInvJacobianFunctionModifyLvalueRefArgHelper()
 {
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 10*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeCuboid( Xref );
@@ -268,7 +268,7 @@ TEST( testCuboid, testInvJacobianFunctionModifyLvalueRefArg )
 
 void testInvJacobianFunctionReturnByValueHelper()
 {
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 10*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeCuboid( Xref );

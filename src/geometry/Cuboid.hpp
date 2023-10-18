@@ -105,7 +105,6 @@ public:
   }
 
   /**
-   */
    * @tparam FUNCTION_TYPE 
    * @param func 
    */

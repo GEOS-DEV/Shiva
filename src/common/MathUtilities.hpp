@@ -1,4 +1,6 @@
-
+/**
+ * @file MathUtilities.hpp
+ */
 
 #pragma once
 
@@ -6,6 +8,10 @@
 
 namespace shiva
 {
+/** 
+ * @namespace mathUtilities
+ * @brief Namespace for math utilities
+ */
 namespace mathUtilities
 {
 template< typename REAL_TYPE >

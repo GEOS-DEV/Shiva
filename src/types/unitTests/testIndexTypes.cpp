@@ -9,7 +9,7 @@ using namespace shiva;
 
 void testLinearIndexTypeHelper()
 {
-  int * data;
+  int * data = nullptr;
   pmpl::genericKernelWrapper( 10, data, [] SHIVA_HOST_DEVICE ( int * const data )
   {
     int i = 0;
@@ -36,7 +36,7 @@ TEST( testIndexTypes, testLinearIndexType )
 
 void testMultiIndexManualLoopHelper()
 {
-  int * data;
+  int * data = nullptr;
   pmpl::genericKernelWrapper( 8, data, [] SHIVA_HOST_DEVICE ( int * const data )
   {
     MultiIndexRange< int, 2, 2, 2 > index{ { 1, 0, 0 } };
@@ -76,7 +76,7 @@ TEST( testIndexTypes, testMultiIndexManualLoop )
 
 void testMultiIndexForRangeHelper()
 {
-  int * data;
+  int * data = nullptr;
   pmpl::genericKernelWrapper( 8, data, [] SHIVA_HOST_DEVICE ( int * const data )
   {
     MultiIndexRange< int, 2, 2, 2 > index{ { 0, 0, 0 } };
