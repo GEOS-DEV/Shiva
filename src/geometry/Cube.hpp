@@ -1,8 +1,8 @@
 #pragma once
 
 #include "common/ShivaMacros.hpp"
-#include "types/IndexTypes.hpp"
-#include "types/types.hpp"
+#include "common/IndexTypes.hpp"
+#include "common/types.hpp"
 namespace shiva
 {
 namespace geometry

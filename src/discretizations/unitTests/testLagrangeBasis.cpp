@@ -2,8 +2,8 @@
 #include "../finiteElementMethod/bases/LagrangeBasis.hpp"
 #include "../spacing/Spacing.hpp"
 #include "../../common/ShivaMacros.hpp"
-#include "types/types.hpp"
 #include "common/pmpl.hpp"
+#include "common/types.hpp"
 
 #include <gtest/gtest.h>
 #include <cmath>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "types/types.hpp"
 #include "common/SequenceUtilities.hpp"
 #include "common/ShivaMacros.hpp"
+#include "common/types.hpp"
 
 
 #include <utility>

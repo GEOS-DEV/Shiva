@@ -24,7 +24,7 @@ using namespace shiva::geometry::utilities;
 double Xreference( int const a, int const i )
 {
   static constexpr double 
-  Xref[8][3] =
+  X[8][3] =
   { { -1.31, -1.15, -1.23 },
     {  1.38, -1.22, -1.17 },
     { -1.31, 1.12, -1.31 },
@@ -34,7 +34,7 @@ double Xreference( int const a, int const i )
     { -1.29, 1.28, 1.41 },
     {  1.39, 1.24, 1.36 } };
 
-  return Xref[a][i];
+  return X[a][i];
 }
 
 constexpr SHIVA_DEVICE double qCoords[8][3] =

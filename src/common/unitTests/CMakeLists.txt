@@ -3,6 +3,7 @@
 #
 
 set( unit_tests_sources
+     testIndexTypes.cpp
      testSequenceUtilities.cpp
      )
 

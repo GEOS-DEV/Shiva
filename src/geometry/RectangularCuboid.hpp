@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/ShivaMacros.hpp"
-#include "types/types.hpp"
+#include "common/types.hpp"
 namespace shiva
 {
 

@@ -45,6 +45,7 @@ macro(shiva_add_code_checks)
                          SOURCES   ${_sources}
                          UNCRUSTIFY_CFG_FILE ${PROJECT_SOURCE_DIR}/src/uncrustify.cfg
                          CPPCHECK_FLAGS ${CPPCHECK_FLAGS}
+                         D
                          )
 
 

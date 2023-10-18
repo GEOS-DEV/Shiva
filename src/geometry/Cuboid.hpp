@@ -7,8 +7,8 @@
 
 #include "common/MathUtilities.hpp"
 #include "common/ShivaMacros.hpp"
-#include "types/types.hpp"
-#include "types/IndexTypes.hpp"
+#include "common/types.hpp"
+#include "common/IndexTypes.hpp"
 
 
 /**
