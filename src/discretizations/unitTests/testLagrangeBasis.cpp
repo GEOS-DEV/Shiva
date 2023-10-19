@@ -14,20 +14,20 @@ using namespace shiva::discretizations::finiteElementMethod::basis;
 template< typename ... T >
 struct TestBasisHelper;
 
-template< bool USE_FOR_SEQUENCE >
-struct TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, USE_FOR_SEQUENCE > >
+template<>
+struct TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing > >
 {
-  using BasisType = LagrangeBasis< double, 5, EqualSpacing, USE_FOR_SEQUENCE >;
+  using BasisType = LagrangeBasis< double, 5, EqualSpacing >;
   static constexpr int order = 5;
   static constexpr double coord = 0.3;
   static constexpr double refValues[order + 1] = {-0.0076904296875, 0.0555419921875, -0.199951171875, 0.999755859375, 0.1666259765625, -0.0142822265625};
   static constexpr double refGradients[order + 1] = {-0.064208984375, 0.44474283854167, -1.42333984375, -0.88134765625, 2.0747884114583, -0.150634765625};
 };
 
-template< bool USE_FOR_SEQUENCE >
-struct TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, USE_FOR_SEQUENCE > >
+template<>
+struct TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing > >
 {
-  using BasisType = LagrangeBasis< double, 5, GaussLobattoSpacing, USE_FOR_SEQUENCE >;
+  using BasisType = LagrangeBasis< double, 5, GaussLobattoSpacing >;
   static constexpr int order = 5;
   static constexpr double coord = 0.3;
   static constexpr double refValues[order + 1] = {-0.0039331249999999, 0.011438606947084, -0.025205197129078, 0.99880774621932, 0.026196343962672, -0.0073043749999999};
@@ -117,33 +117,17 @@ void testBasisAtRunTime()
 
 TEST( testSpacing, testLagrangeBasisEqualSpacing )
 {
-  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, false > >;
+  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing > >;
   testBasisAtCompileTime< BasisHelperType >();
   testBasisAtRunTime< BasisHelperType >();
 }
-
-TEST( testSpacing, testLagrangeBasisEqualSpacingUseForSequence )
-{
-  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, EqualSpacing, true > >;
-  testBasisAtCompileTime< BasisHelperType >();
-  testBasisAtRunTime< BasisHelperType >();
-}
-
 
 TEST( testSpacing, testLagrangeBasisGaussLobattoSpacing )
 {
-  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, false > >;
+  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing > >;
   testBasisAtCompileTime< BasisHelperType >();
   testBasisAtRunTime< BasisHelperType >();
 }
-
-TEST( testSpacing, testLagrangeBasisGaussLobattoSpacingUseForSequence )
-{
-  using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing, false > >;
-  testBasisAtCompileTime< BasisHelperType >();
-  testBasisAtRunTime< BasisHelperType >();
-}
-
 
 int main( int argc, char * * argv )
 {
