@@ -12,7 +12,6 @@ set( shiva_dependencies
 
 add_subdirectory( common )
 add_subdirectory( discretizations )
-add_subdirectory( types )
 add_subdirectory( geometry )
 
 blt_add_library( NAME             shiva

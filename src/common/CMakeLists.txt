@@ -1,9 +1,13 @@
 
 set( common_headers
+     IndexTypes.hpp
+     LinearIndex.hpp
      MathUtilities.hpp
+     MultiIndex.hpp
      pmpl.hpp
      SequenceUtilities.hpp
      ShivaMacros.hpp
+     types.hpp
      )
 
 set( common_sources

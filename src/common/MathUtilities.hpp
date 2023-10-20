@@ -1,4 +1,6 @@
-
+/**
+ * @file MathUtilities.hpp
+ */
 
 #pragma once
 
@@ -6,8 +8,20 @@
 
 namespace shiva
 {
+
+/** 
+ * @namespace shiva::mathUtilities
+ * @brief Namespace for math utilities inside of shiva
+ */
 namespace mathUtilities
 {
+
+/**
+ * @brief Inverse of a 3x3 matrix
+ * @tparam REAL_TYPE The data type of the matrix
+ * @param matrix The matrix to invert
+ * @param det The determinant of the matrix
+ */
 template< typename REAL_TYPE >
 SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void 
 inverse( REAL_TYPE (&matrix)[3][3], REAL_TYPE & det )

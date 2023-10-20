@@ -25,7 +25,7 @@ SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeCube( REAL_TYPE const h )
 void testConstructionAndSettersHelper()
 {
   constexpr double h = 3.14;
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const data )
   {
     auto cell = makeCube( h );
@@ -44,7 +44,7 @@ TEST( testCube, testConstructionAndSetters )
 void testJacobianFunctionModifyLvalueRefArgHelper()
 {
   constexpr double h = 3.14;
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const data )
   {
     auto cell = makeCube( h );

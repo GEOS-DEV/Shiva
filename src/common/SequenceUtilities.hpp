@@ -1,20 +1,23 @@
-#pragma once
-
-
 /**
  * @file SequenceUtilities.hpp
+ * @brief This file contains utilities for the manipulation of parameter packs.
  */
+
+#pragma once
 
 #include "common/ShivaMacros.hpp"
 #include <type_traits>
 #include <utility>
 
-/// @brief The shiva namespace contains all code in the shiva library
 namespace shiva
 {
 
-/// @brief The detail namespace contains implementation details of the shiva library that should not be used directly
-namespace detail
+/**
+ * @namespace shiva::sequenceUtilities
+ * @brief The sequenceUtilitiesImpl namespace contains implementation details 
+ * for SequenceUtilities.
+ */
+namespace sequenceUtilitiesImpl
 {
 
 /**
@@ -55,6 +58,8 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
     // function that takes the parameter pack as a function argument.
     if constexpr ( std::is_invocable_v< FUNC, std::integral_constant< int, DIMENSION_INDICES >..., ARGS ... > )
     {
+      // calling func with the parameter packs ( args..., DIMENSION_INDICES...)
+      // as arguments.
       return func( std::forward< ARGS >( args )...,
                    std::integral_constant< int, DIMENSION_INDICES >{} ... );
     }
@@ -62,6 +67,8 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
     // pass the parameter pack as a template argument.
     else
     {
+      // call func with DIMENSION_INDICES... as template arguments, and args...
+      // as function arguments.
       return func.template operator()< DIMENSION_INDICES... >(std::forward< ARGS >( args )...);
     }
   }
@@ -83,23 +90,29 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
     // then make the appropriate call.
     if constexpr ( std::is_invocable_v< FUNC, std::integral_constant< int, 0 > > )
     {
+      // fold that expands calls to func with each element of the parameter 
+      // pack DIMENSION_INDICES as an argument. The fold calls it for each 
+      // value of DIMENSION_INDICES.
       return (func( std::integral_constant< int, DIMENSION_INDICES >{} ), ...);
     }
     // Otherwise, the function is templated on an integer, so we 
     // pass the element of the integer parameter pack as a template argument.
     else
     {
+      // fold that expands calls to func with each element of the parameter 
+      // pack DIMENSION_INDICES as an template parameter. The fold calls it for
+      // each value of DIMENSION_INDICES.
       return (func.template operator()< DIMENSION_INDICES >(), ...);
     }
   }
 };
 
-} // namespace detail
+} // namespace sequenceUtilitiesImpl
 
 
 /**
  * @brief This function creates an integer_sequence<0,1,2,...,END-1> and calls 
- * detail::SequenceExpansion::execute to deduce the int... and call func of 
+ * sequenceUtilitiesImpl::SequenceExpansion::execute to deduce the int... and call func of 
  * type FUNC, passing back the int... as either a template parameter or a 
  * function argument.
  * @tparam END This is the number of elements in the integer_sequence<0,1,2,...,END-1>
@@ -116,14 +129,14 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto executeSequence( FUNC && func
                                 ARGS && ... args )
 {
   return
-    detail::SequenceExpansion< std::make_integer_sequence< int, END > >::
+    sequenceUtilitiesImpl::SequenceExpansion< std::make_integer_sequence< int, END > >::
     template execute( std::forward< FUNC >( func ),
                       std::forward< ARGS >( args )... );
 }
 
 /**
  * @brief This function creates an integer_sequence<0,1,2,...,END-1> and calls 
- * detail::SequenceExpansion::staticFor to deduce the int... and call func of 
+ * sequenceUtilitiesImpl::SequenceExpansion::staticFor to deduce the int... and call func of 
  * type FUNC, passing back an int in the (int...) as either a template 
  * parameter or a function argument.
  * @tparam END This is the number of elements in the integer_sequence<0,1,2,...,END-1>
@@ -135,7 +148,7 @@ template< int END, typename FUNC >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto forSequence( FUNC && func )
 {
   return
-    detail::SequenceExpansion< std::make_integer_sequence< int, END > >::
+    sequenceUtilitiesImpl::SequenceExpansion< std::make_integer_sequence< int, END > >::
     template staticFor( std::forward< FUNC >( func ) );
 }
 

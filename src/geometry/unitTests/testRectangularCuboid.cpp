@@ -23,7 +23,7 @@ SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeRectangularCuboid( REAL_TYPE con
 void testConstructionAndSettersHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 3, data, [=] SHIVA_HOST_DEVICE ( double * const data )
   {
     auto cell = makeRectangularCuboid( h );
@@ -47,7 +47,7 @@ TEST( testRectangularCuboid, testConstructionAndSetters )
 void testJacobianFunctionModifyLvalueRefArgHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 3, data, [=] SHIVA_HOST_DEVICE ( double * const data )
   {
     auto cell = makeRectangularCuboid( h );
@@ -73,7 +73,7 @@ TEST( testRectangularCuboid, testJacobianFunctionModifyLvalueRefArg )
 void testJacobianFunctionReturnByValueHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 3, data, [=] SHIVA_HOST_DEVICE ( double * const data )
   {
     auto cell = makeRectangularCuboid( h );
@@ -97,7 +97,7 @@ TEST( testRectangularCuboid, testJacobianFunctionReturnByValue )
 void testInvJacobianFunctionModifyLvalueRefArgHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 4, data, [=] SHIVA_HOST_DEVICE ( double * const data )
   {
     auto cell = makeRectangularCuboid( h );
@@ -125,7 +125,7 @@ TEST( testRectangularCuboid, testInvJacobianFunctionModifyLvalueRefArg )
 void testInvJacobianFunctionReturnByValueHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 4, data, [=] SHIVA_HOST_DEVICE ( double * const data )
   {
     auto cell = makeRectangularCuboid( h );

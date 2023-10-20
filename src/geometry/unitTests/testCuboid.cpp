@@ -24,7 +24,7 @@ using namespace shiva::geometry::utilities;
 double Xreference( int const a, int const i )
 {
   static constexpr double 
-  Xref[8][3] =
+  X[8][3] =
   { { -1.31, -1.15, -1.23 },
     {  1.38, -1.22, -1.17 },
     { -1.31, 1.12, -1.31 },
@@ -34,7 +34,7 @@ double Xreference( int const a, int const i )
     { -1.29, 1.28, 1.41 },
     {  1.39, 1.24, 1.36 } };
 
-  return Xref[a][i];
+  return X[a][i];
 }
 
 constexpr SHIVA_DEVICE double qCoords[8][3] =
@@ -101,7 +101,7 @@ SHIVA_HOST_DEVICE auto makeCuboid( REAL_TYPE const (&X)[8][3] )
 
 void testConstructionAndSettersHelper()
 {
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 8*3, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto const cell = makeCuboid( Xref );
@@ -145,7 +145,7 @@ TEST( testCuboid, testConstructionAndSetters )
 
 void testJacobianFunctionModifyLvalueRefArgHelper()
 {
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 9*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeCuboid( Xref );
@@ -185,7 +185,7 @@ TEST( testCuboid, testJacobianFunctionModifyLvalueRefArg )
 
 void testJacobianFunctionReturnByValueHelper()
 {
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 9*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeCuboid( Xref );
@@ -223,7 +223,7 @@ TEST( testCuboid, testJacobianFunctionReturnByValue )
 
 void testInvJacobianFunctionModifyLvalueRefArgHelper()
 {
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 10*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeCuboid( Xref );
@@ -268,7 +268,7 @@ TEST( testCuboid, testInvJacobianFunctionModifyLvalueRefArg )
 
 void testInvJacobianFunctionReturnByValueHelper()
 {
-  double * data;
+  double * data = nullptr;
   pmpl::genericKernelWrapper( 10*8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeCuboid( Xref );

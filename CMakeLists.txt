@@ -70,7 +70,7 @@ add_subdirectory( src )
 add_subdirectory( tpl/camp )
 
 # if( SHIVA_ENABLE_DOCS )
-#     add_subdirectory( docs )
+     add_subdirectory( docs )
 # endif()
 
 
