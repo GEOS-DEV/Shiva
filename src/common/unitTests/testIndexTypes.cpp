@@ -10,13 +10,13 @@ using namespace shiva;
 void testLinearIndexTypeHelper()
 {
   int * data = nullptr;
-  pmpl::genericKernelWrapper( 10, data, [] SHIVA_HOST_DEVICE ( int * const data )
+  pmpl::genericKernelWrapper( 10, data, [] SHIVA_HOST_DEVICE ( int * const kdata )
   {
     int i = 0;
     LinearIndex< int > a = 0;
     for ( a = 0, i = 0; a < 10; ++a, ++i )
     {
-      data[i] = linearIndex( a );
+      kdata[i] = linearIndex( a );
     }
   } );
   for ( int i = 0; i < 10; ++i )
@@ -37,7 +37,7 @@ TEST( testIndexTypes, testLinearIndexType )
 void testMultiIndexManualLoopHelper()
 {
   int * data = nullptr;
-  pmpl::genericKernelWrapper( 8, data, [] SHIVA_HOST_DEVICE ( int * const data )
+  pmpl::genericKernelWrapper( 8, data, [] SHIVA_HOST_DEVICE ( int * const kdata )
   {
     MultiIndexRange< int, 2, 2, 2 > index{ { 1, 0, 0 } };
 
@@ -50,7 +50,7 @@ void testMultiIndexManualLoopHelper()
       {
         for ( c = 0; c < 2; ++c )
         {
-          data[4 * a + 2 * b + c] = linearIndex( index );
+          kdata[4 * a + 2 * b + c] = linearIndex( index );
         }
       }
     }
@@ -77,13 +77,13 @@ TEST( testIndexTypes, testMultiIndexManualLoop )
 void testMultiIndexForRangeHelper()
 {
   int * data = nullptr;
-  pmpl::genericKernelWrapper( 8, data, [] SHIVA_HOST_DEVICE ( int * const data )
+  pmpl::genericKernelWrapper( 8, data, [] SHIVA_HOST_DEVICE ( int * const kdata )
   {
     MultiIndexRange< int, 2, 2, 2 > index{ { 0, 0, 0 } };
 
     forRange( index, [&] ( auto const & i )
     {
-      data[4 * i.data[0] + 2 * i.data[1] + i.data[2]] = linearIndex( i );
+      kdata[4 * i.data[0] + 2 * i.data[1] + i.data[2]] = linearIndex( i );
     } );
   } );
 
