@@ -61,6 +61,7 @@ jobs:
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Debug
+
           - name: ubi8.8-clang15-release
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
             OS: ubuntu-22.04
@@ -68,12 +69,14 @@ jobs:
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Release
             CLANGTIDY_EXECUTABLE: clang-tidy
+
           - name: ubi8.8-gcc12-debug
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
             CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
             CMAKE_BUILD_TYPE: Debug
+            
           - name: ubi8.8-gcc12-release
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
             OS: ubuntu-22.04
