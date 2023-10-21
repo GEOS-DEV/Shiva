@@ -53,14 +53,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: ubi8.8-clang15-debug
+          - name: RHEL8.8-clang15-deb (ubi8.8, clang-15.0.7, Debug)
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Debug
 
-          - name: ubi8.8-clang15-release
+          - name: RHEL8.8-clang15-rel (ubi8.8, clang-15.0.7, Release)
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: clang++
@@ -68,14 +68,14 @@ jobs:
             CMAKE_BUILD_TYPE: Release
             CLANGTIDY_EXECUTABLE: clang-tidy
 
-          - name: ubi8.8-gcc12-debug
+          - name: RHEL8.8-gcc12-deb (ubi8.8, gcc 12.2.1 , Debug)
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
             CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
             CMAKE_BUILD_TYPE: Debug
 
-          - name: ubi8.8-gcc12-release
+          - name: RHEL8.8-gcc12-rel (ubi8.8, gcc 12.2.1 , Release)
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
