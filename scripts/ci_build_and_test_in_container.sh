@@ -32,25 +32,6 @@ if [[ -z "${CMAKE_BUILD_TYPE}" ]]; then
   exit 1
 fi
 
-if [[ -z "${GEOSX_DIR}" ]]; then
-  echo "Environment variable \"GEOSX_DIR\" is undefined."
-  exit 1
-fi
-
-
-# The -DBLT_MPI_COMMAND_APPEND="--allow-run-as-root;--oversubscribe" option is added for OpenMPI.
-#
-# OpenMPI prevents from running as `root` user by default.
-# And by default user is `root` in a docker container.
-# Using this option therefore offers a minimal and convenient way to run the unit tests.
-#
-# The option `--oversubscribe` tells OpenMPI to allow more MPI ranks than the node has cores.
-# This is needed because our unit test `blt_mpi_smoke` is run in parallel with _hard coded_ 4 ranks.
-# While some of our ci nodes may have less cores available.
-# 
-# In case we have more powerful nodes, consider removing `--oversubscribe` and use `--use-hwthread-cpus` instead.
-# This will tells OpenMPI to discover the number of hardware threads on the node,
-# and use that as the number of slots available. (There is a distinction between threads and cores).
 SHIVA_BUILD_DIR=/tmp/build
 SHIVA_INSTALL_DIR=/tmp/install
 or_die python3 scripts/config-build.py \
