@@ -14,7 +14,7 @@ docker run \
   --name=${CONTAINER_NAME} \
   --volume=${BUILD_DIR}:${BUILD_DIR_MOUNT_POINT} \
   --cap-add=ALL \
-  -e HOST_CONFIG=${HOST_CONFIG:hostconfigs/environment.cmake} \
+  -e HOST_CONFIG=${HOST_CONFIG} \
   -e CMAKE_C_COMPILER=${CMAKE_C_COMPILER} \
   -e CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} \
   -e CMAKE_BUILD_TYPE \
