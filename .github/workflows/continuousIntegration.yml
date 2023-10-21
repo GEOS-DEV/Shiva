@@ -48,12 +48,10 @@ jobs:
   linux_builds:
     name: ${{matrix.name}}
     runs-on: ${{matrix.os}}
-
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         include:
           - name: ubi8.8-clang15-debug
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
