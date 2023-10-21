@@ -13,5 +13,5 @@ RUN yum install -y \
 ARG CMAKE_VERSION=3.23.5
 RUN curl -fsSL -k  https://cmake.org/files/v${CMAKE_VERSION%.[0-9]*}/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz | tar --directory=/usr/local --strip-components=1 -xzf -
 
- ENV CC=/opt/rh/devtoolset-12/root/usr/bin/gcc \
-     CXX=/opt/rh/devtoolset-12/root/usr/bin/g++
+#  ENV CC=/opt/rh/devtoolset-12/root/usr/bin/gcc \
+#      CXX=/opt/rh/devtoolset-12/root/usr/bin/g++
