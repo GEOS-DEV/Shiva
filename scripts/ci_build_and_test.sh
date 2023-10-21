@@ -17,8 +17,8 @@ docker run \
   -e HOST_CONFIG=${HOST_CONFIG} \
   -e CMAKE_C_COMPILER=${CMAKE_C_COMPILER} \
   -e CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} \
-  -e CC=/opt/rh/gcc-toolset-12/root/bin/gcc \
-  -e CXX=/opt/rh/gcc-toolset-12/root/bin/g++ \
+  -e CC=${CMAKE_C_COMPILER} \
+  -e CXX=${CMAKE_CXX_COMPILER} \
   -e CMAKE_BUILD_TYPE \
   ${DOCKER_REPOSITORY} \
   ${BUILD_DIR_MOUNT_POINT}/scripts/ci_build_and_test_in_container.sh ${BUILD_AND_TEST_ARGS};
