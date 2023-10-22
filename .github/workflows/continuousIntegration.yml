@@ -68,14 +68,14 @@ jobs:
             CMAKE_BUILD_TYPE: Release
             CLANGTIDY_EXECUTABLE: clang-tidy
 
-          - name: RHEL8.8-gcc12-deb (ubi8.8, gcc 12.2.1 , Debug)
+          - name: RHEL8.8-gcc12-deb (ubi8.8, gcc 12.2.1, Debug)
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8-854
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
             CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
             CMAKE_BUILD_TYPE: Debug
 
-          - name: RHEL8.8-gcc12-rel (ubi8.8, gcc 12.2.1 , Release)
+          - name: RHEL8.8-gcc12-rel (ubi8.8, gcc 12.2.1, Release)
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8-854
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
@@ -89,6 +89,15 @@ jobs:
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Release
             ENABLE_CUDA: ON
+
+          - name: RHEL8.8-gcc12-cuda11-rel (ubi8.8, gcc 12.2.1, cuda-11.8.0, Release)
+            DOCKER_REPOSITORY: geosx/ubi8:ubi8.8-cuda11.8.0
+            OS: ubuntu-22.04
+            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
+            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
+            CMAKE_BUILD_TYPE: Release
+            ENABLE_CUDA: ON
+
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
