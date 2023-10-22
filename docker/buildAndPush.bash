@@ -10,8 +10,10 @@ for image in $images; do
   dir=${imagePart[0]}
   tag=${imagePart[1]}
 
+  dirPart=(${dir//-/ })
+  dirRoot=${dirPart[0]}
   
-  repo=geosx/ubi8:${tag}
+  repo=geosx/${dirRoot}:${tag}
 
   echo dir=${dir}
   echo repo=${repo}
@@ -20,5 +22,3 @@ for image in $images; do
 docker build ${dir} -t ${repo}
 docker push ${repo}
 done
-
-
