@@ -85,7 +85,7 @@ jobs:
           - name: ubuntu22-gcc11-cuda11-rel (ubi8.8, gcc 11.4.0, cuda-12.2.2, Release)
             DOCKER_REPOSITORY: geosx/ubuntu22:ubuntu22.04-cuda11.8.0
             OS: ubuntu-22.04
-            CMAKE_CXX_COMPILER: /usr/bin/gcc++
+            CMAKE_CXX_COMPILER: /usr/bin/g++
             CMAKE_C_COMPILER: /usr/bin/gcc
             CMAKE_BUILD_TYPE: Release
             ENABLE_CUDA: ON
@@ -94,7 +94,7 @@ jobs:
           - name: ubuntu22-gcc11-cuda11-dbg (ubi8.8, gcc 11.4.0, cuda-12.2.2, Debug)
             DOCKER_REPOSITORY: geosx/ubuntu22:ubuntu22.04-cuda11.8.0
             OS: ubuntu-22.04
-            CMAKE_CXX_COMPILER: /usr/bin/gcc++
+            CMAKE_CXX_COMPILER: /usr/bin/g++
             CMAKE_C_COMPILER: /usr/bin/gcc
             CMAKE_BUILD_TYPE: Debug
             ENABLE_CUDA: ON
