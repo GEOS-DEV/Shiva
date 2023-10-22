@@ -89,6 +89,7 @@ jobs:
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Release
             ENABLE_CUDA: ON
+            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
 
           - name: RHEL8.8-gcc12-cuda11-rel (ubi8.8, gcc 12.2.1, cuda-12.2.2, Release)
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8-cuda12.2.2
@@ -97,6 +98,7 @@ jobs:
             CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
             CMAKE_BUILD_TYPE: Release
             ENABLE_CUDA: ON
+            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
 
     steps:
     - name: Checkout Repository

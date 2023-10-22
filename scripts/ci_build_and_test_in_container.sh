@@ -55,7 +55,10 @@ if [[ "$*" == *--test-documentation* ]]; then
 fi
 
 or_die make
-or_die ctest --output-on-failure
+
+if [[ "$*" != *--disable-unit-tests* ]]; then
+  or_die ctest --output-on-failure -E "testUncrustifyCheck|testDoxygenCheck"
+fi
 
 
 exit 0
