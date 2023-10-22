@@ -82,7 +82,7 @@ jobs:
             CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
             CMAKE_BUILD_TYPE: Release
 
-          - name: RHEL8.8-clang15-cuda11-rel (ubi8.8, clang-15.0.7, cuda-12.2.2, Release)
+          - name: RHEL8.8-clang15-cuda12-rel (ubi8.8, clang-15.0.7, cuda-12.2.2, Release)
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8-cuda12.2.2
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: clang++
@@ -91,7 +91,7 @@ jobs:
             ENABLE_CUDA: ON
             BUILD_AND_TEST_ARGS: "--disable-unit-tests"
 
-          - name: RHEL8.8-gcc12-cuda11-rel (ubi8.8, gcc 12.2.1, cuda-12.2.2, Release)
+          - name: RHEL8.8-gcc12-cuda12-rel (ubi8.8, gcc 12.2.1, cuda-12.2.2, Release)
             DOCKER_REPOSITORY: geosx/ubi8:ubi8.8-cuda12.2.2
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
