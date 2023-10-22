@@ -38,4 +38,3 @@ endif()
 
 
 set( CAMP_ENABLE_TESTS OFF CACHE BOOL "")
-target_compile_options( camp PRIVATE "-Wno-shadow") 
