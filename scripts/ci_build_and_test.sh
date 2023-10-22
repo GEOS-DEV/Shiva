@@ -19,6 +19,7 @@ docker run \
   -e CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} \
   -e CC=${CMAKE_C_COMPILER} \
   -e CXX=${CMAKE_CXX_COMPILER} \
+  -e ENABLE_CUDA=${ENABLE_CUDA} \
   -e CMAKE_BUILD_TYPE \
   ${DOCKER_REPOSITORY} \
   ${BUILD_DIR_MOUNT_POINT}/scripts/ci_build_and_test_in_container.sh ${BUILD_AND_TEST_ARGS};

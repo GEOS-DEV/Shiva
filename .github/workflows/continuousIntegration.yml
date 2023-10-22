@@ -54,14 +54,14 @@ jobs:
       matrix:
         include:
           - name: RHEL8.8-clang15-deb (ubi8.8, clang-15.0.7, Debug)
-            DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
+            DOCKER_REPOSITORY: geosx/ubi8:ubi8.8-854
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Debug
 
           - name: RHEL8.8-clang15-rel (ubi8.8, clang-15.0.7, Release)
-            DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
+            DOCKER_REPOSITORY: geosx/ubi8:ubi8.8-854
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
@@ -69,19 +69,26 @@ jobs:
             CLANGTIDY_EXECUTABLE: clang-tidy
 
           - name: RHEL8.8-gcc12-deb (ubi8.8, gcc 12.2.1 , Debug)
-            DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
+            DOCKER_REPOSITORY: geosx/ubi8:ubi8.8-854
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
             CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
             CMAKE_BUILD_TYPE: Debug
 
           - name: RHEL8.8-gcc12-rel (ubi8.8, gcc 12.2.1 , Release)
-            DOCKER_REPOSITORY: geosx/ubi8:ubi8.8
+            DOCKER_REPOSITORY: geosx/ubi8:ubi8.8-854
             OS: ubuntu-22.04
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
             CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
             CMAKE_BUILD_TYPE: Release
 
+          - name: RHEL8.8-clang15-cuda11-rel (ubi8.8, clang-15.0.7, cuda-11.8.0, Release)
+            DOCKER_REPOSITORY: geosx/ubi8.8-cuda11.8.0
+            OS: ubuntu-22.04
+            CMAKE_CXX_COMPILER: clang++
+            CMAKE_C_COMPILER: clang
+            CMAKE_BUILD_TYPE: Release
+            ENABLE_CUDA: ON
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
@@ -98,5 +105,6 @@ jobs:
         CMAKE_CXX_COMPILER: ${{ matrix.CMAKE_CXX_COMPILER }}
         CMAKE_C_COMPILER: ${{ matrix.CMAKE_C_COMPILER }}
         CMAKE_BUILD_TYPE: ${{ matrix.CMAKE_BUILD_TYPE }}
+        ENABLE_CUDA: ${{ matrix.ENABLE_CUDA }}
         HOST_CONFIG: hostconfigs/environment.cmake
       run: ./scripts/ci_build_and_test.sh

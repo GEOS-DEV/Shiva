@@ -9,16 +9,15 @@ set(ENABLE_GTEST_DEATH_TESTS ON CACHE BOOL "" FORCE)
 
 set(ENABLE_CUDA "$ENV{ENABLE_CUDA}" CACHE BOOL "" FORCE)
 if(ENABLE_CUDA)
-
-  set(CMAKE_CUDA_FLAGS "$ENV{CMAKE_CUDA_FLAGS}" CACHE STRING "" FORCE)
-  if(NOT CMAKE_CUDA_FLAGS)
-    set(CMAKE_CUDA_FLAGS "Unused" CACHE STRING "" FORCE)
-  endif()
-
   set(CUDA_TOOLKIT_ROOT_DIR "$ENV{CUDA_TOOLKIT_ROOT_DIR}" CACHE PATH "" FORCE)
   if(NOT CUDA_TOOLKIT_ROOT_DIR)
     set(CUDA_TOOLKIT_ROOT_DIR "/usr/local/cuda" CACHE PATH "" FORCE)
   endif()
 
   set(CUDA_ARCH "$ENV{CUDA_ARCH}" CACHE STRING "" FORCE)
+
+  set(CMAKE_CUDA_HOST_COMPILER ${CMAKE_CXX_COMPILER} CACHE STRING "")
+  set(CMAKE_CUDA_COMPILER ${CUDA_TOOLKIT_ROOT_DIR}/bin/nvcc CACHE STRING "")
+  set(CMAKE_CUDA_FLAGS "-restrict --expt-extended-lambda --expt-relaxed-constexpr -Werror cross-execution-space-call,reorder,deprecated-declarations" CACHE STRING "")
+
 endif()
