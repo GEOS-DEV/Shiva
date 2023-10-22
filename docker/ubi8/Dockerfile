@@ -1,4 +1,4 @@
-FROM redhat/ubi8:8.8 AS ubi8
+FROM redhat/ubi8:8.8-854 AS ubi8
 
 
 # install required packages 
