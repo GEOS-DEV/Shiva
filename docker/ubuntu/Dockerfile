@@ -1,4 +1,4 @@
-FROM ubuntu:22.10 AS ubuntu22
+FROM ubuntu:22.04 AS ubuntu22
 
 # install required packages 
 RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
