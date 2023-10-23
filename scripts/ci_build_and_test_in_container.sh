@@ -12,7 +12,7 @@ free -m
 function or_die () {
     "$@"
     local status=$?
-
+    echo status = $status
     if [[ $status != 0 ]] ; then
         echo ERROR $status command: $@
         exit $status

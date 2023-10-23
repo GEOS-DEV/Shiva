@@ -40,6 +40,8 @@ jobs:
       env:
         DOCKER_REPOSITORY: geosx/ubuntu:22.04
         HOST_CONFIG: hostconfigs/environment.cmake
+        CMAKE_CXX_COMPILER: /usr/bin/clang++
+        CMAKE_C_COMPILER: /usr/bin/clang
         CMAKE_BUILD_TYPE: Release
         BUILD_AND_TEST_ARGS: --test-doxygen
       run: ./scripts/ci_build_and_test.sh
