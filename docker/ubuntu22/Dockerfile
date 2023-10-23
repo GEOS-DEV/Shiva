@@ -1,5 +1,4 @@
-FROM nvidia/cuda:11.8.0-devel-ubuntu22.04 AS ubuntu22-cuda11
-
+FROM ubuntu:22.10 AS ubuntu22
 
 # install required packages 
 RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
