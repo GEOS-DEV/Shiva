@@ -49,12 +49,14 @@ if [[ "$*" == *--test-code-style* ]]; then
 fi
 
 # Documentation check
-if [[ "$*" == *--test-documentation* ]]; then
+if [[ "$*" == *--test-doxygen* ]]; then
   or_die ctest --output-on-failure -R "testDoxygenCheck"
   exit 0
 fi
 
-or_die make
+if [[ "$*" == *--build-exe* ]]; then
+  or_die make
+fi
 
 if [[ "$*" != *--disable-unit-tests* ]]; then
   or_die ctest --output-on-failure -E "testUncrustifyCheck|testDoxygenCheck"

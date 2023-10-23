@@ -28,21 +28,19 @@ jobs:
   #       BUILD_AND_TEST_ARGS: --test-code-style
   #     run: ./scripts/ci_build_and_test.sh
 
-  # documentation:
-  #   needs: [check_pull_request_is_not_a_draft]
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #   - name: Checkout Repository
-  #     uses: actions/checkout@v3
-  #     with:
-  #       submodules: true
-  #       lfs: false
-  #   - name: Check documentation
-  #     env:
-  #       DOCKER_REPOSITORY: geosx/ubuntu20.04-gcc9
-  #       CMAKE_BUILD_TYPE: Release
-  #       BUILD_AND_TEST_ARGS: --test-documentation
-  #     run: ./scripts/ci_build_and_test.sh
+  doxygen_check:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        submodules: true
+        lfs: false
+    - name: Check doxygen
+      env:
+        DOCKER_REPOSITORY: geosx/ubuntu:22.04
+        BUILD_AND_TEST_ARGS: --test-doxygen
+      run: ./scripts/ci_build_and_test.sh
 
 
   linux_builds:
@@ -154,7 +152,7 @@ jobs:
         CMAKE_C_COMPILER: ${{ matrix.CMAKE_C_COMPILER }}
         CMAKE_BUILD_TYPE: ${{ matrix.CMAKE_BUILD_TYPE }}
         ENABLE_CUDA: ${{ matrix.ENABLE_CUDA }}
-        BUILD_AND_TEST_ARGS: ${{ matrix.BUILD_AND_TEST_ARGS }}
+        BUILD_AND_TEST_ARGS: ${{ matrix.BUILD_AND_TEST_ARGS }} --build-exe
         HOST_CONFIG: hostconfigs/environment.cmake
       run: ./scripts/ci_build_and_test.sh
 
@@ -166,7 +164,8 @@ jobs:
     env:
       RETURN_VAL: |
         ${{
-        needs.linux_builds.result == 'success'
+        needs.linux_builds.result == 'success' &&
+        needs.doxygen_check.result == 'success'
         }}
     steps:
     - name: PR Success
