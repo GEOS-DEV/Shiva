@@ -54,6 +54,12 @@ if [[ "$*" == *--test-doxygen* ]]; then
   exit 0
 fi
 
+# code checks
+if [[ "$*" == *----code_checks* ]]; then
+  or_die ctest --output-on-failure -R "testCppCheck | testClangTidy"
+  exit 0
+fi
+
 if [[ "$*" == *--build-exe* ]]; then
   or_die make
 fi

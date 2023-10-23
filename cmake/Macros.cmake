@@ -45,8 +45,16 @@ macro(shiva_add_code_checks)
                          SOURCES   ${_sources}
                          UNCRUSTIFY_CFG_FILE ${PROJECT_SOURCE_DIR}/src/uncrustify.cfg
                          CPPCHECK_FLAGS ${CPPCHECK_FLAGS}
-                         D
                          )
 
+    add_test( NAME testCppCheck
+             COMMAND bash -c "make cppcheck_check 2> >(tee cppcheck.err) >/dev/null && exit $(cat cppcheck.err | wc -l)"
+             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            )
 
+    add_test( NAME testClangTidy
+            COMMAND bash -c "make clang_tidy_check 2> >(tee tidyCheck.err) >/dev/null && exit $(cat tidyCheck.err | wc -l)"
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+           )            
+            
 endmacro(shiva_add_code_checks)
