@@ -39,6 +39,7 @@ jobs:
     - name: Check doxygen
       env:
         DOCKER_REPOSITORY: geosx/ubuntu:22.04
+        HOST_CONFIG: hostconfigs/environment.cmake
         BUILD_AND_TEST_ARGS: --test-doxygen
       run: ./scripts/ci_build_and_test.sh
 
