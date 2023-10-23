@@ -162,6 +162,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs:
     - linux_builds
+    - doxygen_check
     if: ${{ always() }}
     env:
       RETURN_VAL: |
