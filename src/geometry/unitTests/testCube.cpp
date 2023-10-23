@@ -26,10 +26,10 @@ void testConstructionAndSettersHelper()
 {
   constexpr double h = 3.14;
   double * data = nullptr;
-  pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const data )
+  pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeCube( h );
-    data[0] = cell.getLength();
+    kdata[0] = cell.getLength();
   } );
   EXPECT_EQ( data[0], h );
   pmpl::deallocateData( data );
@@ -45,12 +45,12 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
 {
   constexpr double h = 3.14;
   double * data = nullptr;
-  pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const data )
+  pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeCube( h );
     typename Cube< double >::JacobianType::type J;
     jacobian( cell, J );
-    data[0] = J;
+    kdata[0] = J;
   } );
   EXPECT_EQ( data[0], ( h / 2 ) );
   pmpl::deallocateData( data );

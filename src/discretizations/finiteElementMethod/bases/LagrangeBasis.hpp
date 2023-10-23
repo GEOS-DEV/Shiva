@@ -119,9 +119,9 @@ public:
     return executeSequence< numSupportPoints >( [&coord] ( auto const ... a ) constexpr
     {
       REAL_TYPE const values[ numSupportPoints ] = { valueProductTerm< BF_INDEX, decltype(a)::value >( coord )... };
-      auto func = [&values] ( auto a, auto ... b ) constexpr
+      auto func = [&values] ( auto aa, auto ... b ) constexpr
       {
-        constexpr int aVal = decltype(a)::value;
+        constexpr int aVal = decltype(aa)::value;
         return gradientOfValueTerm< BF_INDEX, aVal >() * ( valueProductFactor< decltype(b)::value, aVal >( values ) * ... );
       };
 

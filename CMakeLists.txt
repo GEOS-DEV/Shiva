@@ -68,6 +68,7 @@ include( cmake/Config.cmake )
 
 add_subdirectory( src )
 add_subdirectory( tpl/camp )
+target_compile_options( camp PRIVATE "-Wno-shadow") 
 
 # if( SHIVA_ENABLE_DOCS )
      add_subdirectory( docs )
