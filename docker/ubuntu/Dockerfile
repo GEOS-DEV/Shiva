@@ -7,6 +7,7 @@ RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
         curl \
         python3 \
         make \
+	gcc \
         clang \
         cppcheck \
         clang-tidy
