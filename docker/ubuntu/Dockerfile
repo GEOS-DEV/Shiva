@@ -6,6 +6,7 @@ RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         curl \
         python3 \
+	make \
         clang \
         doxygen \
         cppcheck \
