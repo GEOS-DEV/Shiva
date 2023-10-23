@@ -20,6 +20,6 @@ for image in $images; do
   echo 
 
 
-#docker build ${dir} -t ${repo}
-#docker push ${repo}
+  docker build ${dir} -t ${repo}
+  docker push ${repo}
 done

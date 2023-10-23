@@ -2,7 +2,6 @@ FROM ubuntu:22.04 AS ubuntu22
 
 # install required packages 
 RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-    rm /etc/apt/sources.list.d/*.list && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         curl \
