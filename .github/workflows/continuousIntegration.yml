@@ -40,6 +40,8 @@ jobs:
       env:
         DOCKER_REPOSITORY: geosx/ubuntu:22.04
         HOST_CONFIG: hostconfigs/environment.cmake
+        CMAKE_CXX_COMPILER: /usr/bin/clang++
+        CMAKE_C_COMPILER: /usr/bin/clang
         CMAKE_BUILD_TYPE: Release
         BUILD_AND_TEST_ARGS: --test-doxygen
       run: ./scripts/ci_build_and_test.sh
@@ -57,6 +59,8 @@ jobs:
           env:
             DOCKER_REPOSITORY: geosx/ubuntu:22.04
             HOST_CONFIG: hostconfigs/environment.cmake
+            CMAKE_CXX_COMPILER: /usr/bin/clang++
+            CMAKE_C_COMPILER: /usr/bin/clang
             CMAKE_BUILD_TYPE: Release
             BUILD_AND_TEST_ARGS: --code_checks
           run: ./scripts/ci_build_and_test.sh
@@ -82,7 +86,6 @@ jobs:
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Release
-            CLANGTIDY_EXECUTABLE: clang-tidy
 
           - name: RHEL8.8-gcc12-dbg (ubi8.8, gcc 12.2.1, Debug)
             DOCKER_REPOSITORY: geosx/ubi:8.8-854
