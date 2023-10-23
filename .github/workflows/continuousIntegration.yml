@@ -156,3 +156,21 @@ jobs:
         BUILD_AND_TEST_ARGS: ${{ matrix.BUILD_AND_TEST_ARGS }}
         HOST_CONFIG: hostconfigs/environment.cmake
       run: ./scripts/ci_build_and_test.sh
+
+  check_that_all_jobs_succeeded:
+    runs-on: ubuntu-22.04
+    needs:
+    - linux_builds
+    if: ${{ always() }}
+    env:
+      RETURN_VAL: |
+        ${{
+        needs.linux_builds.result == 'success'
+        }}
+    steps:
+    - name: PR Success
+      if: ${{ contains(env.RETURN_VAL, 'true') }}
+      run: "true"
+    - name: PR Failure
+      if: ${{ contains(env.RETURN_VAL, 'false') }}
+      run: "false"
