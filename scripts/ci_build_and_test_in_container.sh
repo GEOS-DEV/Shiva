@@ -12,7 +12,7 @@ free -m
 function or_die () {
     "$@"
     local status=$?
-
+    echo status = $status
     if [[ $status != 0 ]] ; then
         echo ERROR $status command: $@
         exit $status
@@ -49,16 +49,26 @@ if [[ "$*" == *--test-code-style* ]]; then
 fi
 
 # Documentation check
-if [[ "$*" == *--test-documentation* ]]; then
+if [[ "$*" == *--test-doxygen* ]]; then
   or_die ctest --output-on-failure -R "testDoxygenCheck"
   exit 0
 fi
 
-or_die make
-
-if [[ "$*" != *--disable-unit-tests* ]]; then
-  or_die ctest --output-on-failure -E "testUncrustifyCheck|testDoxygenCheck"
+# code checks
+if [[ "$*" == *----code_checks* ]]; then
+  or_die ctest --output-on-failure -R "testCppCheck|testClangTidy"
+  exit 0
 fi
+
+if [[ "$*" == *--build-exe* ]]; then
+  or_die make -j $(nproc)
+
+  if [[ "$*" != *--disable-unit-tests* ]]; then
+    or_die ctest --output-on-failure -E "testUncrustifyCheck|testDoxygenCheck|testCppCheck|testClangTidy"
+  fi
+fi
+
+
 
 
 exit 0
