@@ -62,11 +62,13 @@ fi
 
 if [[ "$*" == *--build-exe* ]]; then
   or_die make
+
+  if [[ "$*" != *--disable-unit-tests* ]]; then
+    or_die ctest --output-on-failure -E "testUncrustifyCheck|testDoxygenCheck|testCppCheck|testClangTidy"
+  fi
 fi
 
-if [[ "$*" != *--disable-unit-tests* ]]; then
-  or_die ctest --output-on-failure -E "testUncrustifyCheck|testDoxygenCheck|testCppCheck|testClangTidy"
-fi
+
 
 
 exit 0

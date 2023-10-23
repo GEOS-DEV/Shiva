@@ -9,7 +9,6 @@ RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
         curl \
         python3 \
         clang \
-        doxygen \
         cppcheck \
         clang-tidy
 
