@@ -39,9 +39,27 @@ jobs:
     - name: Check doxygen
       env:
         DOCKER_REPOSITORY: geosx/ubuntu:22.04
+        HOST_CONFIG: hostconfigs/environment.cmake
+        CMAKE_BUILD_TYPE: Release
         BUILD_AND_TEST_ARGS: --test-doxygen
       run: ./scripts/ci_build_and_test.sh
 
+
+  code_checks:
+        runs-on: ubuntu-22.04
+        steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v3
+          with:
+            submodules: true
+            lfs: false
+        - name: code_checks
+          env:
+            DOCKER_REPOSITORY: geosx/ubuntu:22.04
+            HOST_CONFIG: hostconfigs/environment.cmake
+            CMAKE_BUILD_TYPE: Release
+            BUILD_AND_TEST_ARGS: --code_checks
+          run: ./scripts/ci_build_and_test.sh
 
   linux_builds:
     name: ${{matrix.name}}
@@ -160,12 +178,15 @@ jobs:
     runs-on: ubuntu-22.04
     needs:
     - linux_builds
+    - doxygen_check
+    - code_checks
     if: ${{ always() }}
     env:
       RETURN_VAL: |
         ${{
         needs.linux_builds.result == 'success' &&
-        needs.doxygen_check.result == 'success'
+        needs.doxygen_check.result == 'success' &&
+        needs.code_checks.result == 'success'
         }}
     steps:
     - name: PR Success
