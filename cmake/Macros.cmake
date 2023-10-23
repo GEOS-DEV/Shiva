@@ -47,14 +47,14 @@ macro(shiva_add_code_checks)
                          CPPCHECK_FLAGS ${CPPCHECK_FLAGS}
                          )
 
-    if( CPPCHECK_EXECUTABLE )
+    if( CPPCHECK_FOUND )
         add_test( NAME testCppCheck
                 COMMAND bash -c "make cppcheck_check 2> >(tee cppcheck.err) >/dev/null && exit $(cat cppcheck.err | wc -l)"
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 )
     endif()
 
-    if( CLANGTIDY_EXECUTABLE )
+    if( CLANGTIDY_FOUND )
         add_test( NAME testClangTidy
                 COMMAND bash -c "make clang_tidy_check 2> >(tee tidyCheck.err) >/dev/null && exit $(cat tidyCheck.err | wc -l)"
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}

@@ -84,7 +84,6 @@ jobs:
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Release
-            CLANGTIDY_EXECUTABLE: clang-tidy
 
           - name: RHEL8.8-gcc12-dbg (ubi8.8, gcc 12.2.1, Debug)
             DOCKER_REPOSITORY: geosx/ubi:8.8-854
