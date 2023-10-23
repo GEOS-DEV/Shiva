@@ -8,9 +8,11 @@ RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
         python3 \
 	make \
         clang \
-        doxygen \
         cppcheck \
         clang-tidy
 
 ARG CMAKE_VERSION=3.23.5
 RUN curl -fsSL -k  https://cmake.org/files/v${CMAKE_VERSION%.[0-9]*}/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz | tar --directory=/usr/local --strip-components=1 -xzf -
+
+ARG DOXYGEN_VERSION=1.9.8
+RUN curl -fsSL -k  https://www.doxygen.nl/files/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz | tar --directory=/usr/local --strip-components=1 -xzf -
