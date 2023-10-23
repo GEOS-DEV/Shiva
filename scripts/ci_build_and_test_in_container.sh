@@ -56,7 +56,7 @@ fi
 
 # code checks
 if [[ "$*" == *----code_checks* ]]; then
-  or_die ctest --output-on-failure -R "testCppCheck | testClangTidy"
+  or_die ctest --output-on-failure -R "testCppCheck|testClangTidy"
   exit 0
 fi
 
@@ -65,7 +65,7 @@ if [[ "$*" == *--build-exe* ]]; then
 fi
 
 if [[ "$*" != *--disable-unit-tests* ]]; then
-  or_die ctest --output-on-failure -E "testUncrustifyCheck | testDoxygenCheck | testCppCheck | testClangTidy"
+  or_die ctest --output-on-failure -E "testUncrustifyCheck|testDoxygenCheck|testCppCheck|testClangTidy"
 fi
 
 
