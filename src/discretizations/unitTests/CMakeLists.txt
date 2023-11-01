@@ -3,6 +3,7 @@
 #
 
 set( unit_tests_sources
+     testFiniteElementSpace.cpp
      testLagrangeBasis.cpp
      testParentElement.cpp
      testSpacing.cpp
