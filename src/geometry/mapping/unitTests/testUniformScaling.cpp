@@ -1,6 +1,6 @@
 
-#include "../Cube.hpp"
-#include "../geometryUtilities.hpp"
+#include "../UniformScaling.hpp"
+#include "../../geometryUtilities.hpp"
 #include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>
@@ -12,9 +12,9 @@ using namespace shiva::geometry::utilities;
 
 
 template< typename REAL_TYPE >
-SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeCube( REAL_TYPE const h )
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeUniformScaling( REAL_TYPE const h )
 {
-  Cube< REAL_TYPE > cell;
+  UniformScaling< REAL_TYPE > cell;
   cell.setLength( h );
   static_assert( decltype(cell)::jacobianIsConstInCell() == true );
   return cell;
@@ -27,14 +27,14 @@ void testConstructionAndSettersHelper()
   double * data = nullptr;
   pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const kdata )
   {
-    auto cell = makeCube( h );
+    auto cell = makeUniformScaling( h );
     kdata[0] = cell.getLength();
   } );
   EXPECT_EQ( data[0], h );
   pmpl::deallocateData( data );
 }
 
-TEST( testCube, testConstructionAndSetters )
+TEST( testUniformScaling, testConstructionAndSetters )
 {
   testConstructionAndSettersHelper();
 }
@@ -46,33 +46,33 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
   double * data = nullptr;
   pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const kdata )
   {
-    auto cell = makeCube( h );
-    typename Cube< double >::JacobianType::type J;
+    auto cell = makeUniformScaling( h );
+    typename UniformScaling< double >::JacobianType::type J;
     jacobian( cell, J );
     kdata[0] = J;
   } );
   EXPECT_EQ( data[0], ( h / 2 ) );
   pmpl::deallocateData( data );
 }
-TEST( testCube, testJacobianFunctionModifyLvalueRefArg )
+TEST( testUniformScaling, testJacobianFunctionModifyLvalueRefArg )
 {
   testJacobianFunctionModifyLvalueRefArgHelper();
 }
 
 
-TEST( testCube, testJacobianFunctionReturnByValue )
+TEST( testUniformScaling, testJacobianFunctionReturnByValue )
 {
   double const h = 3.14;
-  auto cell = makeCube( h );
+  auto cell = makeUniformScaling( h );
 
   auto J = jacobian( cell );
   EXPECT_EQ( J.data, ( h / 2 ) );
 }
 
-TEST( testCube, testInvJacobianFunctionModifyLvalueRefArg )
+TEST( testUniformScaling, testInvJacobianFunctionModifyLvalueRefArg )
 {
   double const h = 3.14;
-  auto cell = makeCube( h );
+  auto cell = makeUniformScaling( h );
 
   typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ;
   double detJ;
@@ -81,10 +81,10 @@ TEST( testCube, testInvJacobianFunctionModifyLvalueRefArg )
   EXPECT_EQ( invJ, ( 2 / h ) );
 }
 
-TEST( testCube, testInvJacobianFunctionReturnByValue )
+TEST( testUniformScaling, testInvJacobianFunctionReturnByValue )
 {
   double const h = 3.14;
-  auto cell = makeCube( h );
+  auto cell = makeUniformScaling( h );
 
   auto [ detJ, invJ ] = inverseJacobian( cell );
   EXPECT_EQ( detJ, 0.125 * h * h * h );

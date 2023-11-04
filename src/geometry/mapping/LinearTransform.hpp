@@ -1,6 +1,6 @@
 
 /**
- * @file Cuboid.hpp
+ * @file LinearTransform.hpp
  */
 
 #pragma once
@@ -29,10 +29,10 @@ namespace geometry
  *
  * The term cuboid is used here to define a 3-dimensional volume with 6
  * quadralateral sides.
- * <a href="https://en.wikipedia.org/wiki/Cuboid"> Cuboid (Wikipedia)</a>
+ * <a href="https://en.wikipedia.org/wiki/LinearTransform"> LinearTransform (Wikipedia)</a>
  */
 template< typename REAL_TYPE >
-class Cuboid
+class LinearTransform
 {
 public:
 
@@ -141,8 +141,8 @@ namespace utilities
  * @tparam REAL_TYPE The floating point type.
  */
 template< typename REAL_TYPE >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( Cuboid< REAL_TYPE > const &,//cell,
-                                                             typename Cuboid< REAL_TYPE >::JacobianType::type & )//J )
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE > const &,//cell,
+                                                             typename LinearTransform< REAL_TYPE >::JacobianType::type & )//J )
 {}
 
 /**
@@ -155,9 +155,9 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( Cuboid< REAL_TYPE >
  */
 template< typename REAL_TYPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-jacobian( Cuboid< REAL_TYPE > const & cell,
+jacobian( LinearTransform< REAL_TYPE > const & cell,
           REAL_TYPE const (&pointCoordsParent)[3],
-          typename Cuboid< REAL_TYPE >::JacobianType::type & J )
+          typename LinearTransform< REAL_TYPE >::JacobianType::type & J )
 {
 
   cell.forVertices( [&J, pointCoordsParent ] ( auto const & index, REAL_TYPE const (&vertexCoord)[3] )
@@ -198,9 +198,9 @@ jacobian( Cuboid< REAL_TYPE > const & cell,
  */
 template< typename REAL_TYPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-inverseJacobian( Cuboid< REAL_TYPE > const & cell,
+inverseJacobian( LinearTransform< REAL_TYPE > const & cell,
                  REAL_TYPE const (&parentCoords)[3],
-                 typename Cuboid< REAL_TYPE >::JacobianType::type & invJ,
+                 typename LinearTransform< REAL_TYPE >::JacobianType::type & invJ,
                  REAL_TYPE & detJ )
 {
   jacobian( cell, parentCoords, invJ );

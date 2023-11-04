@@ -1,6 +1,6 @@
 
-#include "../Cuboid.hpp"
-#include "../geometryUtilities.hpp"
+#include "../LinearTransform.hpp"
+#include "../../geometryUtilities.hpp"
 #include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>
@@ -80,9 +80,9 @@ constexpr double detJref[8] = { 1.9654823830313,
                                 2.219082631125 };
 
 template< typename REAL_TYPE >
-SHIVA_HOST_DEVICE auto makeCuboid( REAL_TYPE const (&X)[8][3] )
+SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 {
-  Cuboid< REAL_TYPE > cell;
+  LinearTransform< REAL_TYPE > cell;
   typename decltype(cell)::IndexType index;
 
   forRange( index = {0, 0, 0}, [&cell, &X] ( auto const & i )
@@ -104,7 +104,7 @@ void testConstructionAndSettersHelper()
   double * data = nullptr;
   pmpl::genericKernelWrapper( 8 * 3, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
-    auto const cell = makeCuboid( Xref );
+    auto const cell = makeLinearTransform( Xref );
     typename decltype(cell)::IndexType index{0, 0, 0};
 
     forRange( index, [&cell, &kernelData] ( auto const & i )
@@ -137,7 +137,7 @@ void testConstructionAndSettersHelper()
   }
   pmpl::deallocateData( data );
 }
-TEST( testCuboid, testConstructionAndSetters )
+TEST( testLinearTransform, testConstructionAndSetters )
 {
   testConstructionAndSettersHelper();
 }
@@ -148,7 +148,7 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
   double * data = nullptr;
   pmpl::genericKernelWrapper( 9 * 8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
-    auto cell = makeCuboid( Xref );
+    auto cell = makeLinearTransform( Xref );
 
     for ( int q = 0; q < 8; ++q )
     {
@@ -177,7 +177,7 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
   pmpl::deallocateData( data );
 }
 
-TEST( testCuboid, testJacobianFunctionModifyLvalueRefArg )
+TEST( testLinearTransform, testJacobianFunctionModifyLvalueRefArg )
 {
   testJacobianFunctionModifyLvalueRefArgHelper();
 }
@@ -188,7 +188,7 @@ void testJacobianFunctionReturnByValueHelper()
   double * data = nullptr;
   pmpl::genericKernelWrapper( 9 * 8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
-    auto cell = makeCuboid( Xref );
+    auto cell = makeLinearTransform( Xref );
     for ( int q = 0; q < 8; ++q )
     {
       auto J = jacobian( cell, qCoords[q] );
@@ -215,7 +215,7 @@ void testJacobianFunctionReturnByValueHelper()
   pmpl::deallocateData( data );
 }
 
-TEST( testCuboid, testJacobianFunctionReturnByValue )
+TEST( testLinearTransform, testJacobianFunctionReturnByValue )
 {
   testJacobianFunctionReturnByValueHelper();
 }
@@ -226,7 +226,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
   double * data = nullptr;
   pmpl::genericKernelWrapper( 10 * 8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
-    auto cell = makeCuboid( Xref );
+    auto cell = makeLinearTransform( Xref );
     for ( int q = 0; q < 8; ++q )
     {
       typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ = { {0} };
@@ -260,7 +260,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
 
 }
 
-TEST( testCuboid, testInvJacobianFunctionModifyLvalueRefArg )
+TEST( testLinearTransform, testInvJacobianFunctionModifyLvalueRefArg )
 {
   testInvJacobianFunctionModifyLvalueRefArgHelper();
 }
@@ -271,7 +271,7 @@ void testInvJacobianFunctionReturnByValueHelper()
   double * data = nullptr;
   pmpl::genericKernelWrapper( 10 * 8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
-    auto cell = makeCuboid( Xref );
+    auto cell = makeLinearTransform( Xref );
     for ( int q = 0; q < 8; ++q )
     {
       auto [ detJ, invJ ] = inverseJacobian( cell, qCoords[q] );
@@ -301,7 +301,7 @@ void testInvJacobianFunctionReturnByValueHelper()
   pmpl::deallocateData( data );
 }
 
-TEST( testCuboid, testInvJacobianFunctionReturnByValue )
+TEST( testLinearTransform, testInvJacobianFunctionReturnByValue )
 {
   testInvJacobianFunctionReturnByValueHelper();
 }

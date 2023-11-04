@@ -1,5 +1,5 @@
 /**
- * @file RectangularCuboid.hpp
+ * @file Scaling.hpp
  */
 
 #pragma once
@@ -13,7 +13,7 @@ namespace geometry
 {
 
 /**
- * @brief Class definition for a RectangularCuboid geometry.
+ * @brief Class definition for a Scaling geometry.
  * direction.
  * @tparam REAL_TYPE The floating point type.
  *
@@ -24,7 +24,7 @@ namespace geometry
 
  */
 template< typename REAL_TYPE >
-class RectangularCuboid
+class Scaling
 {
 public:
 
@@ -93,10 +93,10 @@ namespace utilities
  */
 template< typename REAL_TYPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-jacobian( RectangularCuboid< REAL_TYPE > const & cell,
-          typename RectangularCuboid< REAL_TYPE >::JacobianType::type & J )
+jacobian( Scaling< REAL_TYPE > const & cell,
+          typename Scaling< REAL_TYPE >::JacobianType::type & J )
 {
-  typename RectangularCuboid< REAL_TYPE >::DataType const & h = cell.getLengths();
+  typename Scaling< REAL_TYPE >::DataType const & h = cell.getLengths();
   J[0] = 0.5 * h[0];
   J[1] = 0.5 * h[1];
   J[2] = 0.5 * h[2];
@@ -113,11 +113,11 @@ jacobian( RectangularCuboid< REAL_TYPE > const & cell,
  * @param detJ The determinant of the Jacobian transformation operator.
  */
 template< typename REAL_TYPE >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void inverseJacobian( RectangularCuboid< REAL_TYPE > const & cell,
-                                                                    typename RectangularCuboid< REAL_TYPE >::JacobianType::type & invJ,
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void inverseJacobian( Scaling< REAL_TYPE > const & cell,
+                                                                    typename Scaling< REAL_TYPE >::JacobianType::type & invJ,
                                                                     REAL_TYPE & detJ )
 {
-  typename RectangularCuboid< REAL_TYPE >::DataType const & h = cell.getLengths();
+  typename Scaling< REAL_TYPE >::DataType const & h = cell.getLengths();
   invJ[0] = 2.0 / h[0];
   invJ[1] = 2.0 / h[1];
   invJ[2] = 2.0 / h[2];
