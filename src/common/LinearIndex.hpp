@@ -8,8 +8,7 @@ namespace shiva
 
 #if 1
 /**
- * @brief LinearIndex is a templated linear index type consisting of a single
- * index of type T.
+ * @brief LinearIndex is a templated linear index type consisting of a single index of type T.
  * @tparam T The type of the index.
  */
 template< typename T >

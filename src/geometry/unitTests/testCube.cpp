@@ -11,7 +11,6 @@ using namespace shiva::geometry::utilities;
 
 
 
-
 template< typename REAL_TYPE >
 SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeCube( REAL_TYPE const h )
 {

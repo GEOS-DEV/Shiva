@@ -20,10 +20,9 @@ namespace geometry
  * @tparam N The number of dimensions of the n-cube.
  * @tparam MIN The minimum coordinate of the n-cube.
  * @tparam MAX The maximum coordinate of the n-cube.
- * @tparam DIVISOR The divisor of the coordinates of the n-cube. This is 
- *   required because the coordinates of the n-cube are integers, but the
- *   coordinates of the n-cube are floating point numbers.
- * 
+ * @tparam DIVISOR The divisor of the coordinates of the n-cube. This is
+ *   required because the coordinates of the n-cube are integers, but the coordinates of the n-cube are floating point numbers.
+ *
  * A n-cube is a generalization of a cube in n-dimensions.
  * <a href="https://en.wikipedia.org/wiki/Hypercube"> Wikipedia Hypercube</a>
  * <a href="https://mathworld.wolfram.com/Hypercube.html"> Wolfram Hypercube</a>
@@ -33,8 +32,8 @@ class NCube
 {
 public:
 
-  static_assert( MIN<MAX, "MIN must be less than MAX" );
-  static_assert( DIVISOR>0, "DIVISOR must be greater than 0" );
+  static_assert( MIN < MAX, "MIN must be less than MAX" );
+  static_assert( DIVISOR > 0, "DIVISOR must be greater than 0" );
 
   /**
    * @brief The number of dimension of the cube.
@@ -54,16 +53,16 @@ public:
   /**
    * @brief Returns the number of m-cubes in the n-cube.
    * @tparam M The number of dimensions of the m-cube.
-   * @return The number of m-cubes in the n-cube. An m-cube is the lower
-   *   dimensional object contained in the n-cube. For instance, the 0-cube is 
-   *   a vertex, the 1-cube is a line, the 2-cube is a square, the 3-cube is a 
+   * @return The number of m-cubes in the n-cube. An m-cube is the lower dimensional object contained in the n-cube. For instance, the
+   *0-cube is
+   *   a vertex, the 1-cube is a line, the 2-cube is a square, the 3-cube is a
    *   cube, etc. M must be less than or equal to N
    */
   template< int M >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numMCubes()
   {
-    static_assert( M<=N, "M must be less than or equal to N" );
-    return mathUtilities::pow<int,N-M>( 2 ) * mathUtilities::factorial< int, N >::value / ( mathUtilities::factorial<int,M>::value * mathUtilities::factorial< int, N-M >::value );
+    static_assert( M <= N, "M must be less than or equal to N" );
+    return mathUtilities::pow< int, N - M >( 2 ) * mathUtilities::factorial< int, N >::value / ( mathUtilities::factorial< int, M >::value * mathUtilities::factorial< int, N - M >::value );
   }
 
   /**
@@ -110,10 +109,9 @@ public:
   /**
    * @brief Returns the number of hyperfaces (n-1-cube) in the n-cube.
    * @return The number of hyperfaces (n-1-cube) in the n-cube.
-   * 
-   * The hyperfaces can be considered the number of n-1 dimensional objects
-   * in an n-cube. For instance, the hyperfaces of a cube are the faces of the
-   * cube. The hyperfaces of a square are the edges of the square. The 
+   *
+   * The hyperfaces can be considered the number of n-1 dimensional objects in an n-cube. For instance, the hyperfaces of a cube are the
+   *faces of the cube. The hyperfaces of a square are the edges of the square. The
    * hyperfaces of a line are the vertices of the line.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numHyperFaces()
@@ -126,7 +124,7 @@ public:
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE minCoord()
   {
-    return static_cast<RealType>(MIN) / DIVISOR;
+    return static_cast< RealType >(MIN) / DIVISOR;
   }
 
   /**
@@ -134,7 +132,7 @@ public:
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE maxCoord()
   {
-    return static_cast<RealType>(MAX) / DIVISOR;
+    return static_cast< RealType >(MAX) / DIVISOR;
   }
 
 
@@ -143,43 +141,43 @@ public:
    * @return The length of the cube.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE length()
-  { 
-    return static_cast<RealType>( MAX - MIN ) / DIVISOR;
+  {
+    return static_cast< RealType >( MAX - MIN ) / DIVISOR;
   }
-  
+
 
   /**
    * @brief Returns the volume of the n-cube.
    * @return The volume of the n-cube.
    */
   template< int DIM = N >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE 
-  typename std::enable_if< ( DIM>0 ), REAL_TYPE >::type
-  volume() 
-  { 
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+  typename std::enable_if< ( DIM > 0 ), REAL_TYPE >::type
+  volume()
+  {
     return volumeHelper();
   }
 
 
 private:
-    /**
-     * @brief Helper recusive function for volume calculation.
-     * @tparam DIM The current dimension for the recursion.
-     * @return The volume of the n-cube.
-     */
-    template< int DIM = N>
-    SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
-    volumeHelper()
+  /**
+   * @brief Helper recusive function for volume calculation.
+   * @tparam DIM The current dimension for the recursion.
+   * @return The volume of the n-cube.
+   */
+  template< int DIM = N >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
+  volumeHelper()
+  {
+    if constexpr ( DIM == 0 )
     {
-      if constexpr ( DIM == 0 )
-      {
-        return 1;
-      }
-      else
-      {
-        return length() * volumeHelper<DIM-1>();
-      }
+      return 1;
     }
+    else
+    {
+      return length() * volumeHelper< DIM - 1 >();
+    }
+  }
 
 };
 

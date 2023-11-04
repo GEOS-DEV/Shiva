@@ -11,7 +11,7 @@
 namespace shiva
 {
 
-/** 
+/**
  * @namespace shiva::mathUtilities
  * @brief Namespace for math utilities inside of shiva
  */
@@ -20,9 +20,8 @@ namespace mathUtilities
 
 
 
-
 template< typename T, int EXPONENT >
-SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE 
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
 T pow( T const base )
 {
   T result = 1;
@@ -33,12 +32,13 @@ T pow( T const base )
   return result;
 }
 
-template < typename T, T N, typename I = std::make_integer_sequence<T, N>>
+template< typename T, T N, typename I = std::make_integer_sequence< T, N > >
 struct factorial;
 
-template < typename T, T N, T ... ISEQ>
-struct factorial< T, N, std::integer_sequence< T, ISEQ... > > {
-   static constexpr T value = (static_cast<T>(1)* ... *(ISEQ + 1));
+template< typename T, T N, T ... ISEQ >
+struct factorial< T, N, std::integer_sequence< T, ISEQ... > >
+{
+  static constexpr T value = (static_cast< T >(1) * ... *(ISEQ + 1));
 };
 
 
@@ -50,7 +50,7 @@ struct factorial< T, N, std::integer_sequence< T, ISEQ... > > {
  * @param det The determinant of the matrix
  */
 template< typename REAL_TYPE >
-SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void 
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 inverse( REAL_TYPE (&matrix)[3][3], REAL_TYPE & det )
 {
 

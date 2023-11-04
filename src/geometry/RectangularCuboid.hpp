@@ -17,8 +17,8 @@ namespace geometry
  * direction.
  * @tparam REAL_TYPE The floating point type.
  *
- * A "rectangular cuboid" is defined here as a 3-dimensional volume with
- * 6 quadralatrial sides, 3 lengths in each direction with all corner angles 
+ * A "rectangular cuboid" is defined here as a 3-dimensional volume with 6 quadralatrial sides, 3 lengths in each direction with all corner
+ *angles
  * being 90 degrees.
  * <a href="https://en.wikipedia.org/wiki/Rectangular_cuboid"> Rectangular Cuboid (Wikipedia)</a>
 
@@ -36,8 +36,8 @@ public:
   using DataType = REAL_TYPE[3];
 
   /**
-   * @brief Returns a boolean indicating whether the Jacobian is constant in 
-   * the cell. This is used to determine whether the Jacobian should be 
+   * @brief Returns a boolean indicating whether the Jacobian is constant in
+   * the cell. This is used to determine whether the Jacobian should be
    * computed once per cell or once per quadrature point.
    * @return true
    */
@@ -92,9 +92,9 @@ namespace utilities
  * @param J The Jacobian transformation operator.
  */
 template< typename REAL_TYPE >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void 
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 jacobian( RectangularCuboid< REAL_TYPE > const & cell,
-               typename RectangularCuboid< REAL_TYPE >::JacobianType::type & J )
+          typename RectangularCuboid< REAL_TYPE >::JacobianType::type & J )
 {
   typename RectangularCuboid< REAL_TYPE >::DataType const & h = cell.getLengths();
   J[0] = 0.5 * h[0];
@@ -104,18 +104,18 @@ jacobian( RectangularCuboid< REAL_TYPE > const & cell,
 
 
 /**
- * @brief Calculates the inverse Jacobian transformation and detJ for a 
+ * @brief Calculates the inverse Jacobian transformation and detJ for a
  * rectangular cuboid.
  * @tparam REAL_TYPE The floating point type.
- * @param cell The rectangular cuboid for which the inverse Jacobian is 
+ * @param cell The rectangular cuboid for which the inverse Jacobian is
  * calculated.
  * @param invJ The inverse Jacobian transformation operator.
  * @param detJ The determinant of the Jacobian transformation operator.
  */
 template< typename REAL_TYPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void inverseJacobian( RectangularCuboid< REAL_TYPE > const & cell,
-                      typename RectangularCuboid< REAL_TYPE >::JacobianType::type & invJ,
-                      REAL_TYPE & detJ )
+                                                                    typename RectangularCuboid< REAL_TYPE >::JacobianType::type & invJ,
+                                                                    REAL_TYPE & detJ )
 {
   typename RectangularCuboid< REAL_TYPE >::DataType const & h = cell.getLengths();
   invJ[0] = 2.0 / h[0];

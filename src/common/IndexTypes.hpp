@@ -33,7 +33,7 @@ strideHelper( std::integer_sequence< int, INDICES... >,
 /**
  * @brief function for calculating the strides of a multi-index.
  * @tparam INDEX The index.
- * @tparam BASE_INDEX_TYPE the base type of the index...i.e. "int" 
+ * @tparam BASE_INDEX_TYPE the base type of the index...i.e. "int"
  * @tparam RANGES variaic pack of the ranges.
  * @param index The MultiIndexRange for which the stride will be calclauted.
  * @return The stride.
@@ -79,17 +79,17 @@ linearIndexHelper( T const & index,
  * @param func The function to be called in the iteration.
  */
 template< int DIM, typename BASE_INDEX_TYPE, BASE_INDEX_TYPE... RANGES, typename FUNC >
-SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void 
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start,
-                     MultiIndexRange< BASE_INDEX_TYPE, RANGES... > & index,
-                     FUNC && func )
+                MultiIndexRange< BASE_INDEX_TYPE, RANGES... > & index,
+                FUNC && func )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
   // if we are at the last dimension, then call func on index
   if constexpr ( DIM == (IndexType::NUM_INDICES - 1) )
   {
     int & a = index.data[DIM];
-    for ( a = start.data[DIM]; a < index.range(DIM); ++a )
+    for ( a = start.data[DIM]; a < index.range( DIM ); ++a )
     {
       func( index );
     }
@@ -98,7 +98,7 @@ forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start,
   else
   {
     int & a = index.data[DIM];
-    for ( a = start.data[DIM]; a < index.range(DIM); ++a )
+    for ( a = start.data[DIM]; a < index.range( DIM ); ++a )
     {
       forRangeHelper< DIM + 1 >( start, index, func );
     }
@@ -131,7 +131,7 @@ linearIndex( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
  */
 template< typename INDEX_TYPE >
 SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE INDEX_TYPE
-linearIndex( LinearIndex<INDEX_TYPE> const & index )
+linearIndex( LinearIndex< INDEX_TYPE > const & index )
 {
   return index;
 }
@@ -145,8 +145,8 @@ linearIndex( LinearIndex<INDEX_TYPE> const & index )
  * @param func The function to be called in the iteration.
  */
 template< typename BASE_INDEX_TYPE, BASE_INDEX_TYPE... RANGES, typename FUNC >
-SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void 
-forRange( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > & index, 
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
+forRange( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > & index,
           FUNC && func )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;

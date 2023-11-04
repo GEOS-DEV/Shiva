@@ -58,16 +58,16 @@ template< typename BASIS_HELPER_TYPE >
 void testBasisAtCompileTime()
 {
 #if defined(SHIVA_USE_DEVICE)
-  compileTimeKernel<BASIS_HELPER_TYPE><<<1,1>>>();
+  compileTimeKernel< BASIS_HELPER_TYPE ><< < 1, 1 >> > ();
 #else
-  compileTimeKernel<BASIS_HELPER_TYPE>();
+  compileTimeKernel< BASIS_HELPER_TYPE >();
 #endif
 }
 
 
 template< typename BASIS_HELPER_TYPE >
-SHIVA_GLOBAL void runTimeKernel( double * const values, 
-                                 double * const gradients)
+SHIVA_GLOBAL void runTimeKernel( double * const values,
+                                 double * const gradients )
 {
   using BasisType = typename BASIS_HELPER_TYPE::BasisType;
   constexpr int order = BASIS_HELPER_TYPE::order;
@@ -87,29 +87,29 @@ void testBasisAtRunTime()
   constexpr int order = BASIS_HELPER_TYPE::order;
   constexpr int N = order + 1;
 #if defined(SHIVA_USE_DEVICE)
-  constexpr int bytes = N*sizeof(double);
+  constexpr int bytes = N * sizeof(double);
   double * values;
   double * gradients;
   deviceMallocManaged( &values, bytes );
   deviceMallocManaged( &gradients, bytes );
-  runTimeKernel<BASIS_HELPER_TYPE><<<1,1>>>( values, gradients );
+  runTimeKernel< BASIS_HELPER_TYPE ><< < 1, 1 >> > ( values, gradients );
   deviceDeviceSynchronize();
 #else
   double values[N];
   double gradients[N];
-  runTimeKernel<BASIS_HELPER_TYPE>( values, gradients );
+  runTimeKernel< BASIS_HELPER_TYPE >( values, gradients );
 #endif
 
   constexpr double tolerance = 1.0e-12;
-  for( int a=0; a<N; ++a )
+  for ( int a = 0; a < N; ++a )
   {
     EXPECT_NEAR( values[a], BASIS_HELPER_TYPE::refValues[a], fabs( BASIS_HELPER_TYPE::refValues[a] * tolerance ) );
     EXPECT_NEAR( gradients[a], BASIS_HELPER_TYPE::refGradients[a], fabs( BASIS_HELPER_TYPE::refGradients[a] * tolerance ) );
   }
 
 #if defined(SHIVA_USE_DEVICE)
-  deviceFree(values);
-  deviceFree(gradients);
+  deviceFree( values );
+  deviceFree( gradients );
 #endif
 
 

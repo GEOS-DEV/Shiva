@@ -91,7 +91,7 @@ auto make_tuple( T && ... t )
  * @tparam T Types of the elements of the sequence.
  */
 template< int ... T >
-using int_sequence = std::integer_sequence< int, T... >;
+using int_sequence = std::integer_sequence< int, T ... >;
 
 /**
  * @brief alias for std::make_integer_sequence<int, N>.

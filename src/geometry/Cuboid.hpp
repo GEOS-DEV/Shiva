@@ -26,8 +26,8 @@ namespace geometry
 /**
  * @brief Class to represent a cuboid
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
- * 
- * The term cuboid is used here to define a 3-dimensional volume with 6 
+ *
+ * The term cuboid is used here to define a 3-dimensional volume with 6
  * quadralateral sides.
  * <a href="https://en.wikipedia.org/wiki/Cuboid"> Cuboid (Wikipedia)</a>
  */
@@ -37,7 +37,7 @@ class Cuboid
 public:
 
   /// The type used to represent the Jacobian transformation operation
-  using JacobianType = CArray2d<REAL_TYPE,3,3>;
+  using JacobianType = CArray2d< REAL_TYPE, 3, 3 >;
 
   /// The type used to represent the data stored at the vertices of the cell
   using DataType = REAL_TYPE[8][3];
@@ -46,11 +46,11 @@ public:
   using CoordType = REAL_TYPE[3];
 
   /// The type used to represent the index space of the cell
-  using IndexType = MultiIndexRange<int, 2,2,2>;
+  using IndexType = MultiIndexRange< int, 2, 2, 2 >;
 
   /**
-   * @brief Returns a boolean indicating whether the Jacobian is constant in 
-   * the cell. This is used to determine whether the Jacobian should be 
+   * @brief Returns a boolean indicating whether the Jacobian is constant in
+   * the cell. This is used to determine whether the Jacobian should be
    * computed once per cell or once per quadrature point.
    * @return true if the Jacobian is constant in the cell, false otherwise
    */
@@ -79,7 +79,7 @@ public:
   constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE CoordType const & getVertexCoord( INDEX_TYPE const & a ) const
   { return m_vertexCoords[ linearIndex( a ) ]; }
 
-  
+
   /**
    * @brief setter accessor for a component of a vertex coordinate
    * @tparam INDEX_TYPE The type of the index
@@ -88,10 +88,10 @@ public:
    * @param[in] value A reference to the vertex coordinate component
    */
   template< typename INDEX_TYPE >
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void 
-  setVertexCoord( INDEX_TYPE const & a, int const i, REAL_TYPE const & value ) 
-  { m_vertexCoords[ linearIndex(a) ][i] = value; }
-  
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void
+  setVertexCoord( INDEX_TYPE const & a, int const i, REAL_TYPE const & value )
+  { m_vertexCoords[ linearIndex( a ) ][i] = value; }
+
 
   /**
    * @brief setter accessor for the vertex coordinate
@@ -100,7 +100,7 @@ public:
    * @param[in] value The input coordinate
    */
   template< typename INDEX_TYPE >
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void 
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void
   setVertexCoord( INDEX_TYPE const & a, CoordType const & value )
   {
     m_vertexCoords[ linearIndex( a ) ][0] = value[0];
@@ -133,32 +133,31 @@ namespace utilities
 {
 
 /**
- * @brief NoOp that would calculate the Jacobian transormation of a cuboid 
- * from a parent cuboid with range from (-1,1) in each dimension. However the
- * Jacobian is not constant in the cell, so we keep this as a no-op to allow 
- * for it to be called in the same way as the other geometry objects with 
+ * @brief NoOp that would calculate the Jacobian transormation of a cuboid
+ * from a parent cuboid with range from (-1,1) in each dimension. However the Jacobian is not constant in the cell, so we keep this as a
+ *no-op to allow
+ * for it to be called in the same way as the other geometry objects with
  * constant Jacobian.
  * @tparam REAL_TYPE The floating point type.
  */
 template< typename REAL_TYPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( Cuboid< REAL_TYPE > const &,//cell,
-               typename Cuboid< REAL_TYPE >::JacobianType::type & )//J )
+                                                             typename Cuboid< REAL_TYPE >::JacobianType::type & )//J )
 {}
 
 /**
- * @brief Calculates the Jacobian transormation of a cuboid from a parent 
+ * @brief Calculates the Jacobian transormation of a cuboid from a parent
  * cuboid with range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
  * @param[in] cell The cuboid object
- * @param[in] pointCoordsParent The parent coordinates at which to calculate the
- * Jacobian.
+ * @param[in] pointCoordsParent The parent coordinates at which to calculate the Jacobian.
  * @param[out] J The inverse Jacobian transformation.
  */
 template< typename REAL_TYPE >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void 
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 jacobian( Cuboid< REAL_TYPE > const & cell,
-               REAL_TYPE const (&pointCoordsParent)[3],
-               typename Cuboid< REAL_TYPE >::JacobianType::type & J )
+          REAL_TYPE const (&pointCoordsParent)[3],
+          typename Cuboid< REAL_TYPE >::JacobianType::type & J )
 {
 
   cell.forVertices( [&J, pointCoordsParent ] ( auto const & index, REAL_TYPE const (&vertexCoord)[3] )
@@ -172,8 +171,10 @@ jacobian( Cuboid< REAL_TYPE > const & cell,
     int const a = index.data[0];
     int const b = index.data[1];
     int const c = index.data[2];
-    REAL_TYPE const dNdXi[3] = { 0.125 *       vertexCoordsParent[a]                          * ( 1 + vertexCoordsParent[b] * pointCoordsParent[1] ) * ( 1 + vertexCoordsParent[c] * pointCoordsParent[2] ),
-                                 0.125 * ( 1 + vertexCoordsParent[a] * pointCoordsParent[0] ) *       vertexCoordsParent[b] *                          ( 1 + vertexCoordsParent[c] * pointCoordsParent[2] ),
+    REAL_TYPE const dNdXi[3] = { 0.125 *       vertexCoordsParent[a]                          * ( 1 + vertexCoordsParent[b] * pointCoordsParent[1] ) *
+                                 ( 1 + vertexCoordsParent[c] * pointCoordsParent[2] ),
+                                 0.125 * ( 1 + vertexCoordsParent[a] * pointCoordsParent[0] ) *       vertexCoordsParent[b] *
+                                 ( 1 + vertexCoordsParent[c] * pointCoordsParent[2] ),
                                  0.125 * ( 1 + vertexCoordsParent[a] * pointCoordsParent[0] ) * ( 1 + vertexCoordsParent[b] * pointCoordsParent[1] ) *       vertexCoordsParent[c] };
 
     for ( int i = 0; i < 3; ++i )
@@ -187,21 +188,20 @@ jacobian( Cuboid< REAL_TYPE > const & cell,
 }
 
 /**
- * @brief Calculates the inverse Jacobian transormation of a cuboid from a 
+ * @brief Calculates the inverse Jacobian transormation of a cuboid from a
  * parent cuboid with range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
  * @param[in] cell The cuboid object
- * @param[in] parentCoords The parent coordinates at which to calculate the
- * Jacobian.
+ * @param[in] parentCoords The parent coordinates at which to calculate the Jacobian.
  * @param[out] invJ The inverse Jacobian transformation.
  * @param[out] detJ The determinant of the Jacobian transformation.
  */
 template< typename REAL_TYPE >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void 
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 inverseJacobian( Cuboid< REAL_TYPE > const & cell,
-                      REAL_TYPE const (&parentCoords)[3],
-                      typename Cuboid< REAL_TYPE >::JacobianType::type & invJ,
-                      REAL_TYPE & detJ )
+                 REAL_TYPE const (&parentCoords)[3],
+                 typename Cuboid< REAL_TYPE >::JacobianType::type & invJ,
+                 REAL_TYPE & detJ )
 {
   jacobian( cell, parentCoords, invJ );
   mathUtilities::inverse( invJ, detJ );

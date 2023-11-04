@@ -12,9 +12,8 @@ namespace shiva
 {
 
 /**
- * @brief This struct provides a static constexpr functions to compute the 
- * quadrature weights on a line that correspond with the coordinates of the
- * GaussLegendreSpacing.
+ * @brief This struct provides a static constexpr functions to compute the
+ * quadrature weights on a line that correspond with the coordinates of the GaussLegendreSpacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing/quadrature rule.
  */
@@ -26,7 +25,7 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
    * @param index The index of the point.
    * @return The weight of the point.
    */
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
   weight( int const index )
   {
     if constexpr ( N == 2 )
@@ -56,7 +55,7 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
    * @note This function is only available if INDEX is a compile time constant.
    */
   template< int INDEX >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
   weight()
   {
     if constexpr ( N == 2 )
@@ -81,9 +80,8 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
 };
 
 /**
- * @brief This struct provides a static constexpr functions to compute the 
- * quadrature weights on a line that correspond with the coordinates of the
- * GaussLobattoSpacing.
+ * @brief This struct provides a static constexpr functions to compute the
+ * quadrature weights on a line that correspond with the coordinates of the GaussLobattoSpacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing/quadrature rule.
  */
@@ -91,12 +89,12 @@ template< typename REAL_TYPE, int N >
 struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
 {
   /**
-   * @brief Returns the weight of a point defined by the Guass-Lobatto 
+   * @brief Returns the weight of a point defined by the Guass-Lobatto
    * quadrature rule.
    * @param index The index of the point.
    * @return The weight of the point.
    */
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
   weight( int const index )
   {
     if constexpr ( N == 2 )
@@ -126,14 +124,14 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
   }
 
   /**
-   * @brief Returns the weight of a point defined by the Guass-Lobatto 
+   * @brief Returns the weight of a point defined by the Guass-Lobatto
    * quadrature rule.
    * @tparam INDEX The index of the point.
    * @return The weight of the point.
    * @note This function is only available if INDEX is a compile time constant.
    */
   template< int INDEX >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
   weight()
   {
     if constexpr ( N == 2 )
