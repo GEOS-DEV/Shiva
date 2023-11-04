@@ -6,6 +6,8 @@
 
 #include "common/ShivaMacros.hpp"
 
+#include <utility>
+
 namespace shiva
 {
 
@@ -15,6 +17,31 @@ namespace shiva
  */
 namespace mathUtilities
 {
+
+
+
+
+template< typename T, int EXPONENT >
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE 
+T pow( T const base )
+{
+  T result = 1;
+  for ( int i = 0; i < EXPONENT; ++i )
+  {
+    result *= base;
+  }
+  return result;
+}
+
+template < typename T, T N, typename I = std::make_integer_sequence<T, N>>
+struct factorial;
+
+template < typename T, T N, T ... ISEQ>
+struct factorial< T, N, std::integer_sequence< T, ISEQ... > > {
+   static constexpr T value = (static_cast<T>(1)* ... *(ISEQ + 1));
+};
+
+
 
 /**
  * @brief Inverse of a 3x3 matrix

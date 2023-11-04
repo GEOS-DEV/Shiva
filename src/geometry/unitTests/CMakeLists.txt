@@ -5,6 +5,7 @@
 set( unit_tests_sources
      testCube.cpp
      testCuboid.cpp
+     testNCube.cpp
      testRectangularCuboid.cpp
      )
 

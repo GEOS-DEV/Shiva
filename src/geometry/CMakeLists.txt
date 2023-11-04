@@ -2,6 +2,7 @@
 set( geometry_headers
      Cube.hpp
      Cuboid.hpp
+     nCube.hpp
      RectangularCuboid.hpp
      geometryUtilities.hpp
      )
