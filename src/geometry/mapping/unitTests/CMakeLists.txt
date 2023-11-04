@@ -3,10 +3,9 @@
 #
 
 set( unit_tests_sources
-     testCube.cpp
-     testCuboid.cpp
-     testNCube.cpp
-     testRectangularCuboid.cpp
+     testUniformScaling.cpp
+     testLinearTransform.cpp
+     testScaling.cpp
      )
 
 set( dependencyList ${parallelDeps} gtest geometry )
@@ -32,7 +31,7 @@ foreach(test ${unit_tests_sources})
     get_filename_component( test_name ${test} NAME_WE )
     blt_add_executable( NAME ${test_name}
                         SOURCES ${test}
-                        HEADERS ${header} ../geometryUtilities.hpp
+                        HEADERS ${header} ../../geometryUtilities.hpp
                         OUTPUT_DIR ${TEST_OUTPUT_DIRECTORY}
                         DEPENDS_ON ${dependencyList}
                         )

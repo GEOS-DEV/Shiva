@@ -19,36 +19,33 @@ namespace finiteElementMethod
  * @brief Defines a class that provides static functions to calculate
  * quantities required from the parent element in a finite element method.
  * @tparam REAL_TYPE The floating point type to use
- * @tparam CELL_TYPE The cell type/geometry
+ * @tparam BASE_GEOMETRY The cell type/geometry
  * @tparam FUNCTIONAL_SPACE_TYPE The functional space type
  * @tparam BASIS_TYPE Pack of basis types to apply to each direction of the
  * parent element. There should be a basis defined for each direction.
  */
-template< typename REAL_TYPE, template< typename > typename CELL_TYPE, typename ... BASIS_TYPE >
+template< typename REAL_TYPE, typename BASE_GEOMETRY, typename ... BASIS_TYPE >
 class ParentElement
 {
 
 public:
 
   /// The type used to represent the cell/geometry
-  using CellType = CELL_TYPE< REAL_TYPE >;
+  using BaseGeometry = BASE_GEOMETRY;
 //  using FunctionalSpaceType = FUNCTIONAL_SPACE_TYPE;
-//  using IndexType = typename CellType::IndexType;
-
-  /// The type used to represent the Jacobian transformation operator
-  using JacobianType = typename CellType::JacobianType;
+//  using IndexType = typename BaseGeometry::IndexType;
 
   /// Alias for the floating point type
   using RealType = REAL_TYPE;
 
   /// Alias for the type that represents a coordinate
-  using CoordType = typename CellType::CoordType;
+  using CoordType = typename BaseGeometry::CoordType;
 
   /// The number of dimensions on the ParentElement
   static inline constexpr int numDims = sizeof...(BASIS_TYPE);
 
 
-  static_assert( numDims == CellType::numDims(), "numDims mismatch between cell and number of basis specified" );
+  static_assert( numDims == BaseGeometry::numDims(), "numDims mismatch between cell and number of basis specified" );
 
   /**
    * @brief Calculates the value of the basis function at the specified
