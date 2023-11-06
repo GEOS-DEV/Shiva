@@ -28,6 +28,9 @@ class Scaling
 {
 public:
 
+  /// Alias for the floating point type for the transform.
+  using RealType = REAL_TYPE;
+
   /// The type used to represent the Jacobian transformation operator
   using JacobianType = CArray1d< REAL_TYPE, 3 >;
 

@@ -1,6 +1,7 @@
 
+#include "geometry/shapes/NCube.hpp"
 #include "../LinearTransform.hpp"
-#include "../../geometryUtilities.hpp"
+#include "../JacobianTransforms.hpp"
 #include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>
@@ -82,7 +83,8 @@ constexpr double detJref[8] = { 1.9654823830313,
 template< typename REAL_TYPE >
 SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 {
-  LinearTransform< REAL_TYPE > cell;
+  using BaseGeometry = NCube< double, 3, -1, 1, 1 > ;
+  LinearTransform< REAL_TYPE, BaseGeometry > cell;
   typename decltype(cell)::IndexType index;
 
   forRange( index = {0, 0, 0}, [&cell, &X] ( auto const & i )

@@ -1,6 +1,6 @@
 
 #include "../UniformScaling.hpp"
-#include "../../geometryUtilities.hpp"
+#include "../JacobianTransforms.hpp"
 #include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>

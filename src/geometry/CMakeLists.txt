@@ -1,6 +1,6 @@
 
 set( geometry_headers
-     geometryUtilities.hpp
+     mapping/JacobianTransforms.hpp
      mapping/LinearTransform.hpp
      mapping/Scaling.hpp
      mapping/UniformScaling.hpp

@@ -21,6 +21,8 @@ template< typename REAL_TYPE >
 class UniformScaling
 {
 public:
+  /// Alias for the floating point type for the transform.
+  using RealType = REAL_TYPE;
 
   /// Alias for the floating point type for the Jacobian transformation.
   using JacobianType = Scalar< REAL_TYPE >;

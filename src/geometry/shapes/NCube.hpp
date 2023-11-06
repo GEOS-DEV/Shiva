@@ -1,5 +1,5 @@
 /**
- * @file Cube.hpp
+ * @file NCube.hpp
  */
 
 #pragma once
@@ -183,9 +183,17 @@ private:
 
 };
 
+/**
+ * @brief Alias for a 2-cube.
+ * @tparam REAL_TYPE The floating point type.
+ */
 template< typename REAL_TYPE >
 using Square = NCube< REAL_TYPE, 2, -1, 1, 1 >;
 
+/**
+ * @brief Alias for a 3-cube.
+ * @tparam REAL_TYPE The floating point type.
+ */
 template< typename REAL_TYPE >
 using Cube3 = NCube< REAL_TYPE, 3, -1, 1, 1 >;
 

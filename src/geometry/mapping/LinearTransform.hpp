@@ -31,19 +31,28 @@ namespace geometry
  * quadralateral sides.
  * <a href="https://en.wikipedia.org/wiki/LinearTransform"> LinearTransform (Wikipedia)</a>
  */
-template< typename REAL_TYPE >
+template< typename REAL_TYPE, typename BASE_GEOMETRY, int NDIMS = BASE_GEOMETRY::numDims() >
 class LinearTransform
 {
 public:
+  /// number of vertices in the geometric object that will be transformed.
+  static inline constexpr int numVertices = BASE_GEOMETRY::numVertices();
+
+  /// number of dimensions of the geometric object that will be transformed.
+  static inline constexpr int numDims =  NDIMS;
+
+  /// Alias for the floating point type for the transform.
+  using RealType = REAL_TYPE;
+
 
   /// The type used to represent the Jacobian transformation operation
-  using JacobianType = CArray2d< REAL_TYPE, 3, 3 >;
+  using JacobianType = CArray2d< REAL_TYPE, numDims, numDims >;
 
   /// The type used to represent the data stored at the vertices of the cell
-  using DataType = REAL_TYPE[8][3];
+  using DataType = REAL_TYPE[numVertices][numDims];
 
   /// The type used to represent the coordinates of the vertices of the cell
-  using CoordType = REAL_TYPE[3];
+  using CoordType = REAL_TYPE[numDims];
 
   /// The type used to represent the index space of the cell
   using IndexType = MultiIndexRange< int, 2, 2, 2 >;
@@ -140,9 +149,9 @@ namespace utilities
  * constant Jacobian.
  * @tparam REAL_TYPE The floating point type.
  */
-template< typename REAL_TYPE >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE > const &,//cell,
-                                                             typename LinearTransform< REAL_TYPE >::JacobianType::type & )//J )
+template< typename REAL_TYPE, typename BASE_GEOMETRY >
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY > const &,//cell,
+                                                             typename LinearTransform< REAL_TYPE, BASE_GEOMETRY >::JacobianType::type & )//J )
 {}
 
 /**
@@ -153,11 +162,11 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< RE
  * @param[in] pointCoordsParent The parent coordinates at which to calculate the Jacobian.
  * @param[out] J The inverse Jacobian transformation.
  */
-template< typename REAL_TYPE >
+template< typename REAL_TYPE, typename BASE_GEOMETRY >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-jacobian( LinearTransform< REAL_TYPE > const & cell,
+jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY > const & cell,
           REAL_TYPE const (&pointCoordsParent)[3],
-          typename LinearTransform< REAL_TYPE >::JacobianType::type & J )
+          typename LinearTransform< REAL_TYPE, BASE_GEOMETRY >::JacobianType::type & J )
 {
 
   cell.forVertices( [&J, pointCoordsParent ] ( auto const & index, REAL_TYPE const (&vertexCoord)[3] )
@@ -196,11 +205,11 @@ jacobian( LinearTransform< REAL_TYPE > const & cell,
  * @param[out] invJ The inverse Jacobian transformation.
  * @param[out] detJ The determinant of the Jacobian transformation.
  */
-template< typename REAL_TYPE >
+template< typename REAL_TYPE, typename BASE_GEOMETRY >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-inverseJacobian( LinearTransform< REAL_TYPE > const & cell,
+inverseJacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY > const & cell,
                  REAL_TYPE const (&parentCoords)[3],
-                 typename LinearTransform< REAL_TYPE >::JacobianType::type & invJ,
+                 typename LinearTransform< REAL_TYPE, BASE_GEOMETRY >::JacobianType::type & invJ,
                  REAL_TYPE & detJ )
 {
   jacobian( cell, parentCoords, invJ );
