@@ -67,7 +67,8 @@
 #endif
 
 /**
- * @brief This function is used to facilitate ignoring compiler warnings for unused varaibles.
+ * @brief This function is used to facilitate ignoring compiler warnings for
+ *unused varaibles.
  * @tparam ARGS The types of the arguments to ignore.
  */
 template< typename ... ARGS >

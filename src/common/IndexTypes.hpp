@@ -26,7 +26,8 @@ SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE int
 strideHelper( std::integer_sequence< int, INDICES... >,
               int const * const ranges )
 {
-  // return result of a fold expression that multiples all entries of the ranges array
+  // return result of a fold expression that multiples all entries of the ranges
+  // array
   return ( ranges[INDICES] * ... *1);
 }
 
@@ -44,8 +45,10 @@ stride( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
 
-  // call strideHelper on an integer_sequence that ranges from 0...(NUM_INDICES - 1 - INDEX).
-  // This will result in a fold expression that multiples entries of the ranges array for the integer_sequence.
+  // call strideHelper on an integer_sequence that ranges from 0...(NUM_INDICES
+  // - 1 - INDEX).
+  // This will result in a fold expression that multiples entries of the ranges
+  // array for the integer_sequence.
   return detail::strideHelper( std::make_integer_sequence< int, (IndexType::NUM_INDICES - 1) - INDEX >{},
                                &(index.ranges[0]) );
 }
@@ -69,7 +72,8 @@ linearIndexHelper( T const & index,
 
 
 /**
- * @brief Helper function for executing an iteration over MultiIndexRange object.
+ * @brief Helper function for executing an iteration over MultiIndexRange
+ *object.
  * @tparam DIM The index/dimension of the current iterate
  * @tparam BASE_INDEX_TYPE The type of the base index.
  * @tparam RANGES The pack of ranges of the multi-index.

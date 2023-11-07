@@ -15,7 +15,7 @@ namespace geometry
 
 /**
  * @brief UniformScaling is a transformation/mapping scales the size of a
- * geometric object uniformly in each direction.
+ *geometric object uniformly in each direction.
  * @tparam REAL_TYPE The floating point type.
  */
 template< typename REAL_TYPE, typename BASIS = void >
@@ -32,8 +32,9 @@ public:
   using DataType = REAL_TYPE;
 
   /**
-   * @brief Returns a boolean indicating whether the Jacobian is constant in the cell. This is used to determine whether the Jacobian should
-   *be computed once per cell or once per quadrature point.
+   * @brief Returns a boolean indicating whether the Jacobian is constant in the
+   *cell. This is used to determine whether the Jacobian should be computed once
+   *per cell or once per quadrature point.
    * @return true
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE bool jacobianIsConstInCell() { return true; }
@@ -68,7 +69,8 @@ namespace utilities
 {
 
 /**
- * @brief Calculates the Jacobian transformation of a cube from a cube with range from (-1,1) in each dimension.
+ * @brief Calculates the Jacobian transformation of a cube from a cube with
+ *range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
  * @param cell The cube object
  * @param J The Jacobian transformation.
@@ -82,7 +84,8 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( UniformScaling< REA
 }
 
 /**
- * @brief Calculates the inverse Jacobian transormation of a cube from a cube with range from (-1,1) in each dimension.
+ * @brief Calculates the inverse Jacobian transormation of a cube from a cube
+ *with range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
  * @param cell The cube object
  * @param invJ The inverse Jacobian transformation.

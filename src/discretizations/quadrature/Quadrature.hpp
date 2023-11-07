@@ -12,8 +12,9 @@ namespace shiva
 {
 
 /**
- * @brief This struct provides a static constexpr functions to compute the quadrature weights on a line that correspond with the coordinates
- *of the GaussLegendreSpacing.
+ * @brief This struct provides a static constexpr functions to compute the
+ *quadrature weights on a line that correspond with the coordinates of the
+ *GaussLegendreSpacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing/quadrature rule.
  */
@@ -34,16 +35,35 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
     }
     else if constexpr ( N == 3 )
     {
-      if ( index == 0 ) return 0.5555555555555555555555555555555556; // 5.0 / 9.0;
-      if ( index == 1 ) return 0.8888888888888888888888888888888889; // 8.0 / 9.0;
-      if ( index == 2 ) return 0.5555555555555555555555555555555556; // 5.0 / 9.0;
+      if ( index == 0 ) return 0.5555555555555555555555555555555556; // 5.0 /
+                                                                     // 9.0;
+      if ( index == 1 ) return 0.8888888888888888888888888888888889; // 8.0 /
+                                                                     // 9.0;
+      if ( index == 2 ) return 0.5555555555555555555555555555555556; // 5.0 /
+                                                                     // 9.0;
     }
     else if constexpr ( N == 4 )
     {
-      if ( index == 0 ) return 0.5 - 0.15214515486254614262693605077800059277; // (18.0 - sqrt(30.0)) / 36.0;
-      if ( index == 1 ) return 0.5 + 0.15214515486254614262693605077800059277; // (18.0 + sqrt(30.0)) / 36.0;
-      if ( index == 2 ) return 0.5 + 0.15214515486254614262693605077800059277; // (18.0 + sqrt(30.0)) / 36.0;
-      if ( index == 3 ) return 0.5 - 0.15214515486254614262693605077800059277; // (18.0 - sqrt(30.0)) / 36.0;
+      if ( index == 0 ) return 0.5 - 0.15214515486254614262693605077800059277; // (18.0
+                                                                               // -
+                                                                               // sqrt(30.0))
+                                                                               // /
+                                                                               // 36.0;
+      if ( index == 1 ) return 0.5 + 0.15214515486254614262693605077800059277; // (18.0
+                                                                               // +
+                                                                               // sqrt(30.0))
+                                                                               // /
+                                                                               // 36.0;
+      if ( index == 2 ) return 0.5 + 0.15214515486254614262693605077800059277; // (18.0
+                                                                               // +
+                                                                               // sqrt(30.0))
+                                                                               // /
+                                                                               // 36.0;
+      if ( index == 3 ) return 0.5 - 0.15214515486254614262693605077800059277; // (18.0
+                                                                               // -
+                                                                               // sqrt(30.0))
+                                                                               // /
+                                                                               // 36.0;
     }
     return 0;
   }
@@ -64,24 +84,47 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
     }
     else if constexpr ( N == 3 )
     {
-      if constexpr ( INDEX == 0 ) return 0.5555555555555555555555555555555556; // 5.0 / 9.0;
-      if constexpr ( INDEX == 1 ) return 0.8888888888888888888888888888888889; // 8.0 / 9.0;
-      if constexpr ( INDEX == 2 ) return 0.5555555555555555555555555555555556; // 5.0 / 9.0;
+      if constexpr ( INDEX == 0 ) return 0.5555555555555555555555555555555556; // 5.0
+                                                                               // /
+                                                                               // 9.0;
+      if constexpr ( INDEX == 1 ) return 0.8888888888888888888888888888888889; // 8.0
+                                                                               // /
+                                                                               // 9.0;
+      if constexpr ( INDEX == 2 ) return 0.5555555555555555555555555555555556; // 5.0
+                                                                               // /
+                                                                               // 9.0;
     }
     else if constexpr ( N == 4 )
     {
-      if constexpr ( INDEX == 0 ) return 0.5 - 0.15214515486254614262693605077800059277; // (18.0 - sqrt(30.0)) / 36.0;
-      if constexpr ( INDEX == 1 ) return 0.5 + 0.15214515486254614262693605077800059277; // (18.0 + sqrt(30.0)) / 36.0;
-      if constexpr ( INDEX == 2 ) return 0.5 + 0.15214515486254614262693605077800059277; // (18.0 + sqrt(30.0)) / 36.0;
-      if constexpr ( INDEX == 3 ) return 0.5 - 0.15214515486254614262693605077800059277; // (18.0 - sqrt(30.0)) / 36.0;
+      if constexpr ( INDEX == 0 ) return 0.5 - 0.15214515486254614262693605077800059277; // (18.0
+                                                                                         // -
+                                                                                         // sqrt(30.0))
+                                                                                         // /
+                                                                                         // 36.0;
+      if constexpr ( INDEX == 1 ) return 0.5 + 0.15214515486254614262693605077800059277; // (18.0
+                                                                                         // +
+                                                                                         // sqrt(30.0))
+                                                                                         // /
+                                                                                         // 36.0;
+      if constexpr ( INDEX == 2 ) return 0.5 + 0.15214515486254614262693605077800059277; // (18.0
+                                                                                         // +
+                                                                                         // sqrt(30.0))
+                                                                                         // /
+                                                                                         // 36.0;
+      if constexpr ( INDEX == 3 ) return 0.5 - 0.15214515486254614262693605077800059277; // (18.0
+                                                                                         // -
+                                                                                         // sqrt(30.0))
+                                                                                         // /
+                                                                                         // 36.0;
     }
     return 0;
   }
 };
 
 /**
- * @brief This struct provides a static constexpr functions to compute the quadrature weights on a line that correspond with the coordinates
- *of the GaussLobattoSpacing.
+ * @brief This struct provides a static constexpr functions to compute the
+ *quadrature weights on a line that correspond with the coordinates of the
+ *GaussLobattoSpacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing/quadrature rule.
  */
@@ -89,7 +132,8 @@ template< typename REAL_TYPE, int N >
 struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
 {
   /**
-   * @brief Returns the weight of a point defined by the Guass-Lobatto quadrature rule.
+   * @brief Returns the weight of a point defined by the Guass-Lobatto
+   *quadrature rule.
    * @param index The index of the point.
    * @return The weight of the point.
    */
@@ -123,7 +167,8 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
   }
 
   /**
-   * @brief Returns the weight of a point defined by the Guass-Lobatto quadrature rule.
+   * @brief Returns the weight of a point defined by the Guass-Lobatto
+   *quadrature rule.
    * @tparam INDEX The index of the point.
    * @return The weight of the point.
    * @note This function is only available if INDEX is a compile time constant.

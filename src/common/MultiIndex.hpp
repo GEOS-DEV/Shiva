@@ -13,7 +13,8 @@ namespace shiva
 {
 
 /**
- * @brief MultiIndex is a templated multi-index type consisting of NUM_INDICES indices of type BASE_INDEX_TYPE.
+ * @brief MultiIndex is a templated multi-index type consisting of NUM_INDICES
+ *indices of type BASE_INDEX_TYPE.
  * @tparam BASE_INDEX_TYPE The type of the base index.
  * @tparam NUM_INDICES The number of indices.
  */
@@ -29,8 +30,9 @@ struct MultiIndex
 
 
 /**
- * @brief MultiIndexRange is a templated multi-index type consisting of NUM_INDICES indices of type BASE_INDEX_TYPE. It also contains an
- *array of ranges for each index s.t. a linear index may be calcuated.
+ * @brief MultiIndexRange is a templated multi-index type consisting of
+ *NUM_INDICES indices of type BASE_INDEX_TYPE. It also contains an array of
+ *ranges for each index s.t. a linear index may be calcuated.
  * @tparam BASE_INDEX_TYPE The type of the base index.
  * @tparam NUM_INDICES The number of indices.
  * @tparam RANGES The ranges for each index.
