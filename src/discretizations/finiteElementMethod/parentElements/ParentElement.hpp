@@ -44,6 +44,9 @@ public:
   /// The number of dimensions on the ParentElement
   static inline constexpr int numDims = sizeof...(BASIS_TYPE);
 
+  /// The number of vertices on the ParentElement
+  static inline constexpr int numVertices = BaseGeometry::numVertices();
+
 
   static_assert( numDims == BaseGeometry::numDims(), "numDims mismatch between cell and number of basis specified" );
 
@@ -57,9 +60,10 @@ public:
    * @return The value of the basis function at the specified parent coordinate.
    *
    * The equation for the value of a basis is:
-   * \f[ \Phi_{i_0 i_1 ... i_{(numDims-1)}}(\boldsymbol{\xi}) =
-   *\prod_{k=0}^{(numDims-1)} \phi_{i_k}(\xi_k)\text{, where }\\
-   *      i_j \text{is index of the basis function in the jth dimension, and
+   * \f[
+   * \Phi_{i_0 i_1 ... i_{(numDims-1)}}(\boldsymbol{\xi}) =
+   * \prod_{k=0}^{(numDims-1)} \phi_{i_k}(\xi_k)\text{, where } \\
+   * i_j \text{is index of the basis function in the jth dimension, and
    * ranges from [0...(order+1)]}
    * \f]
    *
@@ -100,10 +104,11 @@ public:
    * coordinate.
    *
    * The equation for the gradient of a basis is:
-   * \f[ \frac{ d\left( \Phi_{i_0 i_1 ... i_{(numDims-1)}}(\boldsymbol{\xi})
-   *\right) }{ d \xi_j} =
+   * \f[
+   * \frac{ d\left( \Phi_{i_0 i_1 ... i_{(numDims-1)}}(\boldsymbol{\xi})
+   * \right) }{ d \xi_j} =
    * \nabla \phi_{i_j}(\xi_j) \prod_{ {k=0}\atop {k\neq j} }^{(numDims-1)}
-   *\phi_{i_k}(\xi_k)
+   * \phi_{i_k}(\xi_k)
    * \f]
    */
   template< int ... BASIS_FUNCTION_INDICES >

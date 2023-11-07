@@ -91,7 +91,6 @@ template< typename REAL_TYPE >
 SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 {
   LinearTransform< REAL_TYPE,
-                   Cube< double >,
                    ParentElement< double,
                                   Cube< double >,
                                   LagrangeBasis< double, 1, EqualSpacing >,

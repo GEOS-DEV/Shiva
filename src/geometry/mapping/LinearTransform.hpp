@@ -34,16 +34,15 @@ namespace geometry
  *(Wikipedia)</a>
  */
 template< typename REAL_TYPE,
-          typename BASE_GEOMETRY,
           typename PARENT_ELEMENT >
 class LinearTransform
 {
 public:
   /// number of vertices in the geometric object that will be transformed.
-  static inline constexpr int numVertices = BASE_GEOMETRY::numVertices();
+  static inline constexpr int numVertices = PARENT_ELEMENT::numVertices;
 
   /// number of dimensions of the geometric object that will be transformed.
-  static inline constexpr int numDims =  BASE_GEOMETRY::numDims();
+  static inline constexpr int numDims =  PARENT_ELEMENT::numDims;
 
   /// Alias for the floating point type for the transform.
   using RealType = REAL_TYPE;
@@ -124,20 +123,20 @@ namespace utilities
 {
 
 /**
- * @brief NoOp that would calculate the Jacobian transormation of a cuboid from
+ * @brief NoOp that would calculate the Jacobian transformation of a cuboid from
  * a parent cuboid with range from (-1,1) in each dimension. However the Jacobian
  * is not constant in the cell, so we keep this as a no-op to allow for it to be
  * called in the same way as the other geometry objects with constant Jacobian.
  * @tparam REAL_TYPE The floating point type.
  */
-template< typename REAL_TYPE, typename BASE_GEOMETRY, typename PARENT_ELEMENT >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT > const &,//cell,
-                                                             typename LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT >::JacobianType::type & )//J
+template< typename REAL_TYPE, typename PARENT_ELEMENT >
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, PARENT_ELEMENT > const &,//cell,
+                                                             typename LinearTransform< REAL_TYPE, PARENT_ELEMENT >::JacobianType::type & )//J
 // )
 {}
 
 /**
- * @brief Calculates the Jacobian transormation of a cuboid from a parent cuboid
+ * @brief Calculates the Jacobian transformation of a cuboid from a parent cuboid
  * with range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
  * @param[in] cell The cuboid object
@@ -145,11 +144,11 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< RE
  * Jacobian.
  * @param[out] J The inverse Jacobian transformation.
  */
-template< typename REAL_TYPE, typename BASE_GEOMETRY, typename PARENT_ELEMENT >
+template< typename REAL_TYPE, typename PARENT_ELEMENT >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT > const & cell,
+jacobian( LinearTransform< REAL_TYPE, PARENT_ELEMENT > const & cell,
           REAL_TYPE const (&pointCoordsParent)[3],
-          typename LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT >::JacobianType::type & J )
+          typename LinearTransform< REAL_TYPE, PARENT_ELEMENT >::JacobianType::type & J )
 {
   auto const & vertexCoords = cell.getData();
   forSequence< 2 >( [&] ( auto const ica ) constexpr
@@ -187,11 +186,11 @@ jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT > const & ce
  * @param[out] invJ The inverse Jacobian transformation.
  * @param[out] detJ The determinant of the Jacobian transformation.
  */
-template< typename REAL_TYPE, typename BASE_GEOMETRY, typename PARENT_ELEMENT >
+template< typename REAL_TYPE, typename PARENT_ELEMENT >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-inverseJacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT > const & cell,
+inverseJacobian( LinearTransform< REAL_TYPE, PARENT_ELEMENT > const & cell,
                  REAL_TYPE const (&parentCoords)[3],
-                 typename LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT >::JacobianType::type & invJ,
+                 typename LinearTransform< REAL_TYPE, PARENT_ELEMENT >::JacobianType::type & invJ,
                  REAL_TYPE & detJ )
 {
   jacobian( cell, parentCoords, invJ );
