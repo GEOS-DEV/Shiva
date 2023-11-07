@@ -27,8 +27,8 @@ namespace shiva
 
 /**
  * @namespace shiva::pmpl
- * @brief The pmpl namespace contains all of the pmpl classes and functions used
- * to provide a portablity layer in unit testing.
+ * @brief The pmpl namespace contains all of the pmpl classes and functions
+ * used to provide a portablity layer in unit testing.
  */
 namespace pmpl
 {
