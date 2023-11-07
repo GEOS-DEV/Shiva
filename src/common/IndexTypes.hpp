@@ -73,7 +73,7 @@ linearIndexHelper( T const & index,
 
 /**
  * @brief Helper function for executing an iteration over MultiIndexRange
- *object.
+ * object.
  * @tparam DIM The index/dimension of the current iterate
  * @tparam BASE_INDEX_TYPE The type of the base index.
  * @tparam RANGES The pack of ranges of the multi-index.

@@ -17,12 +17,12 @@ namespace finiteElementMethod
 /**
  * @class ParentElement
  * @brief Defines a class that provides static functions to calculate quantities
- *required from the parent element in a finite element method.
+ * required from the parent element in a finite element method.
  * @tparam REAL_TYPE The floating point type to use
  * @tparam BASE_GEOMETRY The cell type/geometry
  * @tparam FUNCTIONAL_SPACE_TYPE The functional space type
  * @tparam BASIS_TYPE Pack of basis types to apply to each direction of the
- *parent element. There should be a basis defined for each direction.
+ * parent element. There should be a basis defined for each direction.
  */
 template< typename REAL_TYPE, typename BASE_GEOMETRY, typename ... BASIS_TYPE >
 class ParentElement
@@ -49,18 +49,18 @@ public:
 
   /**
    * @brief Calculates the value of the basis function at the specified parent
-   *coordinate.
+   * coordinate.
    * @tparam BASIS_FUNCTION_INDICES Pack of indices of the basis function to
-   *evaluate in each dimension.
+   * evaluate in each dimension.
    * @param parentCoord The parent coordinate at which to evaluate the basis
-   *function.
+   * function.
    * @return The value of the basis function at the specified parent coordinate.
    *
    * The equation for the value of a basis is:
    * \f[ \Phi_{i_0 i_1 ... i_{(numDims-1)}}(\boldsymbol{\xi}) =
    *\prod_{k=0}^{(numDims-1)} \phi_{i_k}(\xi_k)\text{, where }\\
    *      i_j \text{is index of the basis function in the jth dimension, and
-   *ranges from [0...(order+1)]}
+   * ranges from [0...(order+1)]}
    * \f]
    *
    */
@@ -91,13 +91,13 @@ public:
 
   /**
    * @brief Calculates the gradient of the basis function at the specified
-   *parent coordinate.
+   * parent coordinate.
    * @tparam BASIS_FUNCTION_INDICES Pack of indices of the basis function to
-   *evaluate in each dimension.
+   * evaluate in each dimension.
    * @param parentCoord The parent coordinate at which to evaluate the basis
-   *function gradient.
+   * function gradient.
    * @return The gradient of the basis function at the specified parent
-   *coordinate.
+   * coordinate.
    *
    * The equation for the gradient of a basis is:
    * \f[ \frac{ d\left( \Phi_{i_0 i_1 ... i_{(numDims-1)}}(\boldsymbol{\xi})
@@ -154,19 +154,19 @@ public:
 private:
   /**
    * @brief Helper function to return the gradient of a basis function, or the
-   *value of the basis function depending on whether or not the index of the
-   *basis function (@p BASIS_FUNCTION) matches the index of the direction
-   *component index (@p GRADIENT_COMPONENT). This filter is illustrated in the
-   *documentation for the gradient function.
+   * value of the basis function depending on whether or not the index of the
+   * basis function (@p BASIS_FUNCTION) matches the index of the direction
+   * component index (@p GRADIENT_COMPONENT). This filter is illustrated in the
+   * documentation for the gradient function.
    * @tparam BASIS_FUNCTION The basis function type
    * @tparam GRADIENT_COMPONENT The dimension component of the gradient.
    * @tparam BASIS_FUNCTION_INDEX The index of the basis function that is being
-   *evaluated.
+   * evaluated.
    * @tparam COORD_INDEX The dimension component of the coordinate.
    * @param parentCoord The parent coordinate at which to evaluate the basis
-   *function gradient.
+   * function gradient.
    * @return The gradient component of the basis function at the specified
-   *parent coordinate.
+   * parent coordinate.
    */
   template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COORD_INDEX >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType

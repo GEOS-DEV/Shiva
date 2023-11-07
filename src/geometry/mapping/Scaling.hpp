@@ -18,10 +18,10 @@ namespace geometry
  * @tparam REAL_TYPE The floating point type.
  *
  * A "rectangular cuboid" is defined here as a 3-dimensional volume with 6
- *quadralatrial sides, 3 lengths in each direction with all corner angles being
- *90 degrees.
+ * quadralatrial sides, 3 lengths in each direction with all corner angles being
+ * 90 degrees.
  * <a href="https://en.wikipedia.org/wiki/Rectangular_cuboid"> Rectangular
- *Cuboid (Wikipedia)</a>
+ * Cuboid (Wikipedia)</a>
 
  */
 template< typename REAL_TYPE, typename BASIS = void >
@@ -41,8 +41,8 @@ public:
 
   /**
    * @brief Returns a boolean indicating whether the Jacobian is constant in the
-   *cell. This is used to determine whether the Jacobian should be computed once
-   *per cell or once per quadrature point.
+   * cell. This is used to determine whether the Jacobian should be computed once
+   * per cell or once per quadrature point.
    * @return true
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE bool jacobianIsConstInCell() { return true; }
@@ -101,10 +101,10 @@ jacobian( Scaling< REAL_TYPE > const & cell,
 
 /**
  * @brief Calculates the inverse Jacobian transformation and detJ for a
- *rectangular cuboid.
+ * rectangular cuboid.
  * @tparam REAL_TYPE The floating point type.
  * @param cell The rectangular cuboid for which the inverse Jacobian is
- *calculated.
+ * calculated.
  * @param invJ The inverse Jacobian transformation operator.
  * @param detJ The determinant of the Jacobian transformation operator.
  */

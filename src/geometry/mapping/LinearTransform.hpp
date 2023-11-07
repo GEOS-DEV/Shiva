@@ -29,7 +29,7 @@ namespace geometry
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  *
  * The term cuboid is used here to define a 3-dimensional volume with 6
- *quadralateral sides.
+ * quadralateral sides.
  * <a href="https://en.wikipedia.org/wiki/LinearTransform"> LinearTransform
  *(Wikipedia)</a>
  */
@@ -63,8 +63,8 @@ public:
 
   /**
    * @brief Returns a boolean indicating whether the Jacobian is constant in the
-   *cell. This is used to determine whether the Jacobian should be computed once
-   *per cell or once per quadrature point.
+   * cell. This is used to determine whether the Jacobian should be computed once
+   * per cell or once per quadrature point.
    * @return true if the Jacobian is constant in the cell, false otherwise
    */
   constexpr static bool jacobianIsConstInCell() { return false; }
@@ -125,9 +125,9 @@ namespace utilities
 
 /**
  * @brief NoOp that would calculate the Jacobian transormation of a cuboid from
- *a parent cuboid with range from (-1,1) in each dimension. However the Jacobian
- *is not constant in the cell, so we keep this as a no-op to allow for it to be
- *called in the same way as the other geometry objects with constant Jacobian.
+ * a parent cuboid with range from (-1,1) in each dimension. However the Jacobian
+ * is not constant in the cell, so we keep this as a no-op to allow for it to be
+ * called in the same way as the other geometry objects with constant Jacobian.
  * @tparam REAL_TYPE The floating point type.
  */
 template< typename REAL_TYPE, typename BASE_GEOMETRY, typename PARENT_ELEMENT >
@@ -138,11 +138,11 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< RE
 
 /**
  * @brief Calculates the Jacobian transormation of a cuboid from a parent cuboid
- *with range from (-1,1) in each dimension.
+ * with range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
  * @param[in] cell The cuboid object
  * @param[in] pointCoordsParent The parent coordinates at which to calculate the
- *Jacobian.
+ * Jacobian.
  * @param[out] J The inverse Jacobian transformation.
  */
 template< typename REAL_TYPE, typename BASE_GEOMETRY, typename PARENT_ELEMENT >
@@ -179,11 +179,11 @@ jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT > const & ce
 
 /**
  * @brief Calculates the inverse Jacobian transormation of a cuboid from a
- *parent cuboid with range from (-1,1) in each dimension.
+ * parent cuboid with range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
  * @param[in] cell The cuboid object
  * @param[in] parentCoords The parent coordinates at which to calculate the
- *Jacobian.
+ * Jacobian.
  * @param[out] invJ The inverse Jacobian transformation.
  * @param[out] detJ The determinant of the Jacobian transformation.
  */

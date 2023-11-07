@@ -11,8 +11,8 @@ namespace shiva
 
 /**
  * @brief This struct provides a static constexpr functions to compute the
- *coordinates on a line that spans [-1,1] divided using equal spacing, with the
- *endpoints [-1,1] included as points in the spacing.
+ * coordinates on a line that spans [-1,1] divided using equal spacing, with the
+ * endpoints [-1,1] included as points in the spacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing. There are N-1 segments.
  */
@@ -47,8 +47,8 @@ struct EqualSpacing
 
 /**
  * @brief This struct provides a static constexpr functions to compute the
- *coordinates on a line that spans [-1,1] using Guass-Legendra spacing. Thus the
- *endpoints [-1,1] are not included in the spacing.
+ * coordinates on a line that spans [-1,1] using Guass-Legendra spacing. Thus the
+ * endpoints [-1,1] are not included in the spacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing. There are N+1 segments.
  */
@@ -121,8 +121,8 @@ struct GaussLegendreSpacing
 
 /**
  * @brief This struct provides a static constexpr functions to compute the
- *coordinates on a line that spans [-1,1] using Guass-Lobatto spacing. Thus the
- *endpoints [-1,1] are included in the spacing.
+ * coordinates on a line that spans [-1,1] using Guass-Lobatto spacing. Thus the
+ * endpoints [-1,1] are included in the spacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing. There are N-1 segments.
  */

@@ -13,8 +13,8 @@ namespace shiva
 
 /**
  * @brief This struct provides a static constexpr functions to compute the
- *quadrature weights on a line that correspond with the coordinates of the
- *GaussLegendreSpacing.
+ * quadrature weights on a line that correspond with the coordinates of the
+ * GaussLegendreSpacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing/quadrature rule.
  */
@@ -123,8 +123,8 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
 
 /**
  * @brief This struct provides a static constexpr functions to compute the
- *quadrature weights on a line that correspond with the coordinates of the
- *GaussLobattoSpacing.
+ * quadrature weights on a line that correspond with the coordinates of the
+ * GaussLobattoSpacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing/quadrature rule.
  */
@@ -133,7 +133,7 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
 {
   /**
    * @brief Returns the weight of a point defined by the Guass-Lobatto
-   *quadrature rule.
+   * quadrature rule.
    * @param index The index of the point.
    * @return The weight of the point.
    */
@@ -168,7 +168,7 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
 
   /**
    * @brief Returns the weight of a point defined by the Guass-Lobatto
-   *quadrature rule.
+   * quadrature rule.
    * @tparam INDEX The index of the point.
    * @return The weight of the point.
    * @note This function is only available if INDEX is a compile time constant.

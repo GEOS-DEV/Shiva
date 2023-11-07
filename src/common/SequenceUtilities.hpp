@@ -15,14 +15,14 @@ namespace shiva
 /**
  * @namespace shiva::sequenceUtilities
  * @brief The sequenceUtilitiesImpl namespace contains implementation details
- *for SequenceUtilities.
+ * for SequenceUtilities.
  */
 namespace sequenceUtilitiesImpl
 {
 
 /**
  * @brief This generic declaration is used to allow for specialization that
- *deduces a parameter pack from an integer_sequence.
+ * deduces a parameter pack from an integer_sequence.
  * @tparam T This is a generic parameter pack
  */
 template< typename ... T >
@@ -32,7 +32,7 @@ struct SequenceExpansion
 /**
  * @brief This specialization deduces a parameter pack from an integer_sequence
  * @tparam DIMENSION_INDICES The parameter pack of "int"s deduced from the
- *integer_sequence.
+ * integer_sequence.
  */
 template< int ... DIMENSION_INDICES >
 struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
@@ -40,14 +40,14 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
 
   /**
    * @brief This function uses the DIMENSION_INDICES parameter pack expanded in
-   *the struct to execute a function that takes the parameter pack as an
-   *argument.
+   * the struct to execute a function that takes the parameter pack as an
+   * argument.
    * @tparam FUNC This is the type of the function to call.
    * @tparam ARGS A Parameter pack that contains the arguments types to the
-   *function that were passed in to the execute function.
+   * function that were passed in to the execute function.
    * @param func This is the function of type FUNC to call.
    * @param args These are the arguments to pass to func that were passed in to
-   *the execute function.
+   * the execute function.
    * @return The return value of func().
    */
   template< typename FUNC, typename ... ARGS >
@@ -75,8 +75,8 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
 
   /**
    * @brief This function uses the DIMENSION_INDICES parameter pack expanded in
-   *the struct to execute a "compile time for loop" that takes a calls a
-   *function that takes a single element of the parameter pack as an argument.
+   * the struct to execute a "compile time for loop" that takes a calls a
+   * function that takes a single element of the parameter pack as an argument.
    * @tparam FUNC This is the type of the function to call.
    * @param func This is the function of type FUNC to call.
    * @return The return value of func().
@@ -112,17 +112,17 @@ struct SequenceExpansion< std::integer_sequence< int, DIMENSION_INDICES... > >
 
 /**
  * @brief This function creates an integer_sequence<0,1,2,...,END-1> and calls
- *sequenceUtilitiesImpl::SequenceExpansion::execute to deduce the int... and
- *call func of type FUNC, passing back the int... as either a template parameter
- *or a function argument.
+ * sequenceUtilitiesImpl::SequenceExpansion::execute to deduce the int... and
+ * call func of type FUNC, passing back the int... as either a template parameter
+ * or a function argument.
  * @tparam END This is the number of elements in the
- *integer_sequence<0,1,2,...,END-1>
+ * integer_sequence<0,1,2,...,END-1>
  * @tparam FUNC This is the type of the function to call.
  * @tparam ARGS A Parameter pack that contains the arguments types to the
- *function that were passed in to the execute function.
+ * function that were passed in to the execute function.
  * @param func This is the function of type FUNC to call.
  * @param args These are the arguments to pass to func that were passed in to
- *the execute function.
+ * the execute function.
  * @return The return value of func().
  */
 template< int END, typename FUNC, typename ... ARGS >
@@ -137,11 +137,11 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto executeSequence( FUNC && func
 
 /**
  * @brief This function creates an integer_sequence<0,1,2,...,END-1> and calls
- *sequenceUtilitiesImpl::SequenceExpansion::staticFor to deduce the int... and
- *call func of type FUNC, passing back an int in the (int...) as either a
- *template parameter or a function argument.
+ * sequenceUtilitiesImpl::SequenceExpansion::staticFor to deduce the int... and
+ * call func of type FUNC, passing back an int in the (int...) as either a
+ * template parameter or a function argument.
  * @tparam END This is the number of elements in the
- *integer_sequence<0,1,2,...,END-1>
+ * integer_sequence<0,1,2,...,END-1>
  * @tparam FUNC This is the type of the function to call.
  * @param func This is the function of type FUNC to call.
  * @return The return value of func().

@@ -21,8 +21,8 @@ namespace geometry
  * @tparam MIN The minimum coordinate of the n-cube.
  * @tparam MAX The maximum coordinate of the n-cube.
  * @tparam DIVISOR The divisor of the coordinates of the n-cube. This is
- *required because the coordinates of the n-cube are integers, but the
- *coordinates of the n-cube are floating point numbers.
+ * required because the coordinates of the n-cube are integers, but the
+ * coordinates of the n-cube are floating point numbers.
  *
  * A n-cube is a generalization of a cube in n-dimensions.
  * <a href="https://en.wikipedia.org/wiki/Hypercube"> Wikipedia Hypercube</a>
@@ -55,9 +55,9 @@ public:
    * @brief Returns the number of m-cubes in the n-cube.
    * @tparam M The number of dimensions of the m-cube.
    * @return The number of m-cubes in the n-cube. An m-cube is the lower
-   *dimensional object contained in the n-cube. For instance, the 0-cube is a
-   *vertex, the 1-cube is a line, the 2-cube is a square, the 3-cube is a cube,
-   *etc. M must be less than or equal to N
+   * dimensional object contained in the n-cube. For instance, the 0-cube is a
+   * vertex, the 1-cube is a line, the 2-cube is a square, the 3-cube is a cube,
+   * etc. M must be less than or equal to N
    */
   template< int M >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numMCubes()
@@ -112,9 +112,9 @@ public:
    * @return The number of hyperfaces (n-1-cube) in the n-cube.
    *
    * The hyperfaces can be considered the number of n-1 dimensional objects in
-   *an n-cube. For instance, the hyperfaces of a cube are the faces of the cube.
-   *The hyperfaces of a square are the edges of the square. The hyperfaces of a
-   *line are the vertices of the line.
+   * an n-cube. For instance, the hyperfaces of a cube are the faces of the cube.
+   * The hyperfaces of a square are the edges of the square. The hyperfaces of a
+   * line are the vertices of the line.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numHyperFaces()
   {

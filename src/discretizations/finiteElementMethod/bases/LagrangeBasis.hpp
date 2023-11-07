@@ -23,14 +23,14 @@ namespace basis
 /**
  * @class LagrangeBasis
  * @brief Defines a class to calculate quantities defined by a Lagrange
- *polynomial function of a given order.
+ * polynomial function of a given order.
  * @tparam REAL_TYPE The floating point type to use
  * @tparam ORDER The order of the basis function
  * @tparam SPACING_TYPE The spacing type to define the interpolation points for
- *the Lagrange polynomials.
+ * the Lagrange polynomials.
  * @tparam USE_FOR_SEQUENCE If true, the staticFor will be used to calculate
- *values and gradient functions. If false, the executeSequence function will be
- *used.
+ * values and gradient functions. If false, the executeSequence function will be
+ * used.
  *
  * The equation for a Lagrange interpolating basis function is:
  *
@@ -90,7 +90,7 @@ public:
    * @brief Calculates the gradient of the Lagrange polynomial basis function
    * @p BF_INDEX at the input coordinate @p coord.
    * @tparam BF_INDEX The index of the basis function to calculate the gradient
-   *of.
+   * of.
    * @param coord The coordinate at which to calculate the gradient.
    * @return The gradient of the Lagrange polynomial basis function.
    *
@@ -136,7 +136,7 @@ public:
 private:
   /**
    * @brief Calculates the value of the Lagrange polynomial basis function
-   *product factor at the given @p BF_INDEX at the input coordinate
+   * product factor at the given @p BF_INDEX at the input coordinate
    *@p coord.
    * @tparam BF_INDEX The index of the basis function to calculate the value of.
    * @tparam TERM_INDEX The index of the term in the sequence product.
@@ -166,10 +166,10 @@ private:
 
   /**
    * @brief Applies an index filter to an array that contains the values of the
-   *Lagrange polynomial basis function product terms.
+   * Lagrange polynomial basis function product terms.
    * @tparam TERM_INDEX The index of the factor to calculate the value of.
    * @tparam DERIVATIVE_INDEX The index of the derivative term that is calling
-   *this function.
+   * this function.
    * @param values The array that contains the Lagrange polynomial basis terms.
    * @return The value of the Lagrange polynomial basis function.
    *
@@ -195,7 +195,7 @@ private:
 
   /**
    * @brief Calculates the gradient of a term in the Lagrange polynomial basis
-   *function for a @p BF_INDEX.
+   * function for a @p BF_INDEX.
    * @tparam BF_INDEX The index of the basis function.
    * @tparam TERM_INDEX The index of the term in the sequence product.
    * @return The gradient of the Lagrange polynomial basis function.
