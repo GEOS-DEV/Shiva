@@ -11,6 +11,7 @@ set( shiva_dependencies
      )
 
 add_subdirectory( common )
+add_subdirectory( functions )
 add_subdirectory( discretizations )
 add_subdirectory( geometry )
 

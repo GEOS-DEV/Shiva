@@ -1,7 +1,7 @@
 
 #include "../finiteElementMethod/parentElements/ParentElement.hpp"
-#include "../finiteElementMethod/bases/LagrangeBasis.hpp"
-#include "../spacing/Spacing.hpp"
+#include "functions/bases/LagrangeBasis.hpp"
+#include "functions/spacing/Spacing.hpp"
 #include "geometry/shapes/NCube.hpp"
 #include "common/ShivaMacros.hpp"
 #include "common/pmpl.hpp"

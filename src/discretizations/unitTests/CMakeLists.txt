@@ -3,11 +3,8 @@
 #
 
 set( unit_tests_sources
-     testLagrangeBasis.cpp
      testParentElement.cpp
-     testSpacing.cpp
-     testQuadrature.cpp
-     )
+   )
 
 set( dependencyList ${parallelDeps} discretizations gtest )
 

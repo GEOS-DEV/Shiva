@@ -1,5 +1,5 @@
 
-#include "../finiteElementMethod/bases/LagrangeBasis.hpp"
+#include "../bases/LagrangeBasis.hpp"
 #include "../spacing/Spacing.hpp"
 #include "../../common/ShivaMacros.hpp"
 #include "common/pmpl.hpp"

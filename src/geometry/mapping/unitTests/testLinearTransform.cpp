@@ -2,8 +2,8 @@
 #include "geometry/shapes/NCube.hpp"
 #include "../LinearTransform.hpp"
 #include "../JacobianTransforms.hpp"
-#include "discretizations/finiteElementMethod/bases/LagrangeBasis.hpp"
-#include "discretizations/spacing/Spacing.hpp"
+#include "functions/bases/LagrangeBasis.hpp"
+#include "functions/spacing/Spacing.hpp"
 #include "discretizations/finiteElementMethod/parentElements/ParentElement.hpp"
 
 
