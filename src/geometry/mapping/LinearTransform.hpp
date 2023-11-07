@@ -9,6 +9,7 @@
 #include "common/ShivaMacros.hpp"
 #include "common/types.hpp"
 #include "common/IndexTypes.hpp"
+#include "common/SequenceUtilities.hpp"
 
 
 /**
@@ -31,7 +32,8 @@ namespace geometry
  * <a href="https://en.wikipedia.org/wiki/LinearTransform"> LinearTransform (Wikipedia)</a>
  */
 template< typename REAL_TYPE,
-          typename BASE_GEOMETRY >
+          typename BASE_GEOMETRY,
+          typename PARENT_ELEMENT >
 class LinearTransform
 {
 public:
@@ -124,9 +126,9 @@ namespace utilities
  *geometry objects with constant Jacobian.
  * @tparam REAL_TYPE The floating point type.
  */
-template< typename REAL_TYPE, typename BASE_GEOMETRY >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY > const &,//cell,
-                                                             typename LinearTransform< REAL_TYPE, BASE_GEOMETRY >::JacobianType::type & )//J
+template< typename REAL_TYPE, typename BASE_GEOMETRY, typename PARENT_ELEMENT >
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT > const &,//cell,
+                                                             typename LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT >::JacobianType::type & )//J
                                                                                                                                          // )
 {}
 
@@ -137,37 +139,35 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< RE
  * @param[in] pointCoordsParent The parent coordinates at which to calculate the Jacobian.
  * @param[out] J The inverse Jacobian transformation.
  */
-template< typename REAL_TYPE, typename BASE_GEOMETRY >
+template< typename REAL_TYPE, typename BASE_GEOMETRY, typename PARENT_ELEMENT >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY > const & cell,
+jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT > const & cell,
           REAL_TYPE const (&pointCoordsParent)[3],
-          typename LinearTransform< REAL_TYPE, BASE_GEOMETRY >::JacobianType::type & J )
-{
-
-  cell.forVertices( [&J, pointCoordsParent ] ( auto const & index, REAL_TYPE const (&vertexCoord)[3] )
+          typename LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT >::JacobianType::type & J )
+{ 
+  auto const & vertexCoords = cell.getData();
+  forSequence< 2 >( [&] ( auto const ica ) constexpr
   {
-
-    constexpr int vertexCoordsParent[2] = { -1, 1 }; // this is provided by the Basis
-    // dNdXi is provided by the Basis, which will take in the generic "index" type.
-    // it will probably look like:
-    // CArray1d<REAL_TYPE, 3> const dNdXi = basis.dNdXi( index, pointCoordsParent );
-
-    int const a = index.data[0];
-    int const b = index.data[1];
-    int const c = index.data[2];
-    REAL_TYPE const dNdXi[3] = { 0.125 *       vertexCoordsParent[a]                          * ( 1 + vertexCoordsParent[b] * pointCoordsParent[1] ) *
-                                 ( 1 + vertexCoordsParent[c] * pointCoordsParent[2] ),
-                                 0.125 * ( 1 + vertexCoordsParent[a] * pointCoordsParent[0] ) *       vertexCoordsParent[b] *
-                                 ( 1 + vertexCoordsParent[c] * pointCoordsParent[2] ),
-                                 0.125 * ( 1 + vertexCoordsParent[a] * pointCoordsParent[0] ) * ( 1 + vertexCoordsParent[b] * pointCoordsParent[1] ) *       vertexCoordsParent[c] };
-
-    for ( int i = 0; i < 3; ++i )
+    constexpr int a = decltype(ica)::value;
+    forSequence< 2 >( [&] ( auto const icb ) constexpr
     {
-      for ( int j = 0; j < 3; ++j )
+      constexpr int b = decltype(icb)::value;
+      forSequence< 2 >( [&] ( auto const icc ) constexpr
       {
-        J[j][i] = J[j][i] + dNdXi[i] * vertexCoord[j];
-      }
-    }
+        constexpr int c = decltype(icc)::value;
+        constexpr MultiIndexRange< int, 2, 2, 2 > index{a, b, c};
+        CArray1d< REAL_TYPE, 3 > const dNdXi = PARENT_ELEMENT::template gradient< a, b, c >( pointCoordsParent );
+
+        auto const & vertexCoord = vertexCoords[ linearIndex( index ) ];
+        for ( int i = 0; i < 3; ++i )
+        {
+          for ( int j = 0; j < 3; ++j )
+          {
+            J[j][i] = J[j][i] + dNdXi[i] * vertexCoord[j];
+          }
+        }
+      } );
+    } );
   } );
 }
 
@@ -179,11 +179,11 @@ jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY > const & cell,
  * @param[out] invJ The inverse Jacobian transformation.
  * @param[out] detJ The determinant of the Jacobian transformation.
  */
-template< typename REAL_TYPE, typename BASE_GEOMETRY >
+template< typename REAL_TYPE, typename BASE_GEOMETRY, typename PARENT_ELEMENT >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-inverseJacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY > const & cell,
+inverseJacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT > const & cell,
                  REAL_TYPE const (&parentCoords)[3],
-                 typename LinearTransform< REAL_TYPE, BASE_GEOMETRY >::JacobianType::type & invJ,
+                 typename LinearTransform< REAL_TYPE, BASE_GEOMETRY, PARENT_ELEMENT >::JacobianType::type & invJ,
                  REAL_TYPE & detJ )
 {
   jacobian( cell, parentCoords, invJ );

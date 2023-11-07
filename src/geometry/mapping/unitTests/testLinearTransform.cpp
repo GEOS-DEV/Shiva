@@ -2,6 +2,11 @@
 #include "geometry/shapes/NCube.hpp"
 #include "../LinearTransform.hpp"
 #include "../JacobianTransforms.hpp"
+#include "discretizations/finiteElementMethod/bases/LagrangeBasis.hpp"
+#include "discretizations/spacing/Spacing.hpp"
+#include "discretizations/finiteElementMethod/parentElements/ParentElement.hpp"
+
+
 #include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>
@@ -9,6 +14,8 @@
 using namespace shiva;
 using namespace shiva::geometry;
 using namespace shiva::geometry::utilities;
+using namespace shiva::discretizations::finiteElementMethod;
+using namespace shiva::discretizations::finiteElementMethod::basis;
 
 
 constexpr SHIVA_DEVICE double
@@ -83,8 +90,14 @@ constexpr double detJref[8] = { 1.9654823830313,
 template< typename REAL_TYPE >
 SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 {
-  using BaseGeometry = NCube< double, 3, -1, 1, 1 >;
-  LinearTransform< REAL_TYPE, BaseGeometry > cell;
+  LinearTransform< REAL_TYPE, 
+                   Cube< double >, 
+                   ParentElement< double,
+                                  Cube< double >,
+                                  LagrangeBasis< double, 1, EqualSpacing >,
+                                  LagrangeBasis< double, 1, EqualSpacing >,
+                                  LagrangeBasis< double, 1, EqualSpacing > > > cell;
+
   typename decltype(cell)::IndexType index;
 
   auto & transformData = cell.setData();

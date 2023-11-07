@@ -18,7 +18,7 @@ namespace geometry
  * geometric object uniformly in each direction.
  * @tparam REAL_TYPE The floating point type.
  */
-template< typename REAL_TYPE >
+template< typename REAL_TYPE, typename BASIS = void >
 class UniformScaling
 {
 public:

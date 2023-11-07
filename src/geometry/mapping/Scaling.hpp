@@ -22,7 +22,7 @@ namespace geometry
  * <a href="https://en.wikipedia.org/wiki/Rectangular_cuboid"> Rectangular Cuboid (Wikipedia)</a>
 
  */
-template< typename REAL_TYPE >
+template< typename REAL_TYPE, typename BASIS = void >
 class Scaling
 {
 public:
