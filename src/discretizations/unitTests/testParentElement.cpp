@@ -145,7 +145,7 @@ TEST( testParentElement, testBasicUsage )
 {
 
   ParentElement< double,
-                 Cube3<double>,
+                 Cube< double >,
                  LagrangeBasis< double, 1, GaussLobattoSpacing >,
                  LagrangeBasis< double, 1, GaussLobattoSpacing >,
                  LagrangeBasis< double, 1, GaussLobattoSpacing >
@@ -155,7 +155,7 @@ TEST( testParentElement, testBasicUsage )
 TEST( testParentElement, testCubeLagrangeBasisGaussLobatto_O1 )
 {
   using ParentElementType = ParentElement< double,
-                                           Cube3<double>,
+                                           Cube< double >,
                                            LagrangeBasis< double, 1, GaussLobattoSpacing >,
                                            LagrangeBasis< double, 1, GaussLobattoSpacing >,
                                            LagrangeBasis< double, 1, GaussLobattoSpacing >
@@ -169,7 +169,7 @@ TEST( testParentElement, testCubeLagrangeBasisGaussLobatto_O1 )
 TEST( testParentElement, testCubeLagrangeBasisGaussLobatto_O3 )
 {
   using ParentElementType = ParentElement< double,
-                                           Cube3<double>,
+                                           Cube< double >,
                                            LagrangeBasis< double, 3, GaussLobattoSpacing >,
                                            LagrangeBasis< double, 3, GaussLobattoSpacing >,
                                            LagrangeBasis< double, 3, GaussLobattoSpacing >

@@ -5,14 +5,14 @@ struct TestParentElementHelper;
 
 template<>
 struct TestParentElementHelper< ParentElement< double,
-                                               Cube3<double>,
+                                               Cube< double >,
                                                LagrangeBasis< double, 1, GaussLobattoSpacing >,
                                                LagrangeBasis< double, 1, GaussLobattoSpacing >,
                                                LagrangeBasis< double, 1, GaussLobattoSpacing >
                                                > >
 {
   using ParentElementType = ParentElement< double,
-                                           Cube3<double>,
+                                           Cube< double >,
                                            LagrangeBasis< double, 1, GaussLobattoSpacing >,
                                            LagrangeBasis< double, 1, GaussLobattoSpacing >,
                                            LagrangeBasis< double, 1, GaussLobattoSpacing >
@@ -32,7 +32,7 @@ struct TestParentElementHelper< ParentElement< double,
 
 template<>
 struct TestParentElementHelper< ParentElement< double,
-                                               Cube3<double>,
+                                               Cube< double >,
                                                LagrangeBasis< double, 3, GaussLobattoSpacing >,
                                                LagrangeBasis< double, 3, GaussLobattoSpacing >,
                                                LagrangeBasis< double, 3, GaussLobattoSpacing >
@@ -40,7 +40,7 @@ struct TestParentElementHelper< ParentElement< double,
 {
 
   using ParentElementType = ParentElement< double,
-                                           Cube3<double>,
+                                           Cube< double >,
                                            LagrangeBasis< double, 3, GaussLobattoSpacing >,
                                            LagrangeBasis< double, 3, GaussLobattoSpacing >,
                                            LagrangeBasis< double, 3, GaussLobattoSpacing >

@@ -15,7 +15,7 @@ template< typename REAL_TYPE >
 SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeUniformScaling( REAL_TYPE const h )
 {
   UniformScaling< REAL_TYPE > cell;
-  cell.setLength( h );
+  cell.setData( h );
   static_assert( decltype(cell)::jacobianIsConstInCell() == true );
   return cell;
 }
@@ -28,7 +28,7 @@ void testConstructionAndSettersHelper()
   pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeUniformScaling( h );
-    kdata[0] = cell.getLength();
+    kdata[0] = cell.getData();
   } );
   EXPECT_EQ( data[0], h );
   pmpl::deallocateData( data );
@@ -90,6 +90,7 @@ TEST( testUniformScaling, testInvJacobianFunctionReturnByValue )
   EXPECT_EQ( detJ, 0.125 * h * h * h );
   EXPECT_EQ( invJ.data, ( 2 / h ) );
 }
+
 
 int main( int argc, char * * argv )
 {

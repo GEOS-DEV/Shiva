@@ -7,13 +7,14 @@
 #include "common/ShivaMacros.hpp"
 #include "common/IndexTypes.hpp"
 #include "common/types.hpp"
+
 namespace shiva
 {
 namespace geometry
 {
 
 /**
- * @brief UniformScaling is a transformation/mapping scales the size of a 
+ * @brief UniformScaling is a transformation/mapping scales the size of a
  * geometric object uniformly in each direction.
  * @tparam REAL_TYPE The floating point type.
  */
@@ -31,9 +32,8 @@ public:
   using DataType = REAL_TYPE;
 
   /**
-   * @brief Returns a boolean indicating whether the Jacobian is constant in
-   * the cell. This is used to determine whether the Jacobian should be
-   * computed once per cell or once per quadrature point.
+   * @brief Returns a boolean indicating whether the Jacobian is constant in the cell. This is used to determine whether the Jacobian should
+   *be computed once per cell or once per quadrature point.
    * @return true
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE bool jacobianIsConstInCell() { return true; }
@@ -42,13 +42,19 @@ public:
    * @brief Returns the length dimension of the cube.
    * @return The length of the cube.
    */
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType const & getLength() const { return m_length; }
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType const & getData() const { return m_length; }
+
+  /**
+   * @brief Sets the length dimension of the cube.
+   * @return The length of the cube.
+   */
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType & setData(){ return m_length; }
 
   /**
    * @brief Sets the length dimension of the cube.
    * @param h The length of the cube.
    */
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setLength( DataType const & h )
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setData( DataType const & h )
   { m_length = h; }
 
 
@@ -71,7 +77,7 @@ template< typename REAL_TYPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( UniformScaling< REAL_TYPE > const & cell,
                                                              typename UniformScaling< REAL_TYPE >::JacobianType::type & J )
 {
-  typename UniformScaling< REAL_TYPE >::DataType const & h = cell.getLength();
+  typename UniformScaling< REAL_TYPE >::DataType const & h = cell.getData();
   J = 0.5 * h;
 }
 
@@ -87,7 +93,7 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void inverseJacobian( UniformScali
                                                                     typename UniformScaling< REAL_TYPE >::JacobianType::type & invJ,
                                                                     REAL_TYPE & detJ )
 {
-  typename UniformScaling< REAL_TYPE >::DataType const & h = cell.getLength();
+  typename UniformScaling< REAL_TYPE >::DataType const & h = cell.getData();
   invJ = 2 / h;
   detJ = 0.125 * h * h * h;
 }

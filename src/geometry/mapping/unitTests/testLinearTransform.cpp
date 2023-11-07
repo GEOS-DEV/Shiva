@@ -83,18 +83,21 @@ constexpr double detJref[8] = { 1.9654823830313,
 template< typename REAL_TYPE >
 SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 {
-  using BaseGeometry = NCube< double, 3, -1, 1, 1 > ;
+  using BaseGeometry = NCube< double, 3, -1, 1, 1 >;
   LinearTransform< REAL_TYPE, BaseGeometry > cell;
   typename decltype(cell)::IndexType index;
 
-  forRange( index = {0, 0, 0}, [&cell, &X] ( auto const & i )
+  auto & transformData = cell.setData();
+
+  forRange( index = {0, 0, 0}, [&transformData, &X] ( auto const & i )
   {
     int const a = i.data[0];
     int const b = i.data[1];
     int const c = i.data[2];
+
     for ( int j = 0; j < 3; ++j )
     {
-      cell.setVertexCoord( i, j, X[ a + 2 * b + 4 * c ][j] );
+      transformData[ linearIndex( i ) ][j] = X[ a + 2 * b + 4 * c ][j];
     }
   } );
 
@@ -109,7 +112,9 @@ void testConstructionAndSettersHelper()
     auto const cell = makeLinearTransform( Xref );
     typename decltype(cell)::IndexType index{0, 0, 0};
 
-    forRange( index, [&cell, &kernelData] ( auto const & i )
+    auto const & transformData = cell.getData();
+
+    forRange( index, [&transformData, &kernelData] ( auto const & i )
     {
       int const a = i.data[0];
       int const b = i.data[1];
@@ -117,7 +122,7 @@ void testConstructionAndSettersHelper()
 
       for ( int j = 0; j < 3; ++j )
       {
-        kernelData[ 3 * ( a + 2 * b + 4 * c ) + j ] = cell.getVertexCoord( i, j );
+        kernelData[ 3 * ( a + 2 * b + 4 * c ) + j ] = transformData[linearIndex( i )][j];
       }
     } );
   } );

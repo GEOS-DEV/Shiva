@@ -14,7 +14,7 @@ template< typename REAL_TYPE >
 SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeScaling( REAL_TYPE const (&h)[3] )
 {
   Scaling< REAL_TYPE > cell;
-  cell.setLength( h );
+  cell.setData( h );
 
   return cell;
 }
@@ -27,7 +27,7 @@ void testConstructionAndSettersHelper()
   pmpl::genericKernelWrapper( 3, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeScaling( h );
-    auto const & constData = cell.getLengths();
+    auto const & constData = cell.getData();
     kdata[0] = constData[0];
     kdata[1] = constData[1];
     kdata[2] = constData[2];

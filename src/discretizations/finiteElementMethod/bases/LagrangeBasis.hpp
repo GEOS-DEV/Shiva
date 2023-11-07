@@ -22,8 +22,7 @@ namespace basis
 
 /**
  * @class LagrangeBasis
- * @brief Defines a class to calculate quantities defined by a Lagrange
- * polynomial function of a given order.
+ * @brief Defines a class to calculate quantities defined by a Lagrange polynomial function of a given order.
  * @tparam REAL_TYPE The floating point type to use
  * @tparam ORDER The order of the basis function
  * @tparam SPACING_TYPE The spacing type to define the interpolation points for the Lagrange polynomials.
@@ -166,8 +165,7 @@ private:
    * @return The value of the Lagrange polynomial basis function.
    *
    * In the equation for the "Lagrange basis":
-   * \f[ P_j(x) = \prod_{ { {k=0} \atop {k\neq j} } }^{n-1} \frac{x-x_k}{x_j-x_k} \f],
-   * the filter addresses the case where \f$ k = j \f$.
+   * \f[ P_j(x) = \prod_{ { {k=0} \atop {k\neq j} } }^{n-1} \frac{x-x_k}{x_j-x_k} \f], the filter addresses the case where \f$ k = j \f$.
    *
    */
   template< int TERM_INDEX, int DERIVATIVE_INDEX = -1 >
@@ -185,8 +183,7 @@ private:
   }
 
   /**
-   * @brief Calculates the gradient of a term in the Lagrange polynomial basis
-   * function for a @p BF_INDEX.
+   * @brief Calculates the gradient of a term in the Lagrange polynomial basis function for a @p BF_INDEX.
    * @tparam BF_INDEX The index of the basis function.
    * @tparam TERM_INDEX The index of the term in the sequence product.
    * @return The gradient of the Lagrange polynomial basis function.

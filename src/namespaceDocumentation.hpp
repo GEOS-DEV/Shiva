@@ -18,8 +18,7 @@ namespace geometry
 /**
  * @namespace shiva::discretizations
  * @brief The discretizations namespace contains classes and functions for defining a numerical discretization. For instance the finite
- *element method, the finite volume method, and the finite difference method are all
- * methods that would be defined in this namespace.
+ *element method, the finite volume method, and the finite difference method are all methods that would be defined in this namespace.
  */
 namespace discretizations
 {

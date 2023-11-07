@@ -27,11 +27,11 @@ namespace geometry
  * @brief Class to represent a cuboid
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  *
- * The term cuboid is used here to define a 3-dimensional volume with 6
- * quadralateral sides.
+ * The term cuboid is used here to define a 3-dimensional volume with 6 quadralateral sides.
  * <a href="https://en.wikipedia.org/wiki/LinearTransform"> LinearTransform (Wikipedia)</a>
  */
-template< typename REAL_TYPE, typename BASE_GEOMETRY, int NDIMS = BASE_GEOMETRY::numDims() >
+template< typename REAL_TYPE,
+          typename BASE_GEOMETRY >
 class LinearTransform
 {
 public:
@@ -39,7 +39,7 @@ public:
   static inline constexpr int numVertices = BASE_GEOMETRY::numVertices();
 
   /// number of dimensions of the geometric object that will be transformed.
-  static inline constexpr int numDims =  NDIMS;
+  static inline constexpr int numDims =  BASE_GEOMETRY::numDims();
 
   /// Alias for the floating point type for the transform.
   using RealType = REAL_TYPE;
@@ -58,64 +58,41 @@ public:
   using IndexType = MultiIndexRange< int, 2, 2, 2 >;
 
   /**
-   * @brief Returns a boolean indicating whether the Jacobian is constant in
-   * the cell. This is used to determine whether the Jacobian should be
-   * computed once per cell or once per quadrature point.
+   * @brief Returns a boolean indicating whether the Jacobian is constant in the cell. This is used to determine whether the Jacobian should
+   *be computed once per cell or once per quadrature point.
    * @return true if the Jacobian is constant in the cell, false otherwise
    */
   constexpr static bool jacobianIsConstInCell() { return false; }
 
 
+  /**
+   * @brief Provides access to member data through reference to const.
+   * @return a const reference to the member data.
+   */
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType const & getData() const { return m_vertexCoords; }
 
   /**
-   * @brief const accessor for a component of a vertex coordinate
-   * @tparam INDEX_TYPE The type of the index
-   * @param[in] a The value of the vertex index
-   * @param[in] i The component of the vertex coordinate
-   * @return REAL_TYPE const& A const reference to the vertex coordinate component
+   * @brief Provides non-const access to member data through reference.
+   * @return a mutable reference to the member data.
    */
-  template< typename INDEX_TYPE >
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE REAL_TYPE const & getVertexCoord( INDEX_TYPE const & a, int const i ) const
-  { return m_vertexCoords[ linearIndex( a ) ][i]; }
-
-  /**
-   * @brief const accessor for the vertex coordinate
-   * @tparam INDEX_TYPE The type of the index
-   * @param[in] a The value of the vertex index
-   * @return CoordType const& A const reference to the vertex coordinate object
-   */
-  template< typename INDEX_TYPE >
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE CoordType const & getVertexCoord( INDEX_TYPE const & a ) const
-  { return m_vertexCoords[ linearIndex( a ) ]; }
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType & setData() { return m_vertexCoords; }
 
 
   /**
-   * @brief setter accessor for a component of a vertex coordinate
-   * @tparam INDEX_TYPE The type of the index
-   * @param[in] a The value of the vertex index
-   * @param[in] i The component direction of the vertex coordinate
-   * @param[in] value A reference to the vertex coordinate component
+   * @brief Sets the coordinates of the vertices of the cell
+   * @param[in] coords The coordinates of the vertices of the cell
    */
-  template< typename INDEX_TYPE >
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void
-  setVertexCoord( INDEX_TYPE const & a, int const i, REAL_TYPE const & value )
-  { m_vertexCoords[ linearIndex( a ) ][i] = value; }
-
-
-  /**
-   * @brief setter accessor for the vertex coordinate
-   * @tparam INDEX_TYPE The type of the index
-   * @param[in] a The value of the vertex index
-   * @param[in] value The input coordinate
-   */
-  template< typename INDEX_TYPE >
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void
-  setVertexCoord( INDEX_TYPE const & a, CoordType const & value )
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setData( DataType const & coords )
   {
-    m_vertexCoords[ linearIndex( a ) ][0] = value[0];
-    m_vertexCoords[ linearIndex( a ) ][1] = value[1];
-    m_vertexCoords[ linearIndex( a ) ][2] = value[1];
+    for ( int a = 0; a < numVertices; ++a )
+    {
+      for ( int i = 0; i < numDims; ++i )
+      {
+        m_vertexCoords[a][i] = coords[a][i];
+      }
+    }
   }
+
 
   /**
    * @brief method to loop over the vertices of the cuboid
@@ -129,7 +106,7 @@ public:
 
     forRange( index, [this, func] ( auto const & i )
     {
-      func( i, this->getVertexCoord( i ) );
+      func( i, m_vertexCoords[linearIndex( i )] );
     } );
   }
 
@@ -142,21 +119,19 @@ namespace utilities
 {
 
 /**
- * @brief NoOp that would calculate the Jacobian transormation of a cuboid
- * from a parent cuboid with range from (-1,1) in each dimension. However the Jacobian is not constant in the cell, so we keep this as a
- *no-op to allow
- * for it to be called in the same way as the other geometry objects with
- * constant Jacobian.
+ * @brief NoOp that would calculate the Jacobian transormation of a cuboid from a parent cuboid with range from (-1,1) in each dimension.
+ *However the Jacobian is not constant in the cell, so we keep this as a no-op to allow for it to be called in the same way as the other
+ *geometry objects with constant Jacobian.
  * @tparam REAL_TYPE The floating point type.
  */
 template< typename REAL_TYPE, typename BASE_GEOMETRY >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY > const &,//cell,
-                                                             typename LinearTransform< REAL_TYPE, BASE_GEOMETRY >::JacobianType::type & )//J )
+                                                             typename LinearTransform< REAL_TYPE, BASE_GEOMETRY >::JacobianType::type & )//J
+                                                                                                                                         // )
 {}
 
 /**
- * @brief Calculates the Jacobian transormation of a cuboid from a parent
- * cuboid with range from (-1,1) in each dimension.
+ * @brief Calculates the Jacobian transormation of a cuboid from a parent cuboid with range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
  * @param[in] cell The cuboid object
  * @param[in] pointCoordsParent The parent coordinates at which to calculate the Jacobian.
@@ -197,8 +172,7 @@ jacobian( LinearTransform< REAL_TYPE, BASE_GEOMETRY > const & cell,
 }
 
 /**
- * @brief Calculates the inverse Jacobian transormation of a cuboid from a
- * parent cuboid with range from (-1,1) in each dimension.
+ * @brief Calculates the inverse Jacobian transormation of a cuboid from a parent cuboid with range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
  * @param[in] cell The cuboid object
  * @param[in] parentCoords The parent coordinates at which to calculate the Jacobian.
