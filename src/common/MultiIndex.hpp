@@ -30,9 +30,9 @@ struct MultiIndex
 
 
 /**
- * @brief MultiIndexRange is a templated multi-index type consisting of 
- * NUM_INDICES indices of type BASE_INDEX_TYPE. It also contains an array 
- * of ranges for each index s.t. a linear index may be calcuated.
+ * @brief MultiIndexRange is a templated multi-index type consisting of
+ * NUM_INDICES indices of type BASE_INDEX_TYPE. It also contains an array of
+ * ranges for each index s.t. a linear index may be calcuated.
  * @tparam BASE_INDEX_TYPE The type of the base index.
  * @tparam NUM_INDICES The number of indices.
  * @tparam RANGES The ranges for each index.
@@ -54,9 +54,9 @@ struct MultiIndexRange
    * @param i The index.
    * @return The range for the given index.
    */
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int range( int const i ) 
-  { 
-    return ranges[i]; 
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int range( int const i )
+  {
+    return ranges[i];
   }
 
   /// contains the indices

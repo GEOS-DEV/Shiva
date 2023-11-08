@@ -1,9 +1,11 @@
 
 set( geometry_headers
-     Cube.hpp
-     Cuboid.hpp
-     RectangularCuboid.hpp
-     geometryUtilities.hpp
+     mapping/JacobianTransforms.hpp
+     mapping/LinearTransform.hpp
+     mapping/Scaling.hpp
+     mapping/UniformScaling.hpp
+     shapes/InterpolatedShape.hpp
+     shapes/nCube.hpp
      )
 
 set( geometry_sources
@@ -29,4 +31,5 @@ install( TARGETS geometry
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
 
-add_subdirectory( unitTests )
+add_subdirectory( mapping/unitTests )
+add_subdirectory( shapes/unitTests )

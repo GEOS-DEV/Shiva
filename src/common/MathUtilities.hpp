@@ -6,15 +6,63 @@
 
 #include "common/ShivaMacros.hpp"
 
+#include <utility>
+
 namespace shiva
 {
 
-/** 
+/**
  * @namespace shiva::mathUtilities
  * @brief Namespace for math utilities inside of shiva
  */
 namespace mathUtilities
 {
+
+
+/**
+ * @brief Computes the power of a number at compile time
+ * @tparam T The type of the number
+ * @tparam EXPONENT The exponent
+ * @param base The base of the power
+ * @return result^EXPONENT
+ */
+template< typename T, int EXPONENT >
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+T pow( T const base )
+{
+  T result = 1;
+  for ( int i = 0; i < EXPONENT; ++i )
+  {
+    result *= base;
+  }
+  return result;
+}
+
+/**
+ * @brief helper struct for computing the factorial of a number
+ * @tparam T The type of the number
+ * @tparam N The number
+ * @tparam I type for the integer sequence
+ */
+template< typename T, T N, typename I = std::make_integer_sequence< T, N > >
+struct factorial;
+
+/**
+ * @brief Specialization that computes the factorial of a number
+ * @tparam T The type of the number
+ * @tparam N The number
+ * @tparam ISEQ The integer sequence type/values
+ */
+template< typename T, T N, T ... ISEQ >
+struct factorial< T, N, std::integer_sequence< T, ISEQ... > >
+{
+  /**
+   * @brief The factorial of the number
+   */
+  static constexpr T value = (static_cast< T >(1) * ... *(ISEQ + 1));
+};
+
+
 
 /**
  * @brief Inverse of a 3x3 matrix
@@ -23,7 +71,7 @@ namespace mathUtilities
  * @param det The determinant of the matrix
  */
 template< typename REAL_TYPE >
-SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void 
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 inverse( REAL_TYPE (&matrix)[3][3], REAL_TYPE & det )
 {
 

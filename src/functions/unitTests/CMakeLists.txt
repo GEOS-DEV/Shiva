@@ -3,10 +3,12 @@
 #
 
 set( unit_tests_sources
-     testParentElement.cpp
-   )
+     testLagrangeBasis.cpp
+     testSpacing.cpp
+     testQuadrature.cpp
+     )
 
-set( dependencyList ${parallelDeps} discretizations gtest )
+set( dependencyList ${parallelDeps} functions gtest )
 
 if( ENABLE_HIP )
     list( APPEND dependencyList blt::hip )

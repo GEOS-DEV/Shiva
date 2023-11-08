@@ -11,30 +11,29 @@ using namespace shiva;
 
 
 
-
 template< typename ... T >
 struct ReferenceSolution;
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< EqualSpacing<REAL_TYPE,2> >
+struct ReferenceSolution< EqualSpacing< REAL_TYPE, 2 > >
 {
   static constexpr REAL_TYPE coords[2] = { -1.0, 1.0 };
 };
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< EqualSpacing<REAL_TYPE,3> >
+struct ReferenceSolution< EqualSpacing< REAL_TYPE, 3 > >
 {
   static constexpr REAL_TYPE coords[3] = { -1.0, 0.0, 1.0 };
 };
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< EqualSpacing<REAL_TYPE,4> >
+struct ReferenceSolution< EqualSpacing< REAL_TYPE, 4 > >
 {
   static constexpr REAL_TYPE coords[4] = { -1.0, -1.0 / 3.0, 1.0 / 3.0, 1.0 };
 };
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< EqualSpacing<REAL_TYPE,5> >
+struct ReferenceSolution< EqualSpacing< REAL_TYPE, 5 > >
 {
   static constexpr REAL_TYPE coords[5] = { -1.0, -0.5, 0.0, 0.5, 1.0 };
 };
@@ -42,52 +41,52 @@ struct ReferenceSolution< EqualSpacing<REAL_TYPE,5> >
 
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< GaussLegendreSpacing<REAL_TYPE,2> >
+struct ReferenceSolution< GaussLegendreSpacing< REAL_TYPE, 2 > >
 {
   static constexpr REAL_TYPE coords[2] = { -0.57735026918962576451, 0.57735026918962576451 };
 };
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< GaussLegendreSpacing<REAL_TYPE,3> >
+struct ReferenceSolution< GaussLegendreSpacing< REAL_TYPE, 3 > >
 {
   static constexpr REAL_TYPE coords[3] = { -0.77459666924148337704, 0.0, 0.77459666924148337704 };
 };
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< GaussLegendreSpacing<REAL_TYPE,4> >
+struct ReferenceSolution< GaussLegendreSpacing< REAL_TYPE, 4 > >
 {
-  static constexpr REAL_TYPE coords[4] = { -0.86113631159405257522, 
-                                           -0.3399810435848562648, 
-                                           0.3399810435848562648, 
+  static constexpr REAL_TYPE coords[4] = { -0.86113631159405257522,
+                                           -0.3399810435848562648,
+                                           0.3399810435848562648,
                                            0.86113631159405257522 };
 };
 
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< GaussLobattoSpacing<REAL_TYPE,2> >
+struct ReferenceSolution< GaussLobattoSpacing< REAL_TYPE, 2 > >
 {
   static constexpr REAL_TYPE coords[2] = { -1.0, 1.0 };
 };
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< GaussLobattoSpacing<REAL_TYPE,3> >
+struct ReferenceSolution< GaussLobattoSpacing< REAL_TYPE, 3 > >
 {
   static constexpr REAL_TYPE coords[3] = { -1.0, 0.0, 1.0 };
 };
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< GaussLobattoSpacing<REAL_TYPE,4> >
+struct ReferenceSolution< GaussLobattoSpacing< REAL_TYPE, 4 > >
 {
   static constexpr REAL_TYPE coords[4] = { -1.0, -0.44721359549995793928, 0.44721359549995793928, 1.0 };
 };
 
 template< typename REAL_TYPE >
-struct ReferenceSolution< GaussLobattoSpacing<REAL_TYPE,5> >
+struct ReferenceSolution< GaussLobattoSpacing< REAL_TYPE, 5 > >
 {
-  static constexpr REAL_TYPE coords[5] = { -1.0, 
-                                           -0.6546536707079771438, 
-                                           0.0, 
-                                           0.6546536707079771438, 
+  static constexpr REAL_TYPE coords[5] = { -1.0,
+                                           -0.6546536707079771438,
+                                           0.0,
+                                           0.6546536707079771438,
                                            1.0 };
 };
 
@@ -109,28 +108,25 @@ void testSpacingValuesAtRuntime()
   using Ref = ReferenceSolution< SpacingType >;
 
 #if defined(SHIVA_USE_DEVICE)
-  constexpr int bytes = N*sizeof(REAL_TYPE);
+  constexpr int bytes = N * sizeof(REAL_TYPE);
   REAL_TYPE *values;
   deviceMallocManaged( &values, bytes );
-  runtimeValuesKernel< SPACING, REAL_TYPE, N><<<1,1>>>( values );
+  runtimeValuesKernel< SPACING, REAL_TYPE, N ><< < 1, 1 >> > ( values );
   deviceDeviceSynchronize();
 #else
   REAL_TYPE values[N];
-  runtimeValuesKernel< SPACING, REAL_TYPE, N>( values );
+  runtimeValuesKernel< SPACING, REAL_TYPE, N >( values );
 #endif
-  
-  for( int a=0; a<N; ++a )
+
+  for ( int a = 0; a < N; ++a )
   {
     EXPECT_NEAR( values[a], Ref::coords[a], 1e-14 );
   }
-  
+
 #if defined(SHIVA_USE_DEVICE)
-  deviceFree(values);
+  deviceFree( values );
 #endif
 }
-
-
-
 
 
 
@@ -152,23 +148,20 @@ template< template< typename, int > typename SPACING, typename REAL_TYPE, typena
 void testSpacingValuesAtCompileTime( INDEX_SEQUENCE iSeq )
 {
 #if defined(SHIVA_USE_DEVICE)
-  compileTimeValuesKernel<SPACING,REAL_TYPE><<<1,1>>>( iSeq );
+  compileTimeValuesKernel< SPACING, REAL_TYPE ><< < 1, 1 >> > ( iSeq );
 #else
-  compileTimeValuesKernel<SPACING,REAL_TYPE>( iSeq );
+  compileTimeValuesKernel< SPACING, REAL_TYPE >( iSeq );
 #endif
 }
 
 
 
-
-
-
 TEST( testSpacing, testEqualSpacingRT )
 {
-  testSpacingValuesAtRuntime< EqualSpacing, double, 2>( );
-  testSpacingValuesAtRuntime< EqualSpacing, double, 3>( );
-  testSpacingValuesAtRuntime< EqualSpacing, double, 4>( );
-  testSpacingValuesAtRuntime< EqualSpacing, double, 5>( );
+  testSpacingValuesAtRuntime< EqualSpacing, double, 2 >( );
+  testSpacingValuesAtRuntime< EqualSpacing, double, 3 >( );
+  testSpacingValuesAtRuntime< EqualSpacing, double, 4 >( );
+  testSpacingValuesAtRuntime< EqualSpacing, double, 5 >( );
 
 }
 

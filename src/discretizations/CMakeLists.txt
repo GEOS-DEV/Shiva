@@ -1,9 +1,6 @@
 
 set( discretizations_headers
-     finiteElementMethod/bases/LagrangeBasis.hpp
      finiteElementMethod/parentElements/ParentElement.hpp
-     spacing/Spacing.hpp
-     quadrature/Quadrature.hpp
      )
 
 set( discretizations_sources
@@ -11,6 +8,7 @@ set( discretizations_sources
 
 set( discretizations_dependencies
      common
+     functions
      )
 
 blt_add_library( NAME             discretizations
@@ -29,4 +27,4 @@ install( TARGETS discretizations
          RUNTIME DESTINATION lib ) 
 
 
-add_subdirectory( unitTests )
+#add_subdirectory( unitTests )

@@ -23,7 +23,7 @@ void testLinearIndexTypeHelper()
   {
     EXPECT_EQ( data[i], i );
   }
-  pmpl::deallocateData(data);
+  pmpl::deallocateData( data );
 
 }
 
@@ -55,7 +55,7 @@ void testMultiIndexManualLoopHelper()
       }
     }
   } );
-    
+
   for ( int a = 0; a < 2; ++a )
   {
     for ( int b = 0; b < 2; ++b )
@@ -66,7 +66,7 @@ void testMultiIndexManualLoopHelper()
       }
     }
   }
-  pmpl::deallocateData(data);
+  pmpl::deallocateData( data );
 }
 TEST( testIndexTypes, testMultiIndexManualLoop )
 {
@@ -97,7 +97,7 @@ void testMultiIndexForRangeHelper()
       }
     }
   }
-  pmpl::deallocateData(data);
+  pmpl::deallocateData( data );
 
 }
 TEST( testIndexTypes, testMultiIndexForRange )
