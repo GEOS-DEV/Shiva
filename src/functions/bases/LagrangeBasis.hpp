@@ -13,12 +13,9 @@
 
 namespace shiva
 {
-namespace discretizations
+namespace functions
 {
-namespace finiteElementMethod
-{
-namespace basis
-{
+
 
 /**
  * @class LagrangeBasis
@@ -219,7 +216,5 @@ private:
 
 }; // class LagrangeBasis
 
-} // namespace basis
-} // namespace finiteElementMethod
-} // namespace discretizations
+} // namespace functions
 } // namespace shiva

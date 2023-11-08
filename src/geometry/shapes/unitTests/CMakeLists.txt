@@ -4,6 +4,7 @@
 
 set( unit_tests_sources
      testNCube.cpp
+     testInterpolatedShape.cpp
      )
 
 set( dependencyList ${parallelDeps} gtest geometry )

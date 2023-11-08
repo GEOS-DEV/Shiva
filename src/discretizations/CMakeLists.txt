@@ -27,4 +27,4 @@ install( TARGETS discretizations
          RUNTIME DESTINATION lib ) 
 
 
-add_subdirectory( unitTests )
+#add_subdirectory( unitTests )

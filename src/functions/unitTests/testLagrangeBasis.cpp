@@ -9,7 +9,7 @@
 #include <cmath>
 
 using namespace shiva;
-using namespace shiva::discretizations::finiteElementMethod::basis;
+using namespace shiva::functions;
 
 template< typename ... T >
 struct TestBasisHelper;

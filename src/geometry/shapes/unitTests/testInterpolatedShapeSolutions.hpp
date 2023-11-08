@@ -1,17 +1,17 @@
 
 
 template< typename ... T >
-struct TestParentElementHelper;
+struct TestInterpolatedShapeHelper;
 
 template<>
-struct TestParentElementHelper< ParentElement< double,
+struct TestInterpolatedShapeHelper< InterpolatedShape< double,
                                                Cube< double >,
                                                LagrangeBasis< double, 1, GaussLobattoSpacing >,
                                                LagrangeBasis< double, 1, GaussLobattoSpacing >,
                                                LagrangeBasis< double, 1, GaussLobattoSpacing >
                                                > >
 {
-  using ParentElementType = ParentElement< double,
+  using InterpolatedShapeType = InterpolatedShape< double,
                                            Cube< double >,
                                            LagrangeBasis< double, 1, GaussLobattoSpacing >,
                                            LagrangeBasis< double, 1, GaussLobattoSpacing >,
@@ -19,7 +19,7 @@ struct TestParentElementHelper< ParentElement< double,
                                            >;
 
   static constexpr int order = 1;
-  static constexpr double testParentCoords[3] = { 0.31415, -0.161803, 0.69314 };
+  static constexpr double testCoords[3] = { 0.31415, -0.161803, 0.69314 };
   static constexpr double referenceValues[2][2][2] = { { {0.030564122401949, 0.16864152448555}, {0.022050860348051, 0.12166849276445} },
     { {0.058563594743051, 0.32313225836945}, {0.042251422506949, 0.23312772438055} } };
   static constexpr double referenceGradients[2][2][2][3] = { { { {-0.0445638585725, -0.026307491375, -0.09960282344375}, {-0.2458868914275, -0.145155008625, 0.09960282344375} },
@@ -31,7 +31,7 @@ struct TestParentElementHelper< ParentElement< double,
 
 
 template<>
-struct TestParentElementHelper< ParentElement< double,
+struct TestInterpolatedShapeHelper< InterpolatedShape< double,
                                                Cube< double >,
                                                LagrangeBasis< double, 3, GaussLobattoSpacing >,
                                                LagrangeBasis< double, 3, GaussLobattoSpacing >,
@@ -39,7 +39,7 @@ struct TestParentElementHelper< ParentElement< double,
                                                > >
 {
 
-  using ParentElementType = ParentElement< double,
+  using InterpolatedShapeType = InterpolatedShape< double,
                                            Cube< double >,
                                            LagrangeBasis< double, 3, GaussLobattoSpacing >,
                                            LagrangeBasis< double, 3, GaussLobattoSpacing >,
@@ -47,7 +47,7 @@ struct TestParentElementHelper< ParentElement< double,
                                            >;
 
   static constexpr int order = 3;
-  static constexpr double testParentCoords[3] = { 0.31415, -0.161803, 0.69314};
+  static constexpr double testCoords[3] = { 0.31415, -0.161803, 0.69314};
   static constexpr double referenceValues[4][4][4] = { { {0.00029480662998955, -0.00097875857989107, 0.0045384751099593, 0.0016266339617432},
     {-0.0019359683760398, 0.0064274187405959, -0.029803754035777, -0.01068195755787}, {-0.00090727558355123, 0.0030121566864284, -0.013967283076256, -0.0050060111501464},
     {0.00021269185295386, -0.00070613736183238, 0.0032743384392556, 0.0011735549889536} },

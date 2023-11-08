@@ -4,7 +4,7 @@
 #include "../JacobianTransforms.hpp"
 #include "functions/bases/LagrangeBasis.hpp"
 #include "functions/spacing/Spacing.hpp"
-#include "discretizations/finiteElementMethod/parentElements/ParentElement.hpp"
+#include "geometry/shapes/InterpolatedShape.hpp"
 
 
 #include "common/pmpl.hpp"
@@ -14,8 +14,7 @@
 using namespace shiva;
 using namespace shiva::geometry;
 using namespace shiva::geometry::utilities;
-using namespace shiva::discretizations::finiteElementMethod;
-using namespace shiva::discretizations::finiteElementMethod::basis;
+using namespace shiva::functions;
 
 
 constexpr SHIVA_DEVICE double
@@ -91,7 +90,7 @@ template< typename REAL_TYPE >
 SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 {
   LinearTransform< REAL_TYPE,
-                   ParentElement< double,
+                   InterpolatedShape< double,
                                   Cube< double >,
                                   LagrangeBasis< double, 1, EqualSpacing >,
                                   LagrangeBasis< double, 1, EqualSpacing >,

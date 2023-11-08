@@ -4,6 +4,7 @@ set( geometry_headers
      mapping/LinearTransform.hpp
      mapping/Scaling.hpp
      mapping/UniformScaling.hpp
+     shapes/InterpolatedShape.hpp
      shapes/nCube.hpp
      )
 
