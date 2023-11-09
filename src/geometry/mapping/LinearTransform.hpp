@@ -9,7 +9,7 @@
 #include "common/ShivaMacros.hpp"
 #include "common/types.hpp"
 #include "common/IndexTypes.hpp"
-#include "common/SequenceUtilities.hpp"
+#include "common/NestedSequenceUtilities.hpp"
 
 
 /**
@@ -151,29 +151,46 @@ jacobian( LinearTransform< REAL_TYPE, PARENT_ELEMENT > const & cell,
           typename LinearTransform< REAL_TYPE, PARENT_ELEMENT >::JacobianType::type & J )
 {
   auto const & vertexCoords = cell.getData();
-  forSequence< 2 >( [&] ( auto const ica ) constexpr
+
+  forNestedSequence< 2, 2, 2 >( [&] ( auto const ica, auto const icb, auto const icc )
   {
     constexpr int a = decltype(ica)::value;
-    forSequence< 2 >( [&] ( auto const icb ) constexpr
+    constexpr int b = decltype(icb)::value;
+    constexpr int c = decltype(icc)::value;
+    constexpr MultiIndexRange< int, 2, 2, 2 > index{a, b, c};
+    CArray1d< REAL_TYPE, 3 > const dNdXi = PARENT_ELEMENT::template gradient< a, b, c >( pointCoordsParent );
+    auto const & vertexCoord = vertexCoords[ linearIndex( index ) ];
+    forNestedSequence< 3, 3 >( [&] ( auto const ici, auto const icj )
     {
-      constexpr int b = decltype(icb)::value;
-      forSequence< 2 >( [&] ( auto const icc ) constexpr
-      {
-        constexpr int c = decltype(icc)::value;
-        constexpr MultiIndexRange< int, 2, 2, 2 > index{a, b, c};
-        CArray1d< REAL_TYPE, 3 > const dNdXi = PARENT_ELEMENT::template gradient< a, b, c >( pointCoordsParent );
-
-        auto const & vertexCoord = vertexCoords[ linearIndex( index ) ];
-        for ( int i = 0; i < 3; ++i )
-        {
-          for ( int j = 0; j < 3; ++j )
-          {
-            J[j][i] = J[j][i] + dNdXi[i] * vertexCoord[j];
-          }
-        }
-      } );
+      constexpr int i = decltype(ici)::value;
+      constexpr int j = decltype(icj)::value;
+      J[j][i] = J[j][i] + dNdXi[i] * vertexCoord[j];
     } );
   } );
+
+  // forSequence< 2 >( [&] ( auto const ica ) constexpr
+  // {
+  //   constexpr int a = decltype(ica)::value;
+  //   forSequence< 2 >( [&] ( auto const icb ) constexpr
+  //   {
+  //     constexpr int b = decltype(icb)::value;
+  //     forSequence< 2 >( [&] ( auto const icc ) constexpr
+  //     {
+  //       constexpr int c = decltype(icc)::value;
+  //       constexpr MultiIndexRange< int, 2, 2, 2 > index{a, b, c};
+  //       CArray1d< REAL_TYPE, 3 > const dNdXi = PARENT_ELEMENT::template gradient< a, b, c >( pointCoordsParent );
+
+  //       auto const & vertexCoord = vertexCoords[ linearIndex( index ) ];
+  //       for ( int i = 0; i < 3; ++i )
+  //       {
+  //         for ( int j = 0; j < 3; ++j )
+  //         {
+  //           J[j][i] = J[j][i] + dNdXi[i] * vertexCoord[j];
+  //         }
+  //       }
+  //     } );
+  //   } );
+  // } );
 }
 
 /**
