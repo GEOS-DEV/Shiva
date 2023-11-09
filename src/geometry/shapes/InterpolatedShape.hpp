@@ -50,6 +50,7 @@ public:
   /// The number of vertices on the InterpolatedShape
   static inline constexpr int numVertices = BaseShape::numVertices();
 
+  static inline constexpr int numVerticesInBasis[numDims] = {BASIS_TYPE::numSupportPoints...};
 
   static_assert( numDims == BaseShape::numDims(), "numDims mismatch between cell and number of basis specified" );
 
