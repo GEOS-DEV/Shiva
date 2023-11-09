@@ -151,24 +151,22 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
           REAL_TYPE const (&pointCoordsParent)[3],
           typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & J )
 {
-  using Transform = std::remove_reference_t<decltype(cell)>;
-  using InterpolatedShape = typename Transform::InterpolatedShape;
+  // using Transform = std::remove_reference_t<decltype(cell)>;
+  using InterpolatedShape = typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::InterpolatedShape;
   auto const & vertexCoords = cell.getData();
-  forNestedSequence< 2, 2, 2 >( [&] ( auto const ica, auto const icb, auto const icc )
-  {
-    constexpr int a = decltype(ica)::value;
-    constexpr int b = decltype(icb)::value;
-    constexpr int c = decltype(icc)::value;
-    constexpr MultiIndexRange< int, 2, 2, 2 > index{a, b, c};
-    CArray1d< REAL_TYPE, 3 > const dNdXi = PARENT_ELEMENT::template gradient< a, b, c >( pointCoordsParent );
-    auto const & vertexCoord = vertexCoords[ linearIndex( index ) ];
-    forNestedSequence< 3, 3 >( [&] ( auto const ici, auto const icj )
+  forNestedSequence( 
+  [&] ( auto const ... icx ) constexpr 
     {
-      constexpr int i = decltype(ici)::value;
-      constexpr int j = decltype(icj)::value;
-      J[j][i] = J[j][i] + dNdXi[i] * vertexCoord[j];
-    } );
-  } );
+      constexpr int DIMS = InterpolatedShape::numDims;
+      constexpr auto index = instantiateWithSequence< MultiIndexRangeI >( InterpolatedShape::numVerticesInBasis, decltype(icx)::value... );
+      CArray1d< REAL_TYPE, DIMS > const dNdXi = INTERPOLATED_SHAPE::template gradient< decltype(icx)::value... >( pointCoordsParent );
+      auto const & vertexCoord = vertexCoords[ linearIndex( index ) ];
+      forNestedSequence< DIMS, DIMS >( [&] ( auto const ... icijk ) constexpr
+      {
+        constexpr int ijk[DIMS] = { decltype(icijk)::value... };
+        J[ijk[1]][ijk[0]] = J[ijk[1]][ijk[0]] + dNdXi[ijk[0]] * vertexCoord[ijk[1]];
+      } );
+    }, InterpolatedShape::numVerticesInBasis );
 }
 
 /**

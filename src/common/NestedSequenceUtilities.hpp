@@ -46,17 +46,29 @@ struct NestedSequenceExpansion< END, REMAINING_ENDS... >
 
 }
 
-
-// template< int... ENDS, typename FUNC >
-// constexpr void exectueNestedSequence( FUNC && func )
-// {
-//
-// }
-
 template< int... ENDS, typename FUNC >
 constexpr void forNestedSequence( FUNC && func ) 
 {
   nestedSequenceUtilitiesImpl::NestedSequenceExpansion< ENDS... >::staticForNested( std::forward< FUNC >( func ) );
 }
+
+template< int... Is, typename FUNC >
+constexpr void forNestedSequence( FUNC && func, std::integer_sequence<int, Is...> )
+{
+  forNestedSequence< Is... >( std::forward<FUNC>( func ) );
+}
+
+// template< typename CArray, std::size_t... I, typename FUNC >
+// constexpr void forNestedSequenceHelper( const CArray arr, std::index_sequence<I...>, FUNC && func )
+// {
+//   forNestedSequence< arr[I]... >( std::forward< FUNC >( func ) );
+// }
+
+// // Variant to use a C-array for the bounds of each level of the nested loop
+// template< typename CArray, typename FUNC >
+// constexpr void forNestedSequence( const CArray arr, FUNC && func )
+// {
+//   forNestedSequenceHelper( arr, std::make_index_sequence< CArray::size >{}, std::forward< FUNC >( func ) );
+// }
 
 }

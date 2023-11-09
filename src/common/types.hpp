@@ -131,6 +131,7 @@ struct CArray1d
 
   /// alias for T[N]
   using type = T[N];
+  static constexpr int size = N;
 
   /// contains the data in the array
   T data[N];

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "common/ShivaMacros.hpp"
+#include "SequenceUtilities.hpp"
 
 #include <utility>
 
@@ -62,5 +63,8 @@ struct MultiIndexRange
   /// contains the indices
   BASE_INDEX_TYPE data[NUM_INDICES] = {0};
 };
+
+template < int... RANGES >
+using MultiIndexRangeI = MultiIndexRange< int, RANGES... >;
 
 } // namespace shiva
