@@ -11,6 +11,7 @@ struct Data
   static constexpr int h[10] = {11, 22, 33, 44, 55, 66, 77, 88, 99, 100};
   static constexpr int sum_of_h = 595;
   static constexpr int double_nested_to_8_sum = 8720;
+  static constexpr int quad_nested_evens_sum = 735360;
   static constexpr int nested_sum_of_h = 354025;
 };
 
@@ -63,6 +64,22 @@ void testForNestedSequenceLambdaHelper()
     };
     constexpr int staticSum0 = helper( Data::h );
     static_assert( staticSum0 == Data::double_nested_to_8_sum );
+  } );
+
+  kernelLaunch([] SHIVA_HOST_DEVICE ()
+  {
+    constexpr auto helper = [] ( auto const & h ) constexpr
+    {
+      int staticSum0 = 0;
+      forNestedSequence< 10, 8, 6, 4, 2 > (
+        [&] ( auto const a, auto const b, auto const c, auto const d, auto const e ) constexpr
+      {
+        staticSum0 += h[a] + h[b] + h[c] + h[d] + h[e];
+      } );
+      return staticSum0;
+    };
+    constexpr int staticSum0 = helper( Data::h );
+    static_assert( staticSum0 == Data::quad_nested_evens_sum );
   } );
 }
 

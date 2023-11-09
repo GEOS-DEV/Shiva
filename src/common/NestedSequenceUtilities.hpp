@@ -22,13 +22,13 @@ struct NestedSequenceExpansion
 template< int END, int... REMAINING_ENDS >
 struct NestedSequenceExpansion< END, REMAINING_ENDS... > 
 {
-  template<typename FUNC, typename... INDICES>
+  template< typename FUNC, typename... INDICES >
   static constexpr void staticForNested( FUNC && func, INDICES... indices ) 
   {
     if constexpr (sizeof...(REMAINING_ENDS) == 0) 
     {
       // Base case: execute the function with all accumulated indices
-      forSequence< END >([&]( auto idx ) 
+      forSequence< END >( [&] ( auto idx ) 
       {
         func( indices..., decltype(idx)::value );
       });
@@ -38,7 +38,7 @@ struct NestedSequenceExpansion< END, REMAINING_ENDS... >
       // Recursive case: expand the next loop dimension
       forSequence< END >( [&] ( auto idx ) 
       {
-        NestedSequenceExpansion< REMAINING_ENDS... >::staticForNested( std::forward<FUNC>(func), indices..., decltype(idx)::value );
+        NestedSequenceExpansion< REMAINING_ENDS... >::staticForNested( std::forward<FUNC>( func ), indices..., decltype(idx)::value );
       });
     }
   }
