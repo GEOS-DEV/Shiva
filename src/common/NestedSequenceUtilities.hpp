@@ -30,7 +30,7 @@ struct NestedSequenceExpansion< END, REMAINING_ENDS... >
       // Base case: execute the function with all accumulated indices
       forSequence< END >( [&] ( auto idx ) 
       {
-        func( indices..., decltype(idx)::value );
+        func( indices..., idx );
       });
     } 
     else 
@@ -38,7 +38,7 @@ struct NestedSequenceExpansion< END, REMAINING_ENDS... >
       // Recursive case: expand the next loop dimension
       forSequence< END >( [&] ( auto idx ) 
       {
-        NestedSequenceExpansion< REMAINING_ENDS... >::staticForNested( std::forward<FUNC>( func ), indices..., decltype(idx)::value );
+        NestedSequenceExpansion< REMAINING_ENDS... >::staticForNested( std::forward<FUNC>( func ), indices..., idx );
       });
     }
   }
