@@ -6,6 +6,7 @@ set( common_headers
      MultiIndex.hpp
      pmpl.hpp
      SequenceUtilities.hpp
+     NestedSequenceUtilities.hpp
      ShivaMacros.hpp
      types.hpp
      )

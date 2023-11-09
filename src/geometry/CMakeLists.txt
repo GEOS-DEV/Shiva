@@ -5,7 +5,7 @@ set( geometry_headers
      mapping/Scaling.hpp
      mapping/UniformScaling.hpp
      shapes/InterpolatedShape.hpp
-     shapes/nCube.hpp
+     shapes/NCube.hpp
      )
 
 set( geometry_sources
