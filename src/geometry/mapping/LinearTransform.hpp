@@ -151,12 +151,13 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
           REAL_TYPE const (&pointCoordsParent)[3],
           typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & J )
 {
-  // using Transform = std::remove_reference_t<decltype(cell)>;
-  using InterpolatedShape = typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::InterpolatedShape;
+  using Transform = std::remove_reference_t<decltype(cell)>;
+  using InterpolatedShape = typename Transform::InterpolatedShape;
+  constexpr int DIMS = Transform::numDims;
+
   auto const & vertexCoords = cell.getData();
   forNestedSequence( [&] ( auto const ... icx ) constexpr 
     {
-      constexpr int DIMS = InterpolatedShape::numDims;
       constexpr auto index = instantiateWithSequence< MultiIndexRangeI >( InterpolatedShape::numVerticesInBasis, decltype(icx)::value... );
       CArray1d< REAL_TYPE, DIMS > const dNdXi = INTERPOLATED_SHAPE::template gradient< decltype(icx)::value... >( pointCoordsParent );
       auto const & vertexCoord = vertexCoords[ linearIndex( index ) ];
