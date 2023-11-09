@@ -5,6 +5,7 @@
 set( unit_tests_sources
      testIndexTypes.cpp
      testSequenceUtilities.cpp
+     testNestedSequenceUtilities.cpp
      )
 
 set( dependencyList ${parallelDeps} gtest common )
