@@ -1,6 +1,12 @@
 build-*
 install-*
 
+#vscode
+.vscode
+
+#mac directories
+.DS_Store
+
 # Prerequisites
 *.d
 
