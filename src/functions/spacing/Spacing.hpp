@@ -10,9 +10,9 @@ namespace shiva
 {
 
 /**
- * @brief This struct provides a static constexpr functions to compute the 
- * coordinates on a line that spans [-1,1] divided using equal spacing, with
- * the endpoints [-1,1] included as points in the spacing.
+ * @brief This struct provides a static constexpr functions to compute the
+ * coordinates on a line that spans [-1,1] divided using equal spacing, with the
+ * endpoints [-1,1] included as points in the spacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing. There are N-1 segments.
  */
@@ -46,9 +46,9 @@ struct EqualSpacing
 };
 
 /**
- * @brief This struct provides a static constexpr functions to compute the 
- * coordinates on a line that spans [-1,1] using Guass-Legendra spacing. Thus 
- * the endpoints [-1,1] are not included in the spacing.
+ * @brief This struct provides a static constexpr functions to compute the
+ * coordinates on a line that spans [-1,1] using Guass-Legendra spacing. Thus the
+ * endpoints [-1,1] are not included in the spacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing. There are N+1 segments.
  */
@@ -62,7 +62,7 @@ struct GaussLegendreSpacing
   static inline constexpr REAL_TYPE sqrt3div5 = 0.77459666924148337703585307995647992217; //sqrt(3/5)
 
   /// The number of points in the spacing.
-  static inline constexpr int numPoints = N; 
+  static inline constexpr int numPoints = N;
 
   /**
    * @brief Returns the coordinate of a point defined by the spacing.
@@ -120,9 +120,9 @@ struct GaussLegendreSpacing
 };
 
 /**
- * @brief This struct provides a static constexpr functions to compute the 
- * coordinates on a line that spans [-1,1] using Guass-Lobatto spacing. Thus 
- * the endpoints [-1,1] are included in the spacing.
+ * @brief This struct provides a static constexpr functions to compute the
+ * coordinates on a line that spans [-1,1] using Guass-Lobatto spacing. Thus the
+ * endpoints [-1,1] are included in the spacing.
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
  * @tparam N The number of points in the spacing. There are N-1 segments.
  */

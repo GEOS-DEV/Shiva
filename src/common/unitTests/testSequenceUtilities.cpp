@@ -20,12 +20,12 @@ SHIVA_GLOBAL void testSequenceExpansionHelper( FUNC func )
 }
 
 template< typename FUNC >
-void kernelLaunch( FUNC&& func )
+void kernelLaunch( FUNC && func )
 {
 #if defined(SHIVA_USE_DEVICE)
-  testSequenceExpansionHelper<<<1,1>>>( std::forward<FUNC>(func) );
+  testSequenceExpansionHelper << < 1, 1 >> > ( std::forward< FUNC >( func ) );
 #else
-  testSequenceExpansionHelper( std::forward<FUNC>(func) );
+  testSequenceExpansionHelper( std::forward< FUNC >( func ) );
 #endif
 }
 
@@ -33,8 +33,8 @@ void testSequenceExpansionLambdaHelper()
 {
   kernelLaunch([] SHIVA_HOST_DEVICE ()
   {
-    constexpr int staticSum0 = 
-    executeSequence< 10 >( [&] ( auto const && ... a ) constexpr
+    constexpr int staticSum0 =
+      executeSequence< 10 >( [&] ( auto const && ... a ) constexpr
     {
       return (Data::h[a] + ...);
     } );
@@ -53,14 +53,14 @@ void testNestedSequenceExpansionLambdaHelper()
 {
   kernelLaunch([] SHIVA_HOST_DEVICE ()
   {
-    constexpr int staticSum0 = 
-    executeSequence< 10 >( [&] ( auto const ... a ) constexpr
+    constexpr int staticSum0 =
+      executeSequence< 10 >( [&] ( auto const ... a ) constexpr
     {
-      return 
-      ( executeSequence< 10 >
-          ( [ h = Data::h, aa = std::integral_constant< int, a >{} ] ( auto const ... b ) constexpr
+      return
+        ( executeSequence< 10 >
+            ( [ h = Data::h, aa = std::integral_constant< int, a >{} ] ( auto const ... b ) constexpr
       { return ( (h[aa] * h[b]) + ...); }
-          ) + ...
+            ) + ...
         );
     } );
     static_assert( staticSum0 == Data::nested_sum_of_h );
@@ -105,8 +105,8 @@ void testSequenceExpansionTemplateLambdaHelper()
 {
   kernelLaunch([] SHIVA_HOST_DEVICE ()
   {
-    constexpr int staticSum0 = 
-    executeSequence< 10 >( [&]< int ... a > () constexpr
+    constexpr int staticSum0 =
+      executeSequence< 10 >( [&]< int ... a > () constexpr
     {
       return (Data::h[a] + ...);
     } );
@@ -126,17 +126,17 @@ void testSequenceExpansionTemplateLambdaHelper()
 {
   kernelLaunch([] SHIVA_HOST_DEVICE ()
   {
-  constexpr int staticSum0 = executeSequence< 10 >([&]< int ... a > () constexpr
-  {
-    return
-      ( executeSequence< 10 >
-        (
-          [ h = Data::h, aa = std::integral_constant< int, a >{} ]< int ... b > () constexpr
-          { return ( (h[aa] * h[b]) + ...); }
-        ) + ...
-      );
-  } );
-  static_assert( staticSum0 == Data::nested_sum_of_h );
+    constexpr int staticSum0 = executeSequence< 10 >( [&]< int ... a > () constexpr
+    {
+      return
+        ( executeSequence< 10 >
+          (
+            [ h = Data::h, aa = std::integral_constant< int, a >{} ]< int ... b > () constexpr
+      { return ( (h[aa] * h[b]) + ...); }
+          ) + ...
+        );
+    } );
+    static_assert( staticSum0 == Data::nested_sum_of_h );
   } );
 }
 

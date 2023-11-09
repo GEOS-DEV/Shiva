@@ -1,6 +1,6 @@
 
-#include "../RectangularCuboid.hpp"
-#include "../geometryUtilities.hpp"
+#include "../Scaling.hpp"
+#include "../JacobianTransforms.hpp"
 #include "common/pmpl.hpp"
 
 #include <gtest/gtest.h>
@@ -11,10 +11,10 @@ using namespace shiva::geometry::utilities;
 
 
 template< typename REAL_TYPE >
-SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeRectangularCuboid( REAL_TYPE const (&h)[3] )
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeScaling( REAL_TYPE const (&h)[3] )
 {
-  RectangularCuboid< REAL_TYPE > cell;
-  cell.setLength( h );
+  Scaling< REAL_TYPE > cell;
+  cell.setData( h );
 
   return cell;
 }
@@ -24,10 +24,10 @@ void testConstructionAndSettersHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
   double * data = nullptr;
-  pmpl::genericKernelWrapper( 3, data, [=] SHIVA_HOST_DEVICE ( double * const kdata )
+  pmpl::genericKernelWrapper( 3, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
-    auto cell = makeRectangularCuboid( h );
-    auto const & constData = cell.getLengths();
+    auto cell = makeScaling( h );
+    auto const & constData = cell.getData();
     kdata[0] = constData[0];
     kdata[1] = constData[1];
     kdata[2] = constData[2];
@@ -38,7 +38,7 @@ void testConstructionAndSettersHelper()
 
   pmpl::deallocateData( data );
 }
-TEST( testRectangularCuboid, testConstructionAndSetters )
+TEST( testScaling, testConstructionAndSetters )
 {
   testConstructionAndSettersHelper();
 }
@@ -48,9 +48,9 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
   double * data = nullptr;
-  pmpl::genericKernelWrapper( 3, data, [=] SHIVA_HOST_DEVICE ( double * const kdata )
+  pmpl::genericKernelWrapper( 3, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
-    auto cell = makeRectangularCuboid( h );
+    auto cell = makeScaling( h );
 
     typename std::remove_reference_t< decltype(cell) >::JacobianType::type J;
     jacobian( cell, J );
@@ -65,7 +65,7 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
   pmpl::deallocateData( data );
 }
 
-TEST( testRectangularCuboid, testJacobianFunctionModifyLvalueRefArg )
+TEST( testScaling, testJacobianFunctionModifyLvalueRefArg )
 {
   testJacobianFunctionModifyLvalueRefArgHelper();
 }
@@ -74,9 +74,9 @@ void testJacobianFunctionReturnByValueHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
   double * data = nullptr;
-  pmpl::genericKernelWrapper( 3, data, [=] SHIVA_HOST_DEVICE ( double * const kdata )
+  pmpl::genericKernelWrapper( 3, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
-    auto cell = makeRectangularCuboid( h );
+    auto cell = makeScaling( h );
 
     auto J = jacobian( cell );
     kdata[0] = J[0];
@@ -89,7 +89,7 @@ void testJacobianFunctionReturnByValueHelper()
 
   pmpl::deallocateData( data );
 }
-TEST( testRectangularCuboid, testJacobianFunctionReturnByValue )
+TEST( testScaling, testJacobianFunctionReturnByValue )
 {
   testJacobianFunctionReturnByValueHelper();
 }
@@ -98,9 +98,9 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
   double * data = nullptr;
-  pmpl::genericKernelWrapper( 4, data, [=] SHIVA_HOST_DEVICE ( double * const kdata )
+  pmpl::genericKernelWrapper( 4, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
-    auto cell = makeRectangularCuboid( h );
+    auto cell = makeScaling( h );
 
     typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ;
     double detJ;
@@ -117,7 +117,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
 
   pmpl::deallocateData( data );
 }
-TEST( testRectangularCuboid, testInvJacobianFunctionModifyLvalueRefArg )
+TEST( testScaling, testInvJacobianFunctionModifyLvalueRefArg )
 {
   testInvJacobianFunctionModifyLvalueRefArgHelper();
 }
@@ -126,9 +126,9 @@ void testInvJacobianFunctionReturnByValueHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
   double * data = nullptr;
-  pmpl::genericKernelWrapper( 4, data, [=] SHIVA_HOST_DEVICE ( double * const kdata )
+  pmpl::genericKernelWrapper( 4, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
-    auto cell = makeRectangularCuboid( h );
+    auto cell = makeScaling( h );
 
     auto [ detJ, invJ ] = inverseJacobian( cell );
     kdata[0] = detJ;
@@ -143,7 +143,7 @@ void testInvJacobianFunctionReturnByValueHelper()
 
   pmpl::deallocateData( data );
 }
-TEST( testRectangularCuboid, testInvJacobianFunctionReturnByValue )
+TEST( testScaling, testInvJacobianFunctionReturnByValue )
 {
   testInvJacobianFunctionReturnByValueHelper();
 }

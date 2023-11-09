@@ -3,11 +3,12 @@
 #
 
 set( unit_tests_sources
-     testFiniteElementSpace.cpp
-     testParentElement.cpp
-   )
+     testUniformScaling.cpp
+     testLinearTransform.cpp
+     testScaling.cpp
+     )
 
-set( dependencyList ${parallelDeps} discretizations gtest )
+set( dependencyList ${parallelDeps} gtest geometry )
 
 if( ENABLE_HIP )
     list( APPEND dependencyList blt::hip )
@@ -30,7 +31,7 @@ foreach(test ${unit_tests_sources})
     get_filename_component( test_name ${test} NAME_WE )
     blt_add_executable( NAME ${test_name}
                         SOURCES ${test}
-                        HEADERS 
+                        HEADERS ${header}
                         OUTPUT_DIR ${TEST_OUTPUT_DIRECTORY}
                         DEPENDS_ON ${dependencyList}
                         )
