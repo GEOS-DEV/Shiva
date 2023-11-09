@@ -154,8 +154,7 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
   // using Transform = std::remove_reference_t<decltype(cell)>;
   using InterpolatedShape = typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::InterpolatedShape;
   auto const & vertexCoords = cell.getData();
-  forNestedSequence( 
-  [&] ( auto const ... icx ) constexpr 
+  forNestedSequence( [&] ( auto const ... icx ) constexpr 
     {
       constexpr int DIMS = InterpolatedShape::numDims;
       constexpr auto index = instantiateWithSequence< MultiIndexRangeI >( InterpolatedShape::numVerticesInBasis, decltype(icx)::value... );
