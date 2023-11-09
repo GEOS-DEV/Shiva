@@ -127,6 +127,7 @@ struct CArray1d
    * @return A reference to the i-th element of the array.
    */
   constexpr inline T operator[] ( int const i ) const { return data[i]; }
+  constexpr inline T & operator[] ( int const i )   { return data[i]; }
 
   /// alias for T[N]
   using type = T[N];

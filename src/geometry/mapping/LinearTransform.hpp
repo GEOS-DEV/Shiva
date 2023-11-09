@@ -34,19 +34,20 @@ namespace geometry
  *(Wikipedia)</a>
  */
 template< typename REAL_TYPE,
-          typename PARENT_ELEMENT >
+          typename INTERPOLATED_SHAPE >
 class LinearTransform
 {
 public:
+  using InterpolatedShape = INTERPOLATED_SHAPE;
+
   /// number of vertices in the geometric object that will be transformed.
-  static inline constexpr int numVertices = PARENT_ELEMENT::numVertices;
+  static inline constexpr int numVertices = InterpolatedShape::numVertices;
 
   /// number of dimensions of the geometric object that will be transformed.
-  static inline constexpr int numDims =  PARENT_ELEMENT::numDims;
+  static inline constexpr int numDims =  InterpolatedShape::numDims;
 
   /// Alias for the floating point type for the transform.
   using RealType = REAL_TYPE;
-
 
   /// The type used to represent the Jacobian transformation operation
   using JacobianType = CArray2d< REAL_TYPE, numDims, numDims >;
@@ -129,9 +130,9 @@ namespace utilities
  * called in the same way as the other geometry objects with constant Jacobian.
  * @tparam REAL_TYPE The floating point type.
  */
-template< typename REAL_TYPE, typename PARENT_ELEMENT >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, PARENT_ELEMENT > const &,//cell,
-                                                             typename LinearTransform< REAL_TYPE, PARENT_ELEMENT >::JacobianType::type & )//J
+template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const &,//cell,
+                                                             typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )//J
 // )
 {}
 
@@ -144,24 +145,29 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< RE
  * Jacobian.
  * @param[out] J The inverse Jacobian transformation.
  */
-template< typename REAL_TYPE, typename PARENT_ELEMENT >
+template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-jacobian( LinearTransform< REAL_TYPE, PARENT_ELEMENT > const & cell,
+jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
           REAL_TYPE const (&pointCoordsParent)[3],
-          typename LinearTransform< REAL_TYPE, PARENT_ELEMENT >::JacobianType::type & J )
+          typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & J )
 {
+  using Transform = std::remove_reference_t<decltype(cell)>;
+  using InterpolatedShape = typename Transform::InterpolatedShape;
   auto const & vertexCoords = cell.getData();
-  forSequence< 2 >( [&] ( auto const ica ) constexpr
+  forSequence< InterpolatedShape::numVerticesInBasis[0] >( [&] ( auto const ica ) constexpr
   {
     constexpr int a = decltype(ica)::value;
-    forSequence< 2 >( [&] ( auto const icb ) constexpr
+    forSequence< InterpolatedShape::numVerticesInBasis[1] >( [&] ( auto const icb ) constexpr
     {
       constexpr int b = decltype(icb)::value;
-      forSequence< 2 >( [&] ( auto const icc ) constexpr
+      forSequence< InterpolatedShape::numVerticesInBasis[2] >( [&] ( auto const icc ) constexpr
       {
         constexpr int c = decltype(icc)::value;
-        constexpr MultiIndexRange< int, 2, 2, 2 > index{a, b, c};
-        CArray1d< REAL_TYPE, 3 > const dNdXi = PARENT_ELEMENT::template gradient< a, b, c >( pointCoordsParent );
+        constexpr MultiIndexRange< int, 
+                                   InterpolatedShape::numVerticesInBasis[0], 
+                                   InterpolatedShape::numVerticesInBasis[1], 
+                                   InterpolatedShape::numVerticesInBasis[2] > index{a, b, c};
+        CArray1d< REAL_TYPE, 3 > const dNdXi = INTERPOLATED_SHAPE::template gradient< a, b, c >( pointCoordsParent );
 
         auto const & vertexCoord = vertexCoords[ linearIndex( index ) ];
         for ( int i = 0; i < 3; ++i )
@@ -186,11 +192,11 @@ jacobian( LinearTransform< REAL_TYPE, PARENT_ELEMENT > const & cell,
  * @param[out] invJ The inverse Jacobian transformation.
  * @param[out] detJ The determinant of the Jacobian transformation.
  */
-template< typename REAL_TYPE, typename PARENT_ELEMENT >
+template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-inverseJacobian( LinearTransform< REAL_TYPE, PARENT_ELEMENT > const & cell,
+inverseJacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
                  REAL_TYPE const (&parentCoords)[3],
-                 typename LinearTransform< REAL_TYPE, PARENT_ELEMENT >::JacobianType::type & invJ,
+                 typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & invJ,
                  REAL_TYPE & detJ )
 {
   jacobian( cell, parentCoords, invJ );
