@@ -156,7 +156,8 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
   constexpr int DIMS = Transform::numDims;
 
   auto const & vertexCoords = cell.getData();
-  forNestedSequence( [&] ( auto const ... icx ) constexpr 
+  forNestedSequence( InterpolatedShape::numVerticesInBasis,
+  [&] ( auto const ... icx ) constexpr 
     {
       constexpr auto index = instantiateWithSequence< MultiIndexRangeI >( InterpolatedShape::numVerticesInBasis, decltype(icx)::value... );
       CArray1d< REAL_TYPE, DIMS > const dNdXi = INTERPOLATED_SHAPE::template gradient< decltype(icx)::value... >( pointCoordsParent );
@@ -166,7 +167,7 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
         constexpr int ijk[DIMS] = { decltype(icijk)::value... };
         J[ijk[1]][ijk[0]] = J[ijk[1]][ijk[0]] + dNdXi[ijk[0]] * vertexCoord[ijk[1]];
       } );
-    }, InterpolatedShape::numVerticesInBasis );
+    } );
 }
 
 /**
