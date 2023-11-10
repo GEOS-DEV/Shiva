@@ -50,7 +50,7 @@ public:
   /// The number of vertices on the InterpolatedShape
   static inline constexpr int numVertices = BaseShape::numVertices();
 
-  static inline constexpr std::integer_sequence< int, BASIS_TYPE::numSupportPoints... > numVerticesInBasis{};
+  static inline constexpr std::integer_sequence< int, BASIS_TYPE::numSupportPoints... > basisSupportCounts{};
 
   static_assert( numDims == BaseShape::numDims(), "numDims mismatch between cell and number of basis specified" );
 

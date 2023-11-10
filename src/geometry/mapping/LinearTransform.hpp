@@ -59,7 +59,7 @@ public:
   using CoordType = REAL_TYPE[numDims];
 
   /// The type used to represent the index space of the cell
-  using IndexType = MultiIndexRange< int, 2, 2, 2 >;
+  using IndexType = typename SequenceAlias< MultiIndexRangeI, decltype(InterpolatedShape::basisSupportCounts) >::type;
 
   /**
    * @brief Returns a boolean indicating whether the Jacobian is constant in the
@@ -152,14 +152,15 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
           typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & J )
 {
   using Transform = std::remove_reference_t<decltype(cell)>;
+  using IndexType = typename Transform::IndexType;
   using InterpolatedShape = typename Transform::InterpolatedShape;
   constexpr int DIMS = Transform::numDims;
 
   auto const & vertexCoords = cell.getData();
-  forNestedSequence( InterpolatedShape::numVerticesInBasis,
+  forNestedSequence( InterpolatedShape::basisSupportCounts,
   [&] ( auto const ... icx ) constexpr 
     {
-      constexpr auto index = instantiateWithSequence< MultiIndexRangeI >( InterpolatedShape::numVerticesInBasis, decltype(icx)::value... );
+      IndexType index{ { decltype(icx)::value... } };
       CArray1d< REAL_TYPE, DIMS > const dNdXi = INTERPOLATED_SHAPE::template gradient< decltype(icx)::value... >( pointCoordsParent );
       auto const & vertexCoord = vertexCoords[ linearIndex( index ) ];
       forNestedSequence< DIMS, DIMS >( [&] ( auto const ... icijk ) constexpr

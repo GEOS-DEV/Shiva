@@ -12,14 +12,22 @@
 namespace shiva
 {
 
-// Define the template function that takes a template struct,
-// a set of template parameters, and an index_sequence
-template <template <int...> class Template, int... Seq, typename... Args>
-constexpr auto instantiateWithSequence(std::integer_sequence<int, Seq...>, Args... args) 
-{
-  return Template<Seq...>{ std::forward<Args>(args)... };
-}
+// Helper class to capture the int pack from std::integer_sequence
+// to assist in `using` statements
+template < template <int...> class Template, typename T>
+struct SequenceAlias;
 
+template < template <int...> class Template, int... Seq >
+struct SequenceAlias< Template, std::integer_sequence<int, Seq...> > 
+{
+  using type = Template<Seq...>;
+};
+
+template < template <int...> class Template, int... Seq >
+struct SequenceAlias< Template, const std::integer_sequence<int, Seq...> > 
+{
+  using type = Template<Seq...>;
+};
 
 /**
  * @namespace shiva::sequenceUtilities
