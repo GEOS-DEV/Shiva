@@ -156,18 +156,18 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
   using InterpolatedShape = typename Transform::InterpolatedShape;
   constexpr int DIMS = Transform::numDims;
 
-  auto const & vertexCoords = cell.getData();
+  auto const & nodeCoords = cell.getData();
   forNestedSequence( InterpolatedShape::basisSupportCounts,
     [&] ( auto const ... icNa ) constexpr 
     {
       IndexType index{ { decltype(icNa)::value... } };
       CArray1d< REAL_TYPE, DIMS > const dNadXi = INTERPOLATED_SHAPE::template gradient< decltype(icNa)::value... >( pointCoordsParent );
-      auto const & vertexCoord = vertexCoords[ linearIndex( index ) ];
+      auto const & nodeCoord = nodeCoords[ flattenIndex( index ) ];
       forNestedSequence< DIMS, DIMS >(
       [&] ( auto const ... icijk ) constexpr
       {
         constexpr int ijk[DIMS] = { decltype(icijk)::value... };
-        J[ijk[1]][ijk[0]] = J[ijk[1]][ijk[0]] + dNadXi[ijk[0]] * vertexCoord[ijk[1]];
+        J[ijk[1]][ijk[0]] = J[ijk[1]][ijk[0]] + dNadXi[ijk[0]] * nodeCoord[ijk[1]];
       } );
     } 
   );
