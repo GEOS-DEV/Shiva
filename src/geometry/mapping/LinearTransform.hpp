@@ -99,23 +99,6 @@ public:
     }
   }
 
-
-  // /**
-  //  * @brief method to loop over the vertices of the cuboid
-  //  * @tparam FUNCTION_TYPE The type of the function to execute
-  //  * @param[in] func The function to execute
-  //  */
-  // template< typename FUNCTION_TYPE >
-  // constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void forVertices( FUNCTION_TYPE && func ) const
-  // {
-  //   IndexType index{0, 0, 0};
-
-  //   forRange( index, [this, func] ( auto const & i )
-  //   {
-  //     func( i, m_vertexCoords[linearIndex( i )] );
-  //   } );
-  // }
-
 private:
   /// Data member that stores the vertex coordinates of the cuboid
   DataType m_vertexCoords;
@@ -133,8 +116,7 @@ namespace utilities
  */
 template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const &,//cell,
-                                                             typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )//J
-// )
+                                                             typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )
 {}
 
 /**
