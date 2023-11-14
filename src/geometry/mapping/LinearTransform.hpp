@@ -59,7 +59,8 @@ public:
   using CoordType = REAL_TYPE[numDims];
 
   /// The type used to represent the index space of the cell
-  using IndexType = typename SequenceAlias< MultiIndexRangeI, decltype(InterpolatedShape::basisSupportCounts) >::type;
+  using SupportIndexType = typename InterpolatedShape::BasisCombinationType::IndexType;
+  // using IndexType = typename SequenceAlias< MultiIndexRangeI, decltype(InterpolatedShape::basisSupportCounts) >::type;
 
   /**
    * @brief Returns a boolean indicating whether the Jacobian is constant in the
@@ -80,7 +81,7 @@ public:
    * @brief Provides non-const access to member data through reference.
    * @return a mutable reference to the member data.
    */
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType & setData() { return m_vertexCoords; }
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType & getData() { return m_vertexCoords; }
 
 
   /**
@@ -96,23 +97,6 @@ public:
         m_vertexCoords[a][i] = coords[a][i];
       }
     }
-  }
-
-
-  /**
-   * @brief method to loop over the vertices of the cuboid
-   * @tparam FUNCTION_TYPE The type of the function to execute
-   * @param[in] func The function to execute
-   */
-  template< typename FUNCTION_TYPE >
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void forVertices( FUNCTION_TYPE && func ) const
-  {
-    IndexType index{0, 0, 0};
-
-    forRange( index, [this, func] ( auto const & i )
-    {
-      func( i, m_vertexCoords[linearIndex( i )] );
-    } );
   }
 
 private:
@@ -132,8 +116,7 @@ namespace utilities
  */
 template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const &,//cell,
-                                                             typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )//J
-// )
+                                                             typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )
 {}
 
 /**
@@ -152,17 +135,18 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
           typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & J )
 {
   using Transform = std::remove_reference_t<decltype(cell)>;
-  using IndexType = typename Transform::IndexType;
   using InterpolatedShape = typename Transform::InterpolatedShape;
+  using IndexType = typename InterpolatedShape::BasisCombinationType::IndexType;
   constexpr int DIMS = Transform::numDims;
 
   auto const & nodeCoords = cell.getData();
-  forNestedSequence( InterpolatedShape::basisSupportCounts,
+  InterpolatedShape::template supportLoop(
     [&] ( auto const ... icNa ) constexpr 
     {
       IndexType index{ { decltype(icNa)::value... } };
-      CArray1d< REAL_TYPE, DIMS > const dNadXi = INTERPOLATED_SHAPE::template gradient< decltype(icNa)::value... >( pointCoordsParent );
+      CArray1d< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(icNa)::value... >( pointCoordsParent );
       auto const & nodeCoord = nodeCoords[ flattenIndex( index ) ];
+      // dimensional loop from domain to codomain
       forNestedSequence< DIMS, DIMS >(
       [&] ( auto const ... icijk ) constexpr
       {

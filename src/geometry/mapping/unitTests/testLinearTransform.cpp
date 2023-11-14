@@ -96,9 +96,9 @@ SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
                                   LagrangeBasis< double, 1, EqualSpacing >,
                                   LagrangeBasis< double, 1, EqualSpacing > > > cell;
 
-  typename decltype(cell)::IndexType index;
+  typename decltype(cell)::SupportIndexType index;
 
-  auto & transformData = cell.setData();
+  auto & transformData = cell.getData();
 
   forRange( index = {0, 0, 0}, [&transformData, &X] ( auto const & i )
   {
@@ -121,7 +121,7 @@ void testConstructionAndSettersHelper()
   pmpl::genericKernelWrapper( 8 * 3, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto const cell = makeLinearTransform( Xref );
-    typename decltype(cell)::IndexType index{0, 0, 0};
+    typename decltype(cell)::SupportIndexType index{0, 0, 0};
 
     auto const & transformData = cell.getData();
 
