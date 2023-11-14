@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/SequenceUtilities.hpp"
+#include "common/NestedSequenceUtilities.hpp"
 #include "common/MultiIndex.hpp"
 
 namespace shiva
@@ -28,9 +28,18 @@ struct BasisProduct
   /// Alias for the type that represents a coordinate
   using CoordType = REAL_TYPE[numDims];
 
-  static inline constexpr std::integer_sequence< int, BASIS_TYPES::numSupportPoints... > basisSupportCounts{};
+  using IndexType = typename SequenceAlias< MultiIndexRangeI, 
+                                            std::integer_sequence< int, BASIS_TYPES::numSupportPoints... > >::type;
 
-  using IndexType = typename SequenceAlias< MultiIndexRangeI, decltype(basisSupportCounts) >::type;
+
+  template < typename FUNC >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
+  supportLoop( FUNC && func )
+  {
+    forNestedSequence<BASIS_TYPES::numSupportPoints...>( std::forward< FUNC >( func ) );
+  }
+
+
 
   /**
    * @brief Calculates the value of the basis function at the specified parent

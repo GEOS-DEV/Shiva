@@ -1,3 +1,5 @@
+#pragma once
+
 #include "common/ShivaMacros.hpp"
 #include <type_traits>
 #include <utility>
@@ -53,7 +55,8 @@ constexpr void forNestedSequence( FUNC && func )
 }
 
 template< int... ENDS, typename FUNC >
-constexpr void forNestedSequence( std::integer_sequence<int, ENDS...>, FUNC && func )
+constexpr void forNestedSequence( std::integer_sequence<int, ENDS...>, 
+                                  FUNC && func )
 {
   forNestedSequence< ENDS... >( std::forward<FUNC>( func ) );
 }

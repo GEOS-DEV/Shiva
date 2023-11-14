@@ -58,7 +58,7 @@ public:
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
   supportLoop( FUNC && func )
   {
-    forNestedSequence( BasisCombinationType::basisSupportCounts, std::forward< FUNC >( func ) );
+    BasisCombinationType::supportLoop( std::forward< FUNC >( func ) );
   }
 
   /**
