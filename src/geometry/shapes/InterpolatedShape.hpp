@@ -42,7 +42,7 @@ public:
   using CoordType = typename StandardGeom::CoordType;
 
   /// The type used to represent the product of basis functions
-  using BASIS_PRODUCT_TYPE = functions::BasisProduct< REAL_TYPE, BASIS_TYPE... >;
+  using BasisCombinationType = functions::BasisProduct< REAL_TYPE, BASIS_TYPE... >;
 
   /// The number of dimensions on the InterpolatedShape
   static inline constexpr int numDims = sizeof...(BASIS_TYPE);
@@ -50,10 +50,16 @@ public:
   /// The number of vertices on the InterpolatedShape
   static inline constexpr int numVertices = StandardGeom::numVertices();
 
-  static inline constexpr std::integer_sequence< int, BASIS_TYPE::numSupportPoints... > basisSupportCounts{};
+  // static inline constexpr std::integer_sequence< int, BASIS_TYPE::numSupportPoints... > basisSupportCounts{};
 
   static_assert( numDims == StandardGeom::numDims(), "numDims mismatch between cell and number of basis specified" );
 
+  template < typename FUNC >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
+  supportLoop( FUNC && func )
+  {
+    BasisCombinationType::supportLoop( std::forward< FUNC >( func ) );
+  }
 
   /**
    * @copydoc functions::BasisProduct::value
@@ -63,7 +69,7 @@ public:
   value( CoordType const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
-    return ( BASIS_PRODUCT_TYPE::template value< BASIS_FUNCTION_INDICES... >( parentCoord ) );
+    return ( BasisCombinationType::template value< BASIS_FUNCTION_INDICES... >( parentCoord ) );
   }
 
   /**
@@ -74,7 +80,7 @@ public:
   gradient( CoordType const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
-    return ( BASIS_PRODUCT_TYPE::template gradient< BASIS_FUNCTION_INDICES... >( parentCoord ) );
+    return ( BasisCombinationType::template gradient< BASIS_FUNCTION_INDICES... >( parentCoord ) );
   }
 };
 
