@@ -38,9 +38,6 @@ public:
   /// Alias for the floating point type
   using RealType = REAL_TYPE;
 
-  /// Alias for the type that represents a coordinate
-  using CoordType = typename BaseShape::CoordType;
-
   /// The type used to represent the product of basis functions
   using BASIS_PRODUCT_TYPE = functions::BasisProduct< REAL_TYPE, BASIS_TYPE... >;
 
@@ -57,9 +54,9 @@ public:
   /**
    * @copydoc functions::BasisProduct::value
    */
-  template< int ... BASIS_FUNCTION_INDICES >
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType
-  value( CoordType const & parentCoord )
+  value( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
     return ( BASIS_PRODUCT_TYPE::template value< BASIS_FUNCTION_INDICES... >( parentCoord ) );
@@ -68,9 +65,9 @@ public:
   /**
    * @copydoc functions::BasisProduct::gradient
    */
-  template< int ... BASIS_FUNCTION_INDICES >
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray1d< RealType, numDims >
-  gradient( CoordType const & parentCoord )
+  gradient( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
     return ( BASIS_PRODUCT_TYPE::template gradient< BASIS_FUNCTION_INDICES... >( parentCoord ) );

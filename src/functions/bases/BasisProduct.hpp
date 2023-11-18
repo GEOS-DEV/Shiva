@@ -23,9 +23,6 @@ struct BasisProduct
 
   /// Alias for the floating point type
   using RealType = REAL_TYPE;
-
-  /// Alias for the type that represents a coordinate
-  using CoordType = REAL_TYPE[numDims];
   
 
   /**
@@ -46,9 +43,9 @@ struct BasisProduct
    * \f]
    *
    */
-  template< int ... BASIS_FUNCTION_INDICES >
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType
-  value( CoordType const & parentCoord )
+  value( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
 
@@ -89,9 +86,9 @@ struct BasisProduct
    * \phi_{i_k}(\xi_k)
    * \f]
    */
-  template< int ... BASIS_FUNCTION_INDICES >
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray1d< RealType, numDims >
-  gradient( CoordType const & parentCoord )
+  gradient( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
 
@@ -151,9 +148,9 @@ private:
    * @return The gradient component of the basis function at the specified
    * parent coordinate.
    */
-  template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COORD_INDEX >
+  template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COORD_INDEX, typename COORD_TYPE >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType
-  gradientComponentHelper( CoordType const & parentCoord )
+  gradientComponentHelper( COORD_TYPE const & parentCoord )
   {
     if constexpr ( GRADIENT_COMPONENT == COORD_INDEX )
     {

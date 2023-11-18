@@ -38,9 +38,6 @@ public:
   /// Alias for the floating point type
   using RealType = REAL_TYPE;
 
-  /// Alias for the type that represents a coordinate
-  using CoordType = typename ShapeType::CoordType;
-
   /// The number of dimensions on the ParentElement
   static inline constexpr int numDims = sizeof...(BASIS_TYPE);
 
@@ -54,9 +51,9 @@ public:
   /**
    * @copydoc functions::BasisProduct::value
    */
-  template< int ... BASIS_FUNCTION_INDICES >
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType
-  value( CoordType const & parentCoord )
+  value( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
     return ( BASIS_PRODUCT_TYPE::template value< BASIS_FUNCTION_INDICES... >( parentCoord ) );
@@ -66,9 +63,9 @@ public:
   /**
    * @copydoc functions::BasisProduct::gradient
    */
-  template< int ... BASIS_FUNCTION_INDICES >
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray1d< RealType, numDims >
-  gradient( CoordType const & parentCoord )
+  gradient( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
     return ( BASIS_PRODUCT_TYPE::template gradient< BASIS_FUNCTION_INDICES... >( parentCoord ) );
@@ -76,7 +73,7 @@ public:
 
   // template< typename VAR_DATA, typename VALUE_TYPE >
   // SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE VALUE_TYPE
-  // value( CoordType const & parentCoord,
+  // value( COORD_TYPE const & parentCoord,
   //        VAR_DATA const & var )
   // {
   //   static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
