@@ -49,6 +49,24 @@ static constexpr bool check( REAL_TYPE const a, REAL_TYPE const b, REAL_TYPE con
 }
 
 
+
+template< typename LAMBDA >
+SHIVA_GLOBAL void genericKernel( LAMBDA func )
+{
+  func();
+}
+
+template< typename LAMBDA >
+void genericKernelWrapper( LAMBDA && func )
+{
+#if defined(SHIVA_USE_DEVICE)
+  genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ) );
+#else
+  genericKernel( std::forward< LAMBDA >( func ) );
+#endif
+}
+
+
 /**
  * @brief This function provides a generic kernel execution mechanism that can
  * be called on either host or device.
