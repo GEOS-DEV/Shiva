@@ -17,15 +17,14 @@ static constexpr auto initializer( std::integer_sequence< int, VALUES ... > )
 
 struct TestCArrayHelper
 {
-
   using Array = CArray< double, 2, 3, 4 >;
   static constexpr Array array{ initializer< Array >( std::make_integer_sequence< int, 2 * 3 * 4 >() ) };
 };
 
-
-TEST( testCArray, testTraits )
+void testTraitsHelper()
 {
-  pmpl::genericKernelWrapper( [] ()
+  int * data = nullptr;
+  pmpl::genericKernelWrapper( 5, data, [] SHIVA_DEVICE ( int * const data )
   {
     using Array = TestCArrayHelper::Array;
     static_assert( Array::rank() == 3 );
@@ -35,17 +34,29 @@ TEST( testCArray, testTraits )
     static_assert( Array::size() == 24 );
 
     Array array;
-    EXPECT_EQ( array.rank(), 3 );
-    EXPECT_EQ( array.extent<0>(), 2 );
-    EXPECT_EQ( array.extent<1>(), 3 );
-    EXPECT_EQ( array.extent<2>(), 4 );
-    EXPECT_EQ( array.size(), 24 );
+    data[0] = array.rank();
+    data[1] = array.extent<0>();
+    data[2] = array.extent<1>();
+    data[3] = array.extent<2>();
+    data[4] = array.size();
   } );
+
+  EXPECT_EQ( data[0], 3 );
+  EXPECT_EQ( data[1], 2 );
+  EXPECT_EQ( data[2], 3 );
+  EXPECT_EQ( data[3], 4 );
+  EXPECT_EQ( data[4], 24 );
+  pmpl::deallocateData( data );
+
+}
+TEST( testCArray, testTraits )
+{
+  testTraitsHelper();
 }
 
-TEST( testCArray, testStrides )
+void testStridesHelper()
 {
-  pmpl::genericKernelWrapper( [] ()
+  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
   {
     static_assert( cArrayDetail::stride< 2 >() == 1 );
     static_assert( cArrayDetail::stride< 3, 4 >() == 4 );
@@ -53,10 +64,15 @@ TEST( testCArray, testStrides )
   } );
 }
 
+TEST( testCArray, testStrides )
+{
+  testStridesHelper();
+}
+
 
 void testLinearIndexCT()
 {
-  pmpl::genericKernelWrapper( [] ()
+  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
   {
     using Array = TestCArrayHelper::Array;
     constexpr int na = Array::extent<0>();
@@ -82,7 +98,8 @@ void testLinearIndexCT()
 
 void testLinearIndexRT()
 {
-  pmpl::genericKernelWrapper( [] ()
+  int * data = nullptr;
+  pmpl::genericKernelWrapper( TestCArrayHelper::Array::size(), data, [] SHIVA_DEVICE ( int * const data )
   {
     TestCArrayHelper::Array array;
     int const na = array.extent<0>();
@@ -95,11 +112,18 @@ void testLinearIndexRT()
       {
         for ( int c = 0; c < nc; ++c )
         {
-          EXPECT_EQ( array.linearIndex( a, b, c ), a * nb * nc + b * nc + c );
+          data[ a * nb * nc + b * nc + c ] = array.linearIndex( a, b, c );
         }
       }
     }
   } );
+
+  for ( int a = 0; a < TestCArrayHelper::Array::size(); ++a )
+  {
+    EXPECT_EQ( data[a], a );
+  }
+  pmpl::deallocateData( data );
+
 }
 
 TEST( testCArray, testLinerIndex )
@@ -116,7 +140,7 @@ void testParenthesesOperatorCT()
   constexpr int nb = Array::extent<1>();
   constexpr int nc = Array::extent<2>();
 
-  pmpl::genericKernelWrapper( [] ()
+  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
   {
     forSequence< na >( [] ( auto const ica )
     {
@@ -141,26 +165,33 @@ void testParenthesesOperatorCT()
 
 void testParenthesesOperatorRT()
 {
-  pmpl::genericKernelWrapper( [] ()
+  double * data = nullptr;
+  pmpl::genericKernelWrapper( TestCArrayHelper::Array::size(), data, [] SHIVA_DEVICE ( double * const data )
   {
     TestCArrayHelper::Array const array{ initializer< TestCArrayHelper::Array >( std::make_integer_sequence< int, 2 * 3 * 4 >() ) };;
     int const na = array.extent<0>();
     int const nb = array.extent<1>();
     int const nc = array.extent<2>();
 
-    double value = 0.0;
     for ( int a = 0; a < na; ++a )
     {
       for ( int b = 0; b < nb; ++b )
       {
         for ( int c = 0; c < nc; ++c )
         {
-          EXPECT_DOUBLE_EQ( array( a, b, c ), value );
-          value += 3.14159;
+          data[ a * nb * nc + b * nc + c ] = array( a, b, c );
         }
       }
     }
   } );
+
+  for ( int a = 0; a < TestCArrayHelper::Array::size(); ++a )
+  {
+    EXPECT_EQ( data[a], 3.14159 * a );
+  }
+  pmpl::deallocateData( data );
+
+
 }
 TEST( testCArray, testParenthesesOperator )
 {
