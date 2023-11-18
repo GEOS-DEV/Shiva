@@ -24,7 +24,7 @@ struct TestCArrayHelper
 void testTraitsHelper()
 {
   int * data = nullptr;
-  pmpl::genericKernelWrapper( 5, data, [] SHIVA_DEVICE ( int * const data )
+  pmpl::genericKernelWrapper( 5, data, [] SHIVA_DEVICE ( int * const kernelData )
   {
     using Array = TestCArrayHelper::Array;
     static_assert( Array::rank() == 3 );
@@ -34,11 +34,11 @@ void testTraitsHelper()
     static_assert( Array::size() == 24 );
 
     Array array;
-    data[0] = array.rank();
-    data[1] = array.extent<0>();
-    data[2] = array.extent<1>();
-    data[3] = array.extent<2>();
-    data[4] = array.size();
+    kernelData[0] = array.rank();
+    kernelData[1] = array.extent<0>();
+    kernelData[2] = array.extent<1>();
+    kernelData[3] = array.extent<2>();
+    kernelData[4] = array.size();
   } );
 
   EXPECT_EQ( data[0], 3 );
@@ -99,7 +99,7 @@ void testLinearIndexCT()
 void testLinearIndexRT()
 {
   int * data = nullptr;
-  pmpl::genericKernelWrapper( TestCArrayHelper::Array::size(), data, [] SHIVA_DEVICE ( int * const data )
+  pmpl::genericKernelWrapper( TestCArrayHelper::Array::size(), data, [] SHIVA_DEVICE ( int * const kernelData )
   {
     TestCArrayHelper::Array array;
     int const na = array.extent<0>();
@@ -112,7 +112,7 @@ void testLinearIndexRT()
       {
         for ( int c = 0; c < nc; ++c )
         {
-          data[ a * nb * nc + b * nc + c ] = array.linearIndex( a, b, c );
+          kernelData[ a * nb * nc + b * nc + c ] = array.linearIndex( a, b, c );
         }
       }
     }
@@ -166,7 +166,7 @@ void testParenthesesOperatorCT()
 void testParenthesesOperatorRT()
 {
   double * data = nullptr;
-  pmpl::genericKernelWrapper( TestCArrayHelper::Array::size(), data, [] SHIVA_DEVICE ( double * const data )
+  pmpl::genericKernelWrapper( TestCArrayHelper::Array::size(), data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     TestCArrayHelper::Array const array{ initializer< TestCArrayHelper::Array >( std::make_integer_sequence< int, 2 * 3 * 4 >() ) };;
     int const na = array.extent<0>();
@@ -179,7 +179,7 @@ void testParenthesesOperatorRT()
       {
         for ( int c = 0; c < nc; ++c )
         {
-          data[ a * nb * nc + b * nc + c ] = array( a, b, c );
+          kernelData[ a * nb * nc + b * nc + c ] = array( a, b, c );
         }
       }
     }

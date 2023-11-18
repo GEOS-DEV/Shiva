@@ -159,7 +159,7 @@ struct CArray
 
   /// The dimensions of the array.
   template< int INDEX >
-  static inline constexpr int extent() { return cArrayDetail::get< INDEX, DIMS ... >(); };
+  static inline constexpr int extent() { return cArrayDetail::get< INDEX, DIMS ... >(); }
 
   /// The size of the data in array...i.e. the product of the dimensions.
   static inline constexpr int size() { return ( DIMS * ... ); }
