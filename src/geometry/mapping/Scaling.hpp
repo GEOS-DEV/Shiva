@@ -6,6 +6,7 @@
 
 #include "common/ShivaMacros.hpp"
 #include "common/types.hpp"
+#include "common/CArray.hpp"
 namespace shiva
 {
 
@@ -90,7 +91,7 @@ namespace utilities
 template< typename REAL_TYPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 jacobian( Scaling< REAL_TYPE > const & cell,
-          typename Scaling< REAL_TYPE >::JacobianType::type & J )
+          typename Scaling< REAL_TYPE >::JacobianType & J )
 {
   typename Scaling< REAL_TYPE >::DataType const & h = cell.getData();
   J[0] = 0.5 * h[0];
@@ -110,7 +111,7 @@ jacobian( Scaling< REAL_TYPE > const & cell,
  */
 template< typename REAL_TYPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void inverseJacobian( Scaling< REAL_TYPE > const & cell,
-                                                                    typename Scaling< REAL_TYPE >::JacobianType::type & invJ,
+                                                                    typename Scaling< REAL_TYPE >::JacobianType & invJ,
                                                                     REAL_TYPE & detJ )
 {
   typename Scaling< REAL_TYPE >::DataType const & h = cell.getData();

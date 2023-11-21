@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/SequenceUtilities.hpp"
+#include "common/CArray.hpp"
 
 namespace shiva
 {

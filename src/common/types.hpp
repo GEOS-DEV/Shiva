@@ -104,49 +104,49 @@ using make_int_sequence = std::make_integer_sequence< int, N >;
  * @brief Wrapper for a scalar type.
  * @tparam T Type of the scalar.
  */
-template< typename T >
-struct Scalar
-{
-  /// alias for T
-  using type = T;
+// template< typename T >
+// struct Scalar
+// {
+//   /// alias for T
+//   using type = T;
 
-  /// contains the scalar data
-  T data;
-};
+//   /// contains the scalar data
+//   T data;
+// };
 
-/**
- * @brief Wrapper for a 1d c-array .
- * @tparam T Type of the c-array.
- */
-template< typename T, int N >
-struct CArray1d
-{
-  /**
-   * @brief Returns a reference to the i-th element of the array.
-   * @param i The index.
-   * @return A reference to the i-th element of the array.
-   */
-  constexpr inline T operator[] ( int const i ) const { return data[i]; }
+// /**
+//  * @brief Wrapper for a 1d c-array .
+//  * @tparam T Type of the c-array.
+//  */
+// template< typename T, int N >
+// struct CArray1d
+// {
+//   /**
+//    * @brief Returns a reference to the i-th element of the array.
+//    * @param i The index.
+//    * @return A reference to the i-th element of the array.
+//    */
+//   constexpr inline T operator[] ( int const i ) const { return data[i]; }
 
-  /// alias for T[N]
-  using type = T[N];
+//   /// alias for T[N]
+//   using type = T[N];
 
-  /// contains the data in the array
-  T data[N];
-};
+//   /// contains the data in the array
+//   T data[N];
+// };
 
 /**
  * @brief Wrapper for a 2d c-array .
  * @tparam T Type of the c-array.
  */
-template< typename T, int N, int M >
-struct CArray2d
-{
-  /// alias for T[N][M]
-  using type = T[N][M];
+// template< typename T, int N, int M >
+// struct CArray2d
+// {
+//   /// alias for T[N][M]
+//   using type = T[N][M];
 
-  /// contains the data in the array
-  T data[N][M];
-};
+//   /// contains the data in the array
+//   T data[N][M];
+// };
 
 }

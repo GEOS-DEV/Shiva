@@ -191,12 +191,41 @@ struct CArray
 
 
   /**
+   * @brief Square bracket operator to access the data in a 1d array.
+   * @tparam N rank of the array
+   * @param i the index indicating the data offset to access.
+   * @return reference to the value
+   */
+  template< int N=rank() >
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE 
+  std::enable_if_t< N==1, value_type & >
+  operator[]( index_type const i )
+  {
+    return m_data[ i ];
+  }
+
+  /**
+   * @brief Square bracket operator to access the data in a 1d array.
+   * @tparam N rank of the array
+   * @param i the index indicating the data offset to access.
+   * @return reference to const value
+   */
+  template< int N=rank() >
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE 
+  std::enable_if_t< N==1, value_type const & >
+  operator[]( index_type const i ) const
+  {
+    return m_data[ i ];
+  }
+
+
+  /**
    * @brief Templated operator() to access the data in the array.
    * @tparam ...INDICES The indices that specify the data to access.
    * @return A reference to the data at the specified indices.
    */
   template< int... INDICES >
-  constexpr T& operator()( )
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE T& operator()( )
   {
     static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
     return m_data[ linearIndex< INDICES... >() ];
@@ -208,7 +237,7 @@ struct CArray
    * @return A reference to const to the data at the specified indices.
    */
   template< int... INDICES >
-  constexpr const T& operator()( ) const
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE const T& operator()( ) const
   {
     static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
     return m_data[ linearIndex< INDICES... >() ];
@@ -222,7 +251,7 @@ struct CArray
    * @return A reference to the data at the specified indices.
    */
   template< typename ... INDICES >
-  constexpr T& operator()( INDICES... indices )
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE T& operator()( INDICES... indices )
   {
     static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
     return m_data[ linearIndex( indices ... ) ];
@@ -235,7 +264,7 @@ struct CArray
    * @return A reference to const data at the specified indices.
    */
   template< typename ... INDICES >
-  constexpr const T& operator()( INDICES... indices ) const
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE const T& operator()( INDICES... indices ) const
   {
     static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
     return m_data[ linearIndex( indices ... ) ];
@@ -244,5 +273,14 @@ struct CArray
   /// The data in the array.
   T m_data[ size() ];
 };
+
+template< typename T >
+using Scalar = CArray< T, 1 >;
+
+template< typename T, int DIM >
+using CArray1d = CArray< T, DIM >;
+
+template< typename T, int DIM1, int DIM2 >
+using CArray2d = CArray< T, DIM1, DIM2 >;
 
 } // namespace shiva

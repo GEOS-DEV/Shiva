@@ -52,7 +52,7 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
   {
     auto cell = makeScaling( h );
 
-    typename std::remove_reference_t< decltype(cell) >::JacobianType::type J;
+    typename std::remove_reference_t< decltype(cell) >::JacobianType J;
     jacobian( cell, J );
     kdata[0] = J[0];
     kdata[1] = J[1];
@@ -102,7 +102,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
   {
     auto cell = makeScaling( h );
 
-    typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ;
+    typename std::remove_reference_t< decltype(cell) >::JacobianType invJ;
     double detJ;
     inverseJacobian( cell, invJ, detJ );
     kdata[0] = detJ;
