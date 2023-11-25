@@ -1,6 +1,6 @@
 /**
- * @file CArray.hpp
- * @brief This file contains the implementation of the CArray class.
+ * @file MultiDimensionalBase.hpp
+ * @brief This file contains the implementation of the MultiDimensionalBase class.
  */
 
 #pragma once
@@ -17,17 +17,14 @@
 namespace shiva
 {
 
-
-
-
 /**
- * @struct CArray
+ * @struct MultiDimensionalBase
  * @brief This struct provides a compile-time dimesion multidimensional array.
  * @tparam T This is the type of the data stored in the array.
  * @tparam DIMS These are the dimensions of the array.
  */
-template< typename T, typename DATA_BUFFER, int ... DIMS >
-struct CArray
+template< typename MD_LEAF, typename T, int ... DIMS >
+struct MultiDimensionalBase
 {
   /// The type of the an element in the array.
   using element_type = T;
@@ -48,23 +45,14 @@ struct CArray
   /// The size of the data in array...i.e. the product of the dimensions.
   static inline constexpr int size() { return ( DIMS * ... ); }
 
-  template< typename U=DATA_BUFFER,
-                     std::enable_if_t< std::is_pointer_v< U >, int > = 0 >
-  constexpr CArray( T const (&buffer)[ MultiDimensionalArrayHelper::size<DIMS...>() ] ):
-    m_data( &(buffer[0]) )
-  {}
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto const & data() const
+  { 
+    return static_cast< MD_LEAF const & >(*this).m_data; 
+  }
 
-  template< typename ... U >
-  constexpr CArray( U ... args ): m_data{ args ... }
-  {}
-
-
-  template< typename U=DATA_BUFFER >
-  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE std::enable_if_t< std::is_pointer_v< U >, CArray & >
-  operator=( T (&buffer)[ MultiDimensionalArrayHelper::size<DIMS...>() ] )
-  {
-    m_data = buffer;
-    return *this;
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto & data()
+  { 
+    return static_cast< MD_LEAF & >(*this).m_data; 
   }
 
   /**
@@ -78,7 +66,7 @@ struct CArray
   std::enable_if_t< N==1, value_type & >
   operator[]( index_type const i )
   {
-    return m_data[ i ];
+    return data()[ i ];
   }
 
   /**
@@ -92,7 +80,7 @@ struct CArray
   std::enable_if_t< N==1, value_type const & >
   operator[]( index_type const i ) const
   {
-    return m_data[ i ];
+    return data()[ i ];
   }
 
   /**
@@ -104,7 +92,7 @@ struct CArray
   SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE T& operator()( )
   {
     static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
-    return m_data[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::template eval< INDICES... >() ];
+    return data()[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::template eval< INDICES... >() ];
   }
 
   /**
@@ -116,7 +104,7 @@ struct CArray
   SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE const T& operator()( ) const
   {
     static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
-    return m_data[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::template eval< INDICES... >() ];
+    return data()[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::template eval< INDICES... >() ];
   }
   
   /**
@@ -129,7 +117,7 @@ struct CArray
   SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE T& operator()( INDICES... indices )
   {
     static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
-    return m_data[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::eval( indices ... ) ];
+    return data()[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::eval( indices ... ) ];
   }
 
   /**
@@ -142,48 +130,11 @@ struct CArray
   SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE const T& operator()( INDICES... indices ) const
   {
     static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
-    return m_data[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::eval( indices ... ) ];
+    return data()[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::eval( indices ... ) ];
   }
 
-  /// The data in the array.
-//  T m_data[ size() ];
-  DATA_BUFFER m_data;
 };
 
-template< typename T >
-using Scalar = CArray< T, T[1], 1 >;
-
-template< typename T, int DIM >
-using CArray1d = CArray< T, T[DIM], DIM >;
-
-template< typename T, int DIM1, int DIM2 >
-using CArray2d = CArray< T, T[DIM1*DIM2], DIM1, DIM2 >;
-
-template< typename T, int DIM1, int DIM2, int DIM3 >
-using CArray3d = CArray< T, T[DIM1*DIM2*DIM3], DIM1, DIM2,DIM3 >;
-
-template< typename T, int ... DIMS >
-using CArrayNd = CArray< T, T[MultiDimensionalArrayHelper::size< DIMS ... >()], DIMS ... >;
-
-
-
-
-
-
-template< typename T >
-using ScalarView = CArray< T, T,1 >;
-
-template< typename T, int DIM >
-using CArrayView1d = CArray< T, T * const, DIM >;
-
-template< typename T, int DIM1, int DIM2 >
-using CArrayView2d = CArray< T, T * const , DIM1, DIM2 >;
-
-template< typename T, int DIM1, int DIM2, int DIM3 >
-using CArrayView3d = CArray< T, T * const, DIM1, DIM2,DIM3 >;
-
-template< typename T, int ... DIMS >
-using CArrayViewNd = CArray< T, T * const , DIMS ... >;
 
 
 

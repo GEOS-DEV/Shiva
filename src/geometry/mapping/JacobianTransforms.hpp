@@ -31,7 +31,7 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto
 jacobian( BASE_GEOMETRY const & cell,
           REAL_TYPE const (&parentCoords)[3] )
 {
-  typename BASE_GEOMETRY::JacobianType J{ { {0} } };
+  typename BASE_GEOMETRY::JacobianType J{0.0 };
   jacobian( cell, parentCoords, J );
   return J;
 }
@@ -41,7 +41,7 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto
 inverseJacobian( BASE_GEOMETRY const & cell,
                  REAL_TYPE const (&parentCoords)[3] )
 {
-  typename BASE_GEOMETRY::JacobianType invJ{ { {0} } };
+  typename BASE_GEOMETRY::JacobianType invJ{ 0.0 };
   REAL_TYPE detJ;
   inverseJacobian( cell, parentCoords, invJ, detJ );
   return make_tuple( detJ, invJ );

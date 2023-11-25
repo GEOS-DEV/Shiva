@@ -170,7 +170,7 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
 
     for ( int q = 0; q < 8; ++q )
     {
-      typename std::remove_reference_t< decltype(cell) >::JacobianType J = { {0} };
+      typename std::remove_reference_t< decltype(cell) >::JacobianType J{ 0.0 };
       jacobian( cell, qCoords[q], J );
       for ( int i = 0; i < 3; ++i )
       {
@@ -247,7 +247,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
     auto cell = makeLinearTransform( Xref );
     for ( int q = 0; q < 8; ++q )
     {
-      typename std::remove_reference_t< decltype(cell) >::JacobianType invJ = { {0} };
+      typename std::remove_reference_t< decltype(cell) >::JacobianType invJ{0.0};
       double detJ;
 
       inverseJacobian( cell, qCoords[q], invJ, detJ );
