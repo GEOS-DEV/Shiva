@@ -3,7 +3,8 @@
 #
 
 set( unit_tests_sources
-     testCArray.cpp
+     testMultiDimensionalArray.cpp
+     testMultiDimensionalSlice.cpp
      testIndexTypes.cpp
      testSequenceUtilities.cpp
      )

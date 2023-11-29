@@ -155,5 +155,11 @@ size()
   return ( DIMS * ... );
 }
 
+template< typename T, typename ... Ts >
+struct Peeler
+{
+  using type = T;
+};
+
 } // namespace MultiDimensionalArrayHelper
 } // namespace shiva

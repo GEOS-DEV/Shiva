@@ -1,6 +1,4 @@
 
-//#include "../CArray.hpp"
-#include "../MultiDimensionalSpan.hpp"
 #include "../MultiDimensionalArray.hpp"
 
 #include "../SequenceUtilities.hpp"
@@ -16,16 +14,16 @@ using namespace shiva;
 template< typename ARRAY_TYPE, int ... VALUES >
 static constexpr auto initializer( std::integer_sequence< int, VALUES ... > )
 {
-  return ARRAY_TYPE{ (VALUES * 3.14159) ... };
+  return ARRAY_TYPE{{},{ (VALUES * 3.14159) ... }}; // aggregate list initialization because of inheritance
 }
 
-struct TestCArrayHelper
+struct TestMultiDimensionalHelper
 {
 
-  using Array1d = CArray1d< double, 4 >;
+  using Array1d = mdArray< double const, 4 >;
   static constexpr Array1d array1d{ initializer< Array1d >( std::make_integer_sequence< int, 4 >() ) };
 
-  using Array3d = CArray3d< double, 2, 3, 4 >;
+  using Array3d = mdArray< double const, 2, 3, 4 >;
   static constexpr Array3d array3d{ initializer< Array3d >( std::make_integer_sequence< int, 2 * 3 * 4 >() ) };
 };
 
@@ -34,14 +32,14 @@ void testTraitsHelper()
   int * data = nullptr;
   pmpl::genericKernelWrapper( 5, data, [] SHIVA_DEVICE ( int * const kernelData )
   {
-    using Array = TestCArrayHelper::Array3d;
+    using Array = TestMultiDimensionalHelper::Array3d;
     static_assert( Array::rank() == 3 );
     static_assert( Array::extent<0>() == 2 );
     static_assert( Array::extent<1>() == 3 );
     static_assert( Array::extent<2>() == 4 );
     static_assert( Array::size() == 24 );
 
-    Array array;
+    Array array{{},{0}};
     kernelData[0] = array.rank();
     kernelData[1] = array.extent<0>();
     kernelData[2] = array.extent<1>();
@@ -57,7 +55,7 @@ void testTraitsHelper()
   pmpl::deallocateData( data );
 
 }
-TEST( testCArray, testTraits )
+TEST( testMultiDimensionalArray, testTraits )
 {
   testTraitsHelper();
 }
@@ -72,7 +70,7 @@ void testStridesHelper()
   } );
 }
 
-TEST( testCArray, testStrides )
+TEST( testMultiDimensionalArray, testStrides )
 {
   testStridesHelper();
 }
@@ -82,7 +80,7 @@ void testLinearIndexCT()
 {
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE () constexpr
   {
-    using Array = TestCArrayHelper::Array3d;
+    using Array = TestMultiDimensionalHelper::Array3d;
     constexpr int na = Array::extent<0>();
     constexpr int nb = Array::extent<1>();
     constexpr int nc = Array::extent<2>();
@@ -107,9 +105,9 @@ void testLinearIndexCT()
 // void testLinearIndexRT()
 // {
 //   int * data = nullptr;
-//   pmpl::genericKernelWrapper( TestCArrayHelper::Array3d::size(), data, [] SHIVA_DEVICE ( int * const kernelData )
+//   pmpl::genericKernelWrapper( TestMultiDimensionalHelper::Array3d::size(), data, [] SHIVA_DEVICE ( int * const kernelData )
 //   {
-//     TestCArrayHelper::Array3d array;
+//     TestMultiDimensionalHelper::Array3d array;
 //     int const na = array.extent<0>();
 //     int const nb = array.extent<1>();
 //     int const nc = array.extent<2>();
@@ -126,7 +124,7 @@ void testLinearIndexCT()
 //     }
 //   } );
 
-//   for ( int a = 0; a < TestCArrayHelper::Array3d::size(); ++a )
+//   for ( int a = 0; a < TestMultiDimensionalHelper::Array3d::size(); ++a )
 //   {
 //     EXPECT_EQ( data[a], a );
 //   }
@@ -134,7 +132,7 @@ void testLinearIndexCT()
 
 // }
 
-// TEST( testCArray, testLinearIndex )
+// TEST( testMultiDimensionalArray, testLinearIndex )
 // {
 //   testLinearIndexCT();
 //   testLinearIndexRT();
@@ -143,7 +141,7 @@ void testLinearIndexCT()
 
 void testParenthesesOperatorCT()
 {
-  using Array = TestCArrayHelper::Array3d;
+  using Array = TestMultiDimensionalHelper::Array3d;
   constexpr int na = Array::extent<0>();
   constexpr int nb = Array::extent<1>();
   constexpr int nc = Array::extent<2>();
@@ -159,10 +157,10 @@ void testParenthesesOperatorCT()
         forSequence< nc >( [=] ( auto const icc )
         {
           constexpr int c = decltype(icc)::value;
-          static_assert( pmpl::check( TestCArrayHelper::array3d.operator()< a, b, c >(),
+          static_assert( pmpl::check( TestMultiDimensionalHelper::array3d.operator()< a, b, c >(),
                                       3.14159 * MultiDimensionalArrayHelper::linearIndexHelper<2,3,4>::eval( a, b, c ),
                                       1.0e-12 ) );
-          static_assert( pmpl::check( TestCArrayHelper::array3d( a, b, c ),
+          static_assert( pmpl::check( TestMultiDimensionalHelper::array3d( a, b, c ),
                                       3.14159 * MultiDimensionalArrayHelper::linearIndexHelper<2,3,4>::eval( a, b, c ),
                                       1.0e-12 ) );
         } );
@@ -174,9 +172,9 @@ void testParenthesesOperatorCT()
 void testParenthesesOperatorRT()
 {
   double * data = nullptr;
-  pmpl::genericKernelWrapper( TestCArrayHelper::Array3d::size(), data, [] SHIVA_DEVICE ( double * const kernelData ) constexpr
+  pmpl::genericKernelWrapper( TestMultiDimensionalHelper::Array3d::size(), data, [] SHIVA_DEVICE ( double * const kernelData ) constexpr
   {
-    TestCArrayHelper::Array3d const array{ initializer< TestCArrayHelper::Array3d >( std::make_integer_sequence< int, 2 * 3 * 4 >() ) };;
+    TestMultiDimensionalHelper::Array3d const array{ initializer< TestMultiDimensionalHelper::Array3d >( std::make_integer_sequence< int, 2 * 3 * 4 >() ) };;
     int const na = array.extent<0>();
     int const nb = array.extent<1>();
     int const nc = array.extent<2>();
@@ -193,7 +191,7 @@ void testParenthesesOperatorRT()
     }
   } );
 
-  for ( int a = 0; a < TestCArrayHelper::Array3d::size(); ++a )
+  for ( int a = 0; a < TestMultiDimensionalHelper::Array3d::size(); ++a )
   {
     EXPECT_EQ( data[a], 3.14159 * a );
   }
@@ -201,7 +199,7 @@ void testParenthesesOperatorRT()
 
 
 }
-TEST( testCArray, testParenthesesOperator )
+TEST( testMultiDimensionalArray, testParenthesesOperator )
 {
   testParenthesesOperatorCT();
   testParenthesesOperatorRT();
@@ -212,7 +210,7 @@ TEST( testCArray, testParenthesesOperator )
 
 void testSquareBracketOperatorCT()
 {
-  using Array = TestCArrayHelper::Array1d;
+  using Array = TestMultiDimensionalHelper::Array1d;
   constexpr int n = Array::extent<0>();
 
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE () constexpr
@@ -220,29 +218,29 @@ void testSquareBracketOperatorCT()
     forSequence< n >( [] ( auto const ica )
     {
       constexpr int a = decltype(ica)::value;
-      static_assert( pmpl::check( TestCArrayHelper::array1d[ a ],
+      static_assert( pmpl::check( TestMultiDimensionalHelper::array1d[ a ],
                                   3.14159 * a,
                                   1.0e-12 ) );
     } );
   } );
 }
-TEST( testCArray, testSquareBracketOperator )
+TEST( testMultiDimensionalArray, testSquareBracketOperator )
 {
   testSquareBracketOperatorCT();
 }
 
 
-TEST( testCArray, testView )
+TEST( testMultiDimensionalArray, testView )
 {
-  using Array = TestCArrayHelper::Array1d;
+  using Array = TestMultiDimensionalHelper::Array1d;
 
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE () constexpr
   {
-    constexpr MultiDimensionalSpan< double const, 4 > span( TestCArrayHelper::array1d.m_data );
-    forSequence< Array::extent<0>() >( [span] ( auto const ica )
+    constexpr MultiDimensionalSlice< double const, 4 > view( TestMultiDimensionalHelper::array1d.m_data );
+    forSequence< Array::extent<0>() >( [view] ( auto const ica )
     {
       constexpr int a = decltype(ica)::value;
-      static_assert( pmpl::check( span[ a ],
+      static_assert( pmpl::check( view[ a ],
                                   3.14159 * a,
                                   1.0e-12 ) );
     } );

@@ -5,6 +5,10 @@ set( common_headers
      MathUtilities.hpp
      MultiIndex.hpp
      pmpl.hpp
+     MultiDimensionalArray.hpp
+     MultiDimensionalArrayHelper.hpp
+     MultiDimensionalSlice.hpp
+     MultiDimensionalBase.hpp
      SequenceUtilities.hpp
      ShivaMacros.hpp
      types.hpp

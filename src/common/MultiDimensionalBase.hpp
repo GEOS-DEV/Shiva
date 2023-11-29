@@ -45,28 +45,9 @@ struct MultiDimensionalBase
   /// The size of the data in array...i.e. the product of the dimensions.
   static inline constexpr int size() { return ( DIMS * ... ); }
 
-  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto const & data() const
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE T * data() const
   { 
     return static_cast< MD_LEAF const & >(*this).m_data; 
-  }
-
-  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto & data()
-  { 
-    return static_cast< MD_LEAF & >(*this).m_data; 
-  }
-
-  /**
-   * @brief Square bracket operator to access the data in a 1d array.
-   * @tparam N rank of the array
-   * @param i the index indicating the data offset to access.
-   * @return reference to the value
-   */
-  template< int N=rank() >
-  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE 
-  std::enable_if_t< N==1, value_type & >
-  operator[]( index_type const i )
-  {
-    return data()[ i ];
   }
 
   /**
@@ -77,23 +58,20 @@ struct MultiDimensionalBase
    */
   template< int N=rank() >
   SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE 
-  std::enable_if_t< N==1, value_type const & >
+  std::enable_if_t< N==1, T & >
   operator[]( index_type const i ) const
   {
     return data()[ i ];
   }
 
-  /**
-   * @brief Templated operator() to access the data in the array.
-   * @tparam ...INDICES The indices that specify the data to access.
-   * @return A reference to the data at the specified indices.
-   */
-  template< int... INDICES >
-  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE T& operator()( )
+  template< int N=rank() >
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE 
+  std::enable_if_t< N>1, T & >
+  operator[]( index_type const i ) const
   {
-    static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
-    return data()[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::template eval< INDICES... >() ];
+    return data()[ i ];
   }
+
 
   /**
    * @brief Templated operator() to provide const access the data in the array.
@@ -101,23 +79,10 @@ struct MultiDimensionalBase
    * @return A reference to const to the data at the specified indices.
    */
   template< int... INDICES >
-  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE const T& operator()( ) const
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE T & operator()( ) const
   {
     static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
     return data()[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::template eval< INDICES... >() ];
-  }
-  
-  /**
-   * @brief parentheses operator accessor to data in the array.
-   * @tparam ...INDICES The type of the indices that specify the data to access.
-   * @param ...indices The pack of indices that specify the data to access.
-   * @return A reference to the data at the specified indices.
-   */
-  template< typename ... INDICES >
-  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE T& operator()( INDICES... indices )
-  {
-    static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
-    return data()[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::eval( indices ... ) ];
   }
 
   /**
@@ -127,7 +92,7 @@ struct MultiDimensionalBase
    * @return A reference to const data at the specified indices.
    */
   template< typename ... INDICES >
-  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE const T& operator()( INDICES... indices ) const
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE T & operator()( INDICES... indices ) const
   {
     static_assert( sizeof...(INDICES) == sizeof...(DIMS), "Incorrect number of indices" );
     return data()[ MultiDimensionalArrayHelper::linearIndexHelper<DIMS...>::eval( indices ... ) ];
