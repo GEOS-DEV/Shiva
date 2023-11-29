@@ -24,7 +24,7 @@ struct BasisProduct
 
   /// Alias for the floating point type
   using RealType = REAL_TYPE;
-  
+
 
   /**
    * @brief Calculates the value of the basis function at the specified parent
@@ -88,13 +88,13 @@ struct BasisProduct
    * \f]
    */
   template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray1d< RealType, numDims >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArrayNd< RealType, numDims >
   gradient( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
 
 #if __cplusplus >= 202002L
-    return executeSequence< numDims >( [&]< int ... i >() constexpr -> CArray1d< RealType, numDims >
+    return executeSequence< numDims >( [&]< int ... i >() constexpr -> CArrayNd< RealType, numDims >
     {
       auto gradientComponent = [&] ( auto const iGrad,
                                      auto const  ... PRODUCT_TERM_INDICES ) constexpr
@@ -110,7 +110,7 @@ struct BasisProduct
     } );
 #else
     // Expand over the dimensions.
-    return executeSequence< numDims >( [&] ( auto ... a ) constexpr -> CArray1d< RealType, numDims >
+    return executeSequence< numDims >( [&] ( auto ... a ) constexpr -> CArrayNd< RealType, numDims >
     {
       // define a lambda that calculates the gradient of the basis function in
       // a single dimension/direction.

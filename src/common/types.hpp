@@ -119,7 +119,7 @@ using make_int_sequence = std::make_integer_sequence< int, N >;
 //  * @tparam T Type of the c-array.
 //  */
 // template< typename T, int N >
-// struct CArray1d
+// struct CArrayNd
 // {
 //   /**
 //    * @brief Returns a reference to the i-th element of the array.

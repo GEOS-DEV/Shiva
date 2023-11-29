@@ -49,7 +49,7 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
     auto cell = makeUniformScaling( h );
     typename UniformScaling< double >::JacobianType J;
     jacobian( cell, J );
-    kdata[0] = J[0];
+    kdata[0] = J( 0 );
   } );
   EXPECT_EQ( data[0], ( h / 2 ) );
   pmpl::deallocateData( data );
@@ -66,7 +66,7 @@ TEST( testUniformScaling, testJacobianFunctionReturnByValue )
   auto cell = makeUniformScaling( h );
 
   auto J = jacobian( cell );
-  EXPECT_EQ( J[0], ( h / 2 ) );
+  EXPECT_EQ( J( 0 ), ( h / 2 ) );
 }
 
 TEST( testUniformScaling, testInvJacobianFunctionModifyLvalueRefArg )
@@ -78,7 +78,7 @@ TEST( testUniformScaling, testInvJacobianFunctionModifyLvalueRefArg )
   double detJ;
   inverseJacobian( cell, invJ, detJ );
   EXPECT_EQ( detJ, 0.125 * h * h * h );
-  EXPECT_EQ( invJ[0], ( 2 / h ) );
+  EXPECT_EQ( invJ( 0 ), ( 2 / h ) );
 }
 
 TEST( testUniformScaling, testInvJacobianFunctionReturnByValue )
@@ -88,7 +88,7 @@ TEST( testUniformScaling, testInvJacobianFunctionReturnByValue )
 
   auto [ detJ, invJ ] = inverseJacobian( cell );
   EXPECT_EQ( detJ, 0.125 * h * h * h );
-  EXPECT_EQ( invJ[0], ( 2 / h ) );
+  EXPECT_EQ( invJ( 0 ), ( 2 / h ) );
 }
 
 

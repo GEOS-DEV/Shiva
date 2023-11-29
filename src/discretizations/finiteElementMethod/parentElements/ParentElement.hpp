@@ -41,7 +41,7 @@ public:
   /// The number of dimensions on the ParentElement
   static inline constexpr int numDims = sizeof...(BASIS_TYPE);
 
-  /// The number of degrees of freedom on the ParentElement in each 
+  /// The number of degrees of freedom on the ParentElement in each
   /// dimension/basis.
   static inline constexpr int numDofs[numDims] = {BASIS_TYPE::numDofs()...};
 
@@ -64,7 +64,7 @@ public:
    * @copydoc functions::BasisProduct::gradient
    */
   template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray1d< RealType, numDims >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArrayNd< RealType, numDims >
   gradient( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );

@@ -91,10 +91,10 @@ SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 {
   LinearTransform< REAL_TYPE,
                    InterpolatedShape< double,
-                                  Cube< double >,
-                                  LagrangeBasis< double, 1, EqualSpacing >,
-                                  LagrangeBasis< double, 1, EqualSpacing >,
-                                  LagrangeBasis< double, 1, EqualSpacing > > > cell;
+                                      Cube< double >,
+                                      LagrangeBasis< double, 1, EqualSpacing >,
+                                      LagrangeBasis< double, 1, EqualSpacing >,
+                                      LagrangeBasis< double, 1, EqualSpacing > > > cell;
 
   typename decltype(cell)::IndexType index;
 
@@ -176,7 +176,7 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 9 * q + 3 * i + j ] = J(i,j);
+          kernelData[ 9 * q + 3 * i + j ] = J( i, j );
         }
       }
     }
@@ -214,7 +214,7 @@ void testJacobianFunctionReturnByValueHelper()
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 9 * q + 3 * i + j ] = J(i,j);
+          kernelData[ 9 * q + 3 * i + j ] = J( i, j );
         }
       }
     }
@@ -257,7 +257,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ(i,j);
+          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ( i, j );
         }
       }
     }
@@ -299,7 +299,7 @@ void testInvJacobianFunctionReturnByValueHelper()
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ(i,j);
+          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ( i, j );
         }
       }
     }

@@ -39,7 +39,7 @@ public:
   using RealType = REAL_TYPE;
 
   /// The type used to represent the product of basis functions
-  using BASIS_PRODUCT_TYPE = functions::BasisProduct< REAL_TYPE, BASIS_TYPE... >;
+  using BASIS_PRODUCT_TYPE = functions::BasisProduct< REAL_TYPE, BASIS_TYPE ... >;
 
   /// The number of dimensions on the InterpolatedShape
   static inline constexpr int numDims = sizeof...(BASIS_TYPE);
@@ -66,7 +66,7 @@ public:
    * @copydoc functions::BasisProduct::gradient
    */
   template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray1d< RealType, numDims >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArrayNd< RealType, numDims >
   gradient( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );

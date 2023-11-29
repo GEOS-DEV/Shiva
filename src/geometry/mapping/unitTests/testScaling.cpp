@@ -54,9 +54,9 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
 
     typename std::remove_reference_t< decltype(cell) >::JacobianType J;
     jacobian( cell, J );
-    kdata[0] = J[0];
-    kdata[1] = J[1];
-    kdata[2] = J[2];
+    kdata[0] = J( 0 );
+    kdata[1] = J( 1 );
+    kdata[2] = J( 2 );
   } );
   EXPECT_EQ( data[0], ( h[0] / 2 ) );
   EXPECT_EQ( data[1], ( h[1] / 2 ) );
@@ -79,9 +79,9 @@ void testJacobianFunctionReturnByValueHelper()
     auto cell = makeScaling( h );
 
     auto J = jacobian( cell );
-    kdata[0] = J[0];
-    kdata[1] = J[1];
-    kdata[2] = J[2];
+    kdata[0] = J( 0 );
+    kdata[1] = J( 1 );
+    kdata[2] = J( 2 );
   } );
   EXPECT_EQ( data[0], ( h[0] / 2 ) );
   EXPECT_EQ( data[1], ( h[1] / 2 ) );
@@ -106,9 +106,9 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
     double detJ;
     inverseJacobian( cell, invJ, detJ );
     kdata[0] = detJ;
-    kdata[1] = invJ[0];
-    kdata[2] = invJ[1];
-    kdata[3] = invJ[2];
+    kdata[1] = invJ( 0 );
+    kdata[2] = invJ( 1 );
+    kdata[3] = invJ( 2 );
   } );
   EXPECT_EQ( data[0], 0.125 * h[0] * h[1] * h[2] );
   EXPECT_EQ( data[1], ( 2 / h[0] ) );
@@ -132,9 +132,9 @@ void testInvJacobianFunctionReturnByValueHelper()
 
     auto [ detJ, invJ ] = inverseJacobian( cell );
     kdata[0] = detJ;
-    kdata[1] = invJ[0];
-    kdata[2] = invJ[1];
-    kdata[3] = invJ[2];
+    kdata[1] = invJ( 0 );
+    kdata[2] = invJ( 1 );
+    kdata[3] = invJ( 2 );
   } );
   EXPECT_EQ( data[0], 0.125 * h[0] * h[1] * h[2] );
   EXPECT_EQ( data[1], ( 2 / h[0] ) );

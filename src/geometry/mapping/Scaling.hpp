@@ -34,7 +34,7 @@ public:
   using RealType = REAL_TYPE;
 
   /// The type used to represent the Jacobian transformation operator
-  using JacobianType = CArray1d< REAL_TYPE, 3 >;
+  using JacobianType = CArrayNd< REAL_TYPE, 3 >;
 
   /// Alias for the floating point type for the data members that represent the
   /// dimensions of the rectangular cuboid.
@@ -94,9 +94,9 @@ jacobian( Scaling< REAL_TYPE > const & cell,
           typename Scaling< REAL_TYPE >::JacobianType & J )
 {
   typename Scaling< REAL_TYPE >::DataType const & h = cell.getData();
-  J[0] = 0.5 * h[0];
-  J[1] = 0.5 * h[1];
-  J[2] = 0.5 * h[2];
+  J( 0 ) = 0.5 * h[0];
+  J( 1 ) = 0.5 * h[1];
+  J( 2 ) = 0.5 * h[2];
 }
 
 
@@ -115,9 +115,9 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void inverseJacobian( Scaling< REA
                                                                     REAL_TYPE & detJ )
 {
   typename Scaling< REAL_TYPE >::DataType const & h = cell.getData();
-  invJ[0] = 2.0 / h[0];
-  invJ[1] = 2.0 / h[1];
-  invJ[2] = 2.0 / h[2];
+  invJ( 0 ) = 2.0 / h[0];
+  invJ( 1 ) = 2.0 / h[1];
+  invJ( 2 ) = 2.0 / h[2];
   detJ = 0.125 * h[0] * h[1] * h[2];
 }
 

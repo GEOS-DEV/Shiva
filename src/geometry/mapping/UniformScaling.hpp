@@ -81,7 +81,7 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( UniformScaling< REA
                                                              typename UniformScaling< REAL_TYPE >::JacobianType & J )
 {
   typename UniformScaling< REAL_TYPE >::DataType const & h = cell.getData();
-  J[0] = 0.5 * h;
+  J( 0 ) = 0.5 * h;
 }
 
 /**
@@ -98,7 +98,7 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void inverseJacobian( UniformScali
                                                                     REAL_TYPE & detJ )
 {
   typename UniformScaling< REAL_TYPE >::DataType const & h = cell.getData();
-  invJ[0] = 2 / h;
+  invJ( 0 ) = 2 / h;
   detJ = 0.125 * h * h * h;
 }
 
