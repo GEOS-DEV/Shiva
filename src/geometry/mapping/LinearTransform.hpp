@@ -140,21 +140,19 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
   constexpr int DIMS = Transform::numDims;
 
   auto const & nodeCoords = cell.getData();
-  InterpolatedShape::template supportLoop(
-    [&] ( auto const ... icNa ) constexpr 
+  InterpolatedShape::template supportLoop( [&] ( auto const ... icNa ) constexpr 
+  {
+    IndexType index{ { decltype(icNa)::value... } };
+    CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(icNa)::value... >( pointCoordsParent );
+    auto const & nodeCoord = nodeCoords[ linearIndex( index ) ];
+    // dimensional loop from domain to codomain
+    forNestedSequence< DIMS, DIMS >(
+    [&] ( auto const ... icijk ) constexpr
     {
-      IndexType index{ { decltype(icNa)::value... } };
-      CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(icNa)::value... >( pointCoordsParent );
-      auto const & nodeCoord = nodeCoords[ flattenIndex( index ) ];
-      // dimensional loop from domain to codomain
-      forNestedSequence< DIMS, DIMS >(
-      [&] ( auto const ... icijk ) constexpr
-      {
-        constexpr int ijk[DIMS] = { decltype(icijk)::value... };
-        J( ijk[1],ijk[0] ) = J( ijk[1], ijk[0] ) + dNadXi(ijk[0]) * nodeCoord[ijk[1]];
-      } );
-    } 
-  );
+      constexpr int ijk[DIMS] = { decltype(icijk)::value... };
+      J( ijk[1],ijk[0] ) = J( ijk[1], ijk[0] ) + dNadXi(ijk[0]) * nodeCoord[ijk[1]];
+    });
+  });
 }
 
 /**

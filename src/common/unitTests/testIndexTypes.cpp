@@ -16,7 +16,7 @@ void testLinearIndexTypeHelper()
     LinearIndex< int > a = 0;
     for ( a = 0, i = 0; a < 10; ++a, ++i )
     {
-      kdata[i] = flattenIndex( a );
+      kdata[i] = linearIndex( a );
     }
   } );
   for ( int i = 0; i < 10; ++i )
@@ -50,7 +50,7 @@ void testMultiIndexManualLoopHelper()
       {
         for ( c = 0; c < 2; ++c )
         {
-          kdata[4 * a + 2 * b + c] = flattenIndex( index );
+          kdata[4 * a + 2 * b + c] = linearIndex( index );
         }
       }
     }
@@ -83,7 +83,7 @@ void testMultiIndexForRangeHelper()
 
     forRange( index, [&] ( auto const & i )
     {
-      kdata[4 * i.data[0] + 2 * i.data[1] + i.data[2]] = flattenIndex( i );
+      kdata[4 * i.data[0] + 2 * i.data[1] + i.data[2]] = linearIndex( i );
     } );
   } );
 

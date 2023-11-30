@@ -121,7 +121,7 @@ forRangeHelper( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & start,
  */
 template< typename BASE_INDEX_TYPE, BASE_INDEX_TYPE... RANGES >
 SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE BASE_INDEX_TYPE
-flattenIndex( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
+linearIndex( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
 {
   using IndexType = MultiIndexRange< BASE_INDEX_TYPE, RANGES... >;
   return detail::linearIndexHelper( index, std::make_integer_sequence< int, IndexType::NUM_INDICES >{} );
@@ -135,7 +135,7 @@ flattenIndex( MultiIndexRange< BASE_INDEX_TYPE, RANGES... > const & index )
  */
 template< typename INDEX_TYPE >
 SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE INDEX_TYPE
-flattenIndex( LinearIndex< INDEX_TYPE > const & index )
+linearIndex( LinearIndex< INDEX_TYPE > const & index )
 {
   return index;
 }
