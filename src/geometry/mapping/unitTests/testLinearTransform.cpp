@@ -91,10 +91,10 @@ SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 {
   LinearTransform< REAL_TYPE,
                    InterpolatedShape< double,
-                                  Cube< double >,
-                                  LagrangeBasis< double, 1, EqualSpacing >,
-                                  LagrangeBasis< double, 1, EqualSpacing >,
-                                  LagrangeBasis< double, 1, EqualSpacing > > > cell;
+                                      Cube< double >,
+                                      LagrangeBasis< double, 1, EqualSpacing >,
+                                      LagrangeBasis< double, 1, EqualSpacing >,
+                                      LagrangeBasis< double, 1, EqualSpacing > > > cell;
 
   typename decltype(cell)::IndexType index;
 
@@ -170,13 +170,13 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
 
     for ( int q = 0; q < 8; ++q )
     {
-      typename std::remove_reference_t< decltype(cell) >::JacobianType::type J = { {0} };
+      typename std::remove_reference_t< decltype(cell) >::JacobianType J{ 0.0 };
       jacobian( cell, qCoords[q], J );
       for ( int i = 0; i < 3; ++i )
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 9 * q + 3 * i + j ] = J[i][j];
+          kernelData[ 9 * q + 3 * i + j ] = J( i, j );
         }
       }
     }
@@ -214,7 +214,7 @@ void testJacobianFunctionReturnByValueHelper()
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 9 * q + 3 * i + j ] = J.data[i][j];
+          kernelData[ 9 * q + 3 * i + j ] = J( i, j );
         }
       }
     }
@@ -247,7 +247,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
     auto cell = makeLinearTransform( Xref );
     for ( int q = 0; q < 8; ++q )
     {
-      typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ = { {0} };
+      typename std::remove_reference_t< decltype(cell) >::JacobianType invJ{0.0};
       double detJ;
 
       inverseJacobian( cell, qCoords[q], invJ, detJ );
@@ -257,7 +257,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ[i][j];
+          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ( i, j );
         }
       }
     }
@@ -299,7 +299,7 @@ void testInvJacobianFunctionReturnByValueHelper()
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ.data[i][j];
+          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ( i, j );
         }
       }
     }

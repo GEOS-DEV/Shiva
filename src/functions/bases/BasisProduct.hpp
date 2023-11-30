@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/SequenceUtilities.hpp"
+#include "common/CArray.hpp"
 
 namespace shiva
 {
@@ -24,9 +25,6 @@ struct BasisProduct
   /// Alias for the floating point type
   using RealType = REAL_TYPE;
 
-  /// Alias for the type that represents a coordinate
-  using CoordType = REAL_TYPE[numDims];
-  
 
   /**
    * @brief Calculates the value of the basis function at the specified parent
@@ -46,9 +44,9 @@ struct BasisProduct
    * \f]
    *
    */
-  template< int ... BASIS_FUNCTION_INDICES >
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType
-  value( CoordType const & parentCoord )
+  value( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
 
@@ -89,14 +87,14 @@ struct BasisProduct
    * \phi_{i_k}(\xi_k)
    * \f]
    */
-  template< int ... BASIS_FUNCTION_INDICES >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray1d< RealType, numDims >
-  gradient( CoordType const & parentCoord )
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArrayNd< RealType, numDims >
+  gradient( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
 
 #if __cplusplus >= 202002L
-    return executeSequence< numDims >( [&]< int ... i >() constexpr -> CArray1d< RealType, numDims >
+    return executeSequence< numDims >( [&]< int ... i >() constexpr -> CArrayNd< RealType, numDims >
     {
       auto gradientComponent = [&] ( auto const iGrad,
                                      auto const  ... PRODUCT_TERM_INDICES ) constexpr
@@ -112,7 +110,7 @@ struct BasisProduct
     } );
 #else
     // Expand over the dimensions.
-    return executeSequence< numDims >( [&] ( auto ... a ) constexpr -> CArray1d< RealType, numDims >
+    return executeSequence< numDims >( [&] ( auto ... a ) constexpr -> CArrayNd< RealType, numDims >
     {
       // define a lambda that calculates the gradient of the basis function in
       // a single dimension/direction.
@@ -151,9 +149,9 @@ private:
    * @return The gradient component of the basis function at the specified
    * parent coordinate.
    */
-  template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COORD_INDEX >
+  template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COORD_INDEX, typename COORD_TYPE >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType
-  gradientComponentHelper( CoordType const & parentCoord )
+  gradientComponentHelper( COORD_TYPE const & parentCoord )
   {
     if constexpr ( GRADIENT_COMPONENT == COORD_INDEX )
     {

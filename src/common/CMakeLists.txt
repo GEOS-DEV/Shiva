@@ -1,5 +1,7 @@
 
 set( common_headers
+     CArray.hpp
+     CArrayHelper.hpp
      IndexTypes.hpp
      LinearIndex.hpp
      MathUtilities.hpp

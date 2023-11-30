@@ -47,9 +47,9 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
   pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeUniformScaling( h );
-    typename UniformScaling< double >::JacobianType::type J;
+    typename UniformScaling< double >::JacobianType J;
     jacobian( cell, J );
-    kdata[0] = J;
+    kdata[0] = J( 0 );
   } );
   EXPECT_EQ( data[0], ( h / 2 ) );
   pmpl::deallocateData( data );
@@ -66,7 +66,7 @@ TEST( testUniformScaling, testJacobianFunctionReturnByValue )
   auto cell = makeUniformScaling( h );
 
   auto J = jacobian( cell );
-  EXPECT_EQ( J.data, ( h / 2 ) );
+  EXPECT_EQ( J( 0 ), ( h / 2 ) );
 }
 
 TEST( testUniformScaling, testInvJacobianFunctionModifyLvalueRefArg )
@@ -74,11 +74,11 @@ TEST( testUniformScaling, testInvJacobianFunctionModifyLvalueRefArg )
   double const h = 3.14;
   auto cell = makeUniformScaling( h );
 
-  typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ;
+  typename std::remove_reference_t< decltype(cell) >::JacobianType invJ;
   double detJ;
   inverseJacobian( cell, invJ, detJ );
   EXPECT_EQ( detJ, 0.125 * h * h * h );
-  EXPECT_EQ( invJ, ( 2 / h ) );
+  EXPECT_EQ( invJ( 0 ), ( 2 / h ) );
 }
 
 TEST( testUniformScaling, testInvJacobianFunctionReturnByValue )
@@ -88,7 +88,7 @@ TEST( testUniformScaling, testInvJacobianFunctionReturnByValue )
 
   auto [ detJ, invJ ] = inverseJacobian( cell );
   EXPECT_EQ( detJ, 0.125 * h * h * h );
-  EXPECT_EQ( invJ.data, ( 2 / h ) );
+  EXPECT_EQ( invJ( 0 ), ( 2 / h ) );
 }
 
 
