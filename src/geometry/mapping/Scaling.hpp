@@ -75,7 +75,7 @@ public:
 
 private:
   /// Data member that stores the length dimensions of the rectangular cuboid.
-  DataType m_length;
+  DataType m_length{1.0,1.0,1.0};
 };
 
 

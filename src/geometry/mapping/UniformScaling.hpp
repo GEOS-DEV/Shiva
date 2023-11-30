@@ -62,7 +62,7 @@ public:
 
 private:
   /// Data member that stores the length dimension of the cube.
-  DataType m_length;
+  DataType m_length{1.0};
 };
 
 
