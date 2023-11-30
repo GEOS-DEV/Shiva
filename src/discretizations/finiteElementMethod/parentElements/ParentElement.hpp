@@ -49,7 +49,7 @@ public:
   /// The number of dimensions on the ParentElement
   static inline constexpr int numDims = sizeof...(BASIS_TYPE);
 
-  /// The number of degrees of freedom on the ParentElement in each 
+  /// The number of degrees of freedom on the ParentElement in each
   /// dimension/basis.
   static inline constexpr int numSupportPoints[numDims] = {BASIS_TYPE::numSupportPoints...};
 
@@ -59,9 +59,9 @@ public:
   /**
    * @copydoc functions::BasisProduct::value
    */
-  template< int ... BASIS_FUNCTION_INDICES >
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType
-  value( CoordType const & parentCoord )
+  value( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
     return ( BASIS_PRODUCT_TYPE::template value< BASIS_FUNCTION_INDICES... >( parentCoord ) );
@@ -71,9 +71,9 @@ public:
   /**
    * @copydoc functions::BasisProduct::gradient
    */
-  template< int ... BASIS_FUNCTION_INDICES >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray1d< RealType, numDims >
-  gradient( CoordType const & parentCoord )
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArrayNd< RealType, numDims >
+  gradient( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
     return ( BASIS_PRODUCT_TYPE::template gradient< BASIS_FUNCTION_INDICES... >( parentCoord ) );
@@ -102,10 +102,10 @@ public:
 
 
   template<typename VAR_TYPE >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray1d< RealType, numDims > 
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArrayNd< RealType, numDims > 
   gradient( CoordType const & parentCoord, VAR_TYPE const & var )
   {
-    CArray1d< RealType, numDims > rval = {0};
+    CArrayNd< RealType, numDims > rval = {0.0};
     forSequence< numSupportPoints[0] >( [&] ( auto const ica ) constexpr
     {
       constexpr int a = decltype(ica)::value;
@@ -115,10 +115,10 @@ public:
         forSequence< numSupportPoints[2] >( [&] ( auto const icc ) constexpr
         {
           constexpr int c = decltype(icc)::value;
-          CArray1d< RealType, numDims > const grad = gradient< a, b, c >( parentCoord );
-          rval[0] = rval[0] + grad[0] * var[a][b][c] ;
-          rval[1] = rval[1] + grad[1] * var[a][b][c] ;
-          rval[2] = rval[2] + grad[2] * var[a][b][c] ;
+          CArrayNd< RealType, numDims > const grad = gradient< a, b, c >( parentCoord );
+          rval(0) = rval(0) + grad(0) * var[a][b][c] ;
+          rval(1) = rval(1) + grad(1) * var[a][b][c] ;
+          rval(2) = rval(2) + grad(2) * var[a][b][c] ;
         });
       });
     });

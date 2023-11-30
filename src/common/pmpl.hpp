@@ -52,6 +52,37 @@ static constexpr bool check( REAL_TYPE const a, REAL_TYPE const b, REAL_TYPE con
 /**
  * @brief This function provides a generic kernel execution mechanism that can
  * be called on either host or device.
+ * @tparam LAMBDA The type of the lambda function to execute.
+ * @param func The lambda function to execute.
+ */
+template< typename LAMBDA >
+SHIVA_GLOBAL void genericKernel( LAMBDA func )
+{
+  func();
+}
+
+/**
+ * @brief This function provides a wrapper to the genericKernel function.
+ * @tparam LAMBDA The type of the lambda function to execute.
+ * @param func The lambda function to execute.
+ *
+ * This function will execute the lambda through a kernel launch of
+ * genericKernel.
+ */
+template< typename LAMBDA >
+void genericKernelWrapper( LAMBDA && func )
+{
+#if defined(SHIVA_USE_DEVICE)
+  genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ) );
+#else
+  genericKernel( std::forward< LAMBDA >( func ) );
+#endif
+}
+
+
+/**
+ * @brief This function provides a generic kernel execution mechanism that can
+ * be called on either host or device.
  * @tparam DATA_TYPE The type of the data pointer.
  * @tparam LAMBDA The type of the lambda function to execute.
  * @param func The lambda function to execute.

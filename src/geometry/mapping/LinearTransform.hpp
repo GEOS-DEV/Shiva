@@ -10,6 +10,7 @@
 #include "common/types.hpp"
 #include "common/IndexTypes.hpp"
 #include "common/NestedSequenceUtilities.hpp"
+#include "common/CArray.hpp"
 
 
 /**
@@ -50,13 +51,10 @@ public:
   using RealType = REAL_TYPE;
 
   /// The type used to represent the Jacobian transformation operation
-  using JacobianType = CArray2d< REAL_TYPE, numDims, numDims >;
+  using JacobianType = CArrayNd< REAL_TYPE, numDims, numDims >;
 
   /// The type used to represent the data stored at the vertices of the cell
   using DataType = REAL_TYPE[numVertices][numDims];
-
-  /// The type used to represent the coordinates of the vertices of the cell
-  using CoordType = REAL_TYPE[numDims];
 
   /// The type used to represent the index space of the cell
   using SupportIndexType = typename InterpolatedShape::BasisCombinationType::IndexType;
@@ -128,11 +126,13 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< RE
  * Jacobian.
  * @param[out] J The inverse Jacobian transformation.
  */
-template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
+template< typename REAL_TYPE,
+          typename INTERPOLATED_SHAPE,
+          typename COORD_TYPE = REAL_TYPE[INTERPOLATED_SHAPE::numDims] >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
-          REAL_TYPE const (&pointCoordsParent)[3],
-          typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & J )
+          COORD_TYPE const & pointCoordsParent,
+          typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & J )
 {
   using Transform = std::remove_reference_t<decltype(cell)>;
   using InterpolatedShape = typename Transform::InterpolatedShape;
@@ -144,14 +144,14 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
     [&] ( auto const ... icNa ) constexpr 
     {
       IndexType index{ { decltype(icNa)::value... } };
-      CArray1d< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(icNa)::value... >( pointCoordsParent );
+      CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(icNa)::value... >( pointCoordsParent );
       auto const & nodeCoord = nodeCoords[ flattenIndex( index ) ];
       // dimensional loop from domain to codomain
       forNestedSequence< DIMS, DIMS >(
       [&] ( auto const ... icijk ) constexpr
       {
         constexpr int ijk[DIMS] = { decltype(icijk)::value... };
-        J[ijk[1]][ijk[0]] = J[ijk[1]][ijk[0]] + dNadXi[ijk[0]] * nodeCoord[ijk[1]];
+        J( ijk[1],ijk[0] ) = J( ijk[1], ijk[0] ) + dNadXi(ijk[0]) * nodeCoord[ijk[1]];
       } );
     } 
   );
@@ -167,11 +167,13 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
  * @param[out] invJ The inverse Jacobian transformation.
  * @param[out] detJ The determinant of the Jacobian transformation.
  */
-template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
+template< typename REAL_TYPE,
+          typename INTERPOLATED_SHAPE,
+          typename COORD_TYPE = REAL_TYPE[INTERPOLATED_SHAPE::numDims] >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 inverseJacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
-                 REAL_TYPE const (&parentCoords)[3],
-                 typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & invJ,
+                 COORD_TYPE const & parentCoords,
+                 typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & invJ,
                  REAL_TYPE & detJ )
 {
   jacobian( cell, parentCoords, invJ );

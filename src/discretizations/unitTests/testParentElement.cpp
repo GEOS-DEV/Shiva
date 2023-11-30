@@ -87,13 +87,13 @@ SHIVA_GLOBAL void compileTimeKernel()
                                 TEST_PARENT_ELEMENT_HELPER::testCoords[2] };
 
   constexpr double value = ParentElementType::template value( coord, TEST_PARENT_ELEMENT_HELPER::fieldValues );
-  constexpr CArray1d< double, 3 > gradient = ParentElementType::template gradient( coord, TEST_PARENT_ELEMENT_HELPER::fieldValues );
+  constexpr CArrayNd< double, 3 > gradient = ParentElementType::template gradient( coord, TEST_PARENT_ELEMENT_HELPER::fieldValues );
   constexpr double tolerance = 1.0e-12;
 
   static_assert( pmpl::check( value, TEST_PARENT_ELEMENT_HELPER::referenceValue, tolerance ) );
-  static_assert( pmpl::check( gradient[0], TEST_PARENT_ELEMENT_HELPER::referenceGradient[0], tolerance ) );
-  static_assert( pmpl::check( gradient[1], TEST_PARENT_ELEMENT_HELPER::referenceGradient[1], tolerance ) );
-  static_assert( pmpl::check( gradient[2], TEST_PARENT_ELEMENT_HELPER::referenceGradient[2], tolerance ) );
+  static_assert( pmpl::check( gradient(0), TEST_PARENT_ELEMENT_HELPER::referenceGradient[0], tolerance ) );
+  static_assert( pmpl::check( gradient(1), TEST_PARENT_ELEMENT_HELPER::referenceGradient[1], tolerance ) );
+  static_assert( pmpl::check( gradient(2), TEST_PARENT_ELEMENT_HELPER::referenceGradient[2], tolerance ) );
 }
 
 template< typename TEST_PARENT_ELEMENT_HELPER >
@@ -118,10 +118,10 @@ SHIVA_GLOBAL void runTimeKernel( double * const value,
                             TEST_PARENT_ELEMENT_HELPER::testCoords[2] };
 
   *value = ParentElementType::value( coord, TEST_PARENT_ELEMENT_HELPER::fieldValues );
-  CArray1d< double, 3 > const temp = ParentElementType::gradient( coord, TEST_PARENT_ELEMENT_HELPER::fieldValues );
-  gradient[ 0 ] = temp[0];
-  gradient[ 1 ] = temp[1];
-  gradient[ 2 ] = temp[2];
+  CArrayNd< double, 3 > const temp = ParentElementType::gradient( coord, TEST_PARENT_ELEMENT_HELPER::fieldValues );
+  gradient[0] = temp(0);
+  gradient[1] = temp(1);
+  gradient[2] = temp(2);
 }
 
 template< typename TEST_PARENT_ELEMENT_HELPER >
