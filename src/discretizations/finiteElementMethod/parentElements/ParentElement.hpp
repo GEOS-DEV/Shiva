@@ -103,9 +103,9 @@ public:
       });
     });
 #else
-    forNestedSequence< BASIS_TYPE::numSupportPoints... >( [&] ( auto const ... indices ) constexpr
+    forNestedSequence< BASIS_TYPE::numSupportPoints... >( [&] ( auto const ... ic_indices ) constexpr
     {
-      rval = rval + ( value< indices... >( parentCoord ) * var(indices...) );
+      rval = rval + ( value< decltype(ic_indices)::value ... >( parentCoord ) * var(decltype(ic_indices)::value ...) );
     });
 #endif
     return rval;
@@ -137,10 +137,10 @@ public:
 #else
   forNestedSequence< BASIS_TYPE::numSupportPoints... >( [&] ( auto const ... ic_indices ) constexpr
   {
-    CArrayNd< RealType, numDims > const grad = gradient< ic_indices... >( parentCoord );
+    CArrayNd< RealType, numDims > const grad = gradient< decltype(ic_indices)::value ... >( parentCoord );
     forSequence<numDims>([&]( auto const a ) constexpr
     {
-      rval(a) = rval(a) + grad(a) * var(ic_indices...) ;
+      rval(a) = rval(a) + grad(a) * var( decltype(ic_indices)::value ... ) ;
     });
   });
 

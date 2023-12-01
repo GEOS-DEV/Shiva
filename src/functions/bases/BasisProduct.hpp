@@ -33,6 +33,8 @@ struct BasisProduct
                                             std::integer_sequence< int, BASIS_TYPES::numSupportPoints... > >::type;
 
 
+  using numSupportPoints = std::integer_sequence< int, BASIS_TYPES::numSupportPoints... >;
+
   template < typename FUNC >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
   supportLoop( FUNC && func )

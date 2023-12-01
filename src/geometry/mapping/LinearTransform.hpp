@@ -54,7 +54,8 @@ public:
   using JacobianType = CArrayNd< REAL_TYPE, numDims, numDims >;
 
   /// The type used to represent the data stored at the vertices of the cell
-  using DataType = REAL_TYPE[numVertices][numDims];
+//  using DataType = CArrayNd<REAL_TYPE, InterpolatedShape::BasisCombinationType::numSupportPoints, numDims >;//REAL_TYPE[numVertices][numDims];
+  using DataType = CArrayNd<REAL_TYPE, numVertices, numDims >;//REAL_TYPE[numVertices][numDims];
 
   /// The type used to represent the index space of the cell
   using SupportIndexType = typename InterpolatedShape::BasisCombinationType::IndexType;
@@ -121,7 +122,7 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< RE
  * @brief Calculates the Jacobian transformation of a cuboid from a parent cuboid
  * with range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
- * @param[in] cell The cuboid object
+ * @param[in] transform The cuboid object
  * @param[in] pointCoordsParent The parent coordinates at which to calculate the
  * Jacobian.
  * @param[out] J The inverse Jacobian transformation.
@@ -130,36 +131,45 @@ template< typename REAL_TYPE,
           typename INTERPOLATED_SHAPE,
           typename COORD_TYPE = REAL_TYPE[INTERPOLATED_SHAPE::numDims] >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
+jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
           COORD_TYPE const & pointCoordsParent,
           typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & J )
 {
-  using Transform = std::remove_reference_t<decltype(cell)>;
+  using Transform = std::remove_reference_t<decltype(transform)>;
   using InterpolatedShape = typename Transform::InterpolatedShape;
   using IndexType = typename InterpolatedShape::BasisCombinationType::IndexType;
   constexpr int DIMS = Transform::numDims;
 
-  auto const & nodeCoords = cell.getData();
+  auto const & nodeCoords = transform.getData();
   InterpolatedShape::template supportLoop( [&] ( auto const ... icNa ) constexpr 
   {
     IndexType index{ { decltype(icNa)::value... } };
     CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(icNa)::value... >( pointCoordsParent );
-    auto const & nodeCoord = nodeCoords[ linearIndex( index ) ];
     // dimensional loop from domain to codomain
-    forNestedSequence< DIMS, DIMS >(
-    [&] ( auto const ... icijk ) constexpr
+
+#if 0
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... indices ) constexpr
     {
-      constexpr int ijk[DIMS] = { decltype(icijk)::value... };
-      J( ijk[1],ijk[0] ) = J( ijk[1], ijk[0] ) + dNadXi(ijk[0]) * nodeCoord[ijk[1]];
+      constexpr int ijk[DIMS] = { decltype(indices)::value... };
+      J( decltype(indices)::value... ) = J( decltype(indices)::value... ) + dNadXi(ijk[1]) * nodeCoords( linearIndex( index ), ijk[0] );
     });
+#else
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
+    {
+      constexpr int i = decltype(ici)::value;
+      constexpr int j = decltype(icj)::value;
+      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( linearIndex( index ), i );
+    });
+#endif
+
   });
 }
 
 /**
- * @brief Calculates the inverse Jacobian transormation of a cuboid from a
+ * @brief Calculates the inverse Jacobian transformation of a cuboid from a
  * parent cuboid with range from (-1,1) in each dimension.
  * @tparam REAL_TYPE The floating point type.
- * @param[in] cell The cuboid object
+ * @param[in] transform The cuboid object
  * @param[in] parentCoords The parent coordinates at which to calculate the
  * Jacobian.
  * @param[out] invJ The inverse Jacobian transformation.
@@ -169,12 +179,12 @@ template< typename REAL_TYPE,
           typename INTERPOLATED_SHAPE,
           typename COORD_TYPE = REAL_TYPE[INTERPOLATED_SHAPE::numDims] >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-inverseJacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & cell,
+inverseJacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
                  COORD_TYPE const & parentCoords,
                  typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & invJ,
                  REAL_TYPE & detJ )
 {
-  jacobian( cell, parentCoords, invJ );
+  jacobian( transform, parentCoords, invJ );
   mathUtilities::inverse( invJ, detJ );
 }
 

@@ -143,15 +143,7 @@ SHIVA_GLOBAL void runTimeKernel( double * const value,
 template< typename TEST_PARENT_ELEMENT_HELPER >
 void testParentElementAtRunTime()
 {
-#if defined(SHIVA_USE_DEVICE)
-  constexpr int bytes = sizeof(double);
-  double * value;
-  double * gradient;
-  deviceMallocManaged( &value, bytes );
-  deviceMallocManaged( &gradient, 3 * bytes );
 
-  // double * fieldValues;
-  // deviceMallocManaged( &fieldValues, TEST_PARENT_ELEMENT_HELPER::fieldValues.size() * bytes );
   constexpr int N = TEST_PARENT_ELEMENT_HELPER::order + 1;
   CArrayNd< double, N, N, N > fieldValues;
   for( int i = 0; i < TEST_PARENT_ELEMENT_HELPER::fieldValues.size(); ++i )
@@ -159,13 +151,18 @@ void testParentElementAtRunTime()
     fieldValues.data()[i] = TEST_PARENT_ELEMENT_HELPER::fieldValues.data()[i];
   }
 
-
+#if defined(SHIVA_USE_DEVICE)
+  constexpr int bytes = sizeof(double);
+  double * value;
+  double * gradient;
+  deviceMallocManaged( &value, bytes );
+  deviceMallocManaged( &gradient, 3 * bytes );
   runTimeKernel< TEST_PARENT_ELEMENT_HELPER ><< < 1, 1 >> > ( value, gradient, fieldValues );
   deviceDeviceSynchronize();
 #else
   double value[1];
   double gradient[3];
-  runTimeKernel< TEST_PARENT_ELEMENT_HELPER >( value, gradient );
+  runTimeKernel< TEST_PARENT_ELEMENT_HELPER >( value, gradient, fieldValues );
 #endif
 
   constexpr double tolerance = 1.0e-12;
