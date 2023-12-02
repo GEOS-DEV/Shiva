@@ -54,8 +54,8 @@ public:
   using JacobianType = CArrayNd< REAL_TYPE, numDims, numDims >;
 
   /// The type used to represent the data stored at the vertices of the cell
-//  using DataType = CArrayNd<REAL_TYPE, InterpolatedShape::BasisCombinationType::numSupportPoints, numDims >;//REAL_TYPE[numVertices][numDims];
-  using DataType = CArrayNd<REAL_TYPE, numVertices, numDims >;//REAL_TYPE[numVertices][numDims];
+//  using DataType = CArrayNd<REAL_TYPE, InterpolatedShape::BasisCombinationType::numSupportPoints..., numDims >;
+  using DataType = CArrayNd<REAL_TYPE, numVertices, numDims >;
 
   /// The type used to represent the index space of the cell
   using SupportIndexType = typename InterpolatedShape::BasisCombinationType::IndexType;
@@ -147,11 +147,21 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
     CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(icNa)::value... >( pointCoordsParent );
     // dimensional loop from domain to codomain
 
-#if 0
+#define VARIANT 1
+#if VARIANT==0
     forNestedSequence< DIMS, DIMS >( [&] ( auto const ... indices ) constexpr
     {
       constexpr int ijk[DIMS] = { decltype(indices)::value... };
-      J( decltype(indices)::value... ) = J( decltype(indices)::value... ) + dNadXi(ijk[1]) * nodeCoords( linearIndex( index ), ijk[0] );
+      J( decltype(indices)::value... ) = J( decltype(indices)::value... ) 
+                                       + dNadXi(ijk[1]) * nodeCoords( linearIndex( index ), ijk[0] );
+    });
+#elif VARIANT==1
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... indices ) constexpr
+    {
+      constexpr int i = IntPackPeeler< 0, decltype(indices)::value... >::value();
+      constexpr int j = IntPackPeeler< 1, decltype(indices)::value... >::value();
+
+      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( linearIndex( index ), i );
     });
 #else
     forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
@@ -161,6 +171,8 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
       J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( linearIndex( index ), i );
     });
 #endif
+
+#undef VARIANT
 
   });
 }
