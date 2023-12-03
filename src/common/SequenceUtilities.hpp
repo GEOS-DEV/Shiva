@@ -23,11 +23,48 @@ struct SequenceAlias< Template, std::integer_sequence<int, Seq...> >
   using type = Template<Seq...>;
 };
 
-template < template <int...> class Template, int... Seq >
-struct SequenceAlias< Template, const std::integer_sequence<int, Seq...> > 
+
+
+template< int I, typename T, typename ... Ts>
+struct PackPeeler
 {
-  using type = Template<Seq...>;
+  /// The type of the first value in the pack.
+  using type = typename PackPeeler< I - 1, Ts... >::type;
 };
+
+template< typename T, typename ... Ts>
+struct PackPeeler<0,T,Ts...>
+{
+  /// The type of the first value in the pack.
+  using type = T;
+};
+
+
+
+template< int I, int FIRST, int ... REST >
+struct IntPackPeeler
+{
+  /// The type of the first value in the pack.
+  static constexpr int value() { return IntPackPeeler< I - 1, REST... >::value(); }
+};
+
+template< int FIRST, int ... REST>
+struct IntPackPeeler<0,FIRST,REST...>
+{
+  /// The type of the first value in the pack.
+  static constexpr int value() { return FIRST; }
+};
+
+
+template <typename T, int ...PACK> struct ParameterPacker
+{
+    template <template <typename, int...> typename TT, int ... OTHER_DIMS > 
+    using type = TT<T, PACK..., OTHER_DIMS...>;
+};
+
+
+
+
 
 /**
  * @namespace shiva::sequenceUtilities
@@ -172,35 +209,6 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto forSequence( FUNC && func )
 }
 
 
-template< int I, typename T, typename ... Ts>
-struct PackPeeler
-{
-  /// The type of the first value in the pack.
-  using type = typename PackPeeler< I - 1, Ts... >::type;
-};
-
-template< typename T, typename ... Ts>
-struct PackPeeler<0,T,Ts...>
-{
-  /// The type of the first value in the pack.
-  using type = T;
-};
-
-
-
-template< int I, int FIRST, int ... REST >
-struct IntPackPeeler
-{
-  /// The type of the first value in the pack.
-  static constexpr int value() { return IntPackPeeler< I - 1, REST... >::value(); }
-};
-
-template< int FIRST, int ... REST>
-struct IntPackPeeler<0,FIRST,REST...>
-{
-  /// The type of the first value in the pack.
-  static constexpr int value() { return FIRST; }
-};
 
 
 } // namespace shiva

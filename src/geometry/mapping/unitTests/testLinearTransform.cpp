@@ -108,7 +108,7 @@ SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 
     for ( int j = 0; j < 3; ++j )
     {
-      transformData( linearIndex( i ), j ) = X[ a + 2 * b + 4 * c ][j];
+      transformData( a,b,c, j ) = X[ a + 2 * b + 4 * c ][j];
     }
   } );
 
@@ -133,7 +133,7 @@ void testConstructionAndSettersHelper()
 
       for ( int j = 0; j < 3; ++j )
       {
-        kernelData[ 3 * ( a + 2 * b + 4 * c ) + j ] = transformData( linearIndex( i ), j );
+        kernelData[ 3 * ( a + 2 * b + 4 * c ) + j ] = transformData( a,b,c, j );
       }
     } );
   } );

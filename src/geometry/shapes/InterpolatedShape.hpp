@@ -50,7 +50,13 @@ public:
   /// The number of vertices on the InterpolatedShape
   static inline constexpr int numVertices = StandardGeom::numVertices();
 
-  static inline constexpr std::integer_sequence< int, BASIS_TYPE::numSupportPoints... > basisSupportCounts{};
+  static inline constexpr std::integer_sequence< int, BASIS_TYPE::numSupportPoints... > basisSupportCounts{};  
+
+  using numSupportPointsSequence = std::integer_sequence< int, BASIS_TYPE::numSupportPoints... >;
+
+  template< typename T >
+  using numSupportPointsPacker = ParameterPacker< T, BASIS_TYPE::numSupportPoints... >;
+
 
   static_assert( numDims == StandardGeom::numDims(), "numDims mismatch between cell and number of basis specified" );
 

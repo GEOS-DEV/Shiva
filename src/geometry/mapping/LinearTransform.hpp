@@ -55,7 +55,13 @@ public:
 
   /// The type used to represent the data stored at the vertices of the cell
 //  using DataType = CArrayNd<REAL_TYPE, InterpolatedShape::BasisCombinationType::numSupportPoints..., numDims >;
-  using DataType = CArrayNd<REAL_TYPE, numVertices, numDims >;
+//  using DataType = CArrayNd<REAL_TYPE, numVertices, numDims >;
+
+//  using DataType = typename InterpolatedShape::template numSupportPointsPacker< REAL_TYPE >::template type< CArrayNd, numDims >;
+
+  template< int ... NUM_SUPPORT_POINTS >
+  using RealCArrayDims = CArrayNd< REAL_TYPE, NUM_SUPPORT_POINTS..., numDims >;
+  using DataType = typename SequenceAlias< RealCArrayDims, typename InterpolatedShape::numSupportPointsSequence >::type;
 
   /// The type used to represent the index space of the cell
   using SupportIndexType = typename InterpolatedShape::BasisCombinationType::IndexType;
@@ -137,13 +143,11 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
 {
   using Transform = std::remove_reference_t<decltype(transform)>;
   using InterpolatedShape = typename Transform::InterpolatedShape;
-  using IndexType = typename InterpolatedShape::BasisCombinationType::IndexType;
   constexpr int DIMS = Transform::numDims;
 
   auto const & nodeCoords = transform.getData();
   InterpolatedShape::template supportLoop( [&] ( auto const ... icNa ) constexpr 
   {
-    IndexType index{ { decltype(icNa)::value... } };
     CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(icNa)::value... >( pointCoordsParent );
     // dimensional loop from domain to codomain
 
@@ -153,7 +157,7 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
     {
       constexpr int ijk[DIMS] = { decltype(indices)::value... };
       J( decltype(indices)::value... ) = J( decltype(indices)::value... ) 
-                                       + dNadXi(ijk[1]) * nodeCoords( linearIndex( index ), ijk[0] );
+                                       + dNadXi(ijk[1]) * nodeCoords( decltype(icNa)::value..., ijk[0] );
     });
 #elif VARIANT==1
     forNestedSequence< DIMS, DIMS >( [&] ( auto const ... indices ) constexpr
@@ -161,14 +165,14 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
       constexpr int i = IntPackPeeler< 0, decltype(indices)::value... >::value();
       constexpr int j = IntPackPeeler< 1, decltype(indices)::value... >::value();
 
-      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( linearIndex( index ), i );
+      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( decltype(icNa)::value..., i );
     });
 #else
     forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
     {
       constexpr int i = decltype(ici)::value;
       constexpr int j = decltype(icj)::value;
-      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( linearIndex( index ), i );
+      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( decltype(icNa)::value..., i );
     });
 #endif
 
