@@ -146,33 +146,33 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
   constexpr int DIMS = Transform::numDims;
 
   auto const & nodeCoords = transform.getData();
-  InterpolatedShape::template supportLoop( [&] ( auto const ... icNa ) constexpr 
+  InterpolatedShape::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr 
   {
-    CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(icNa)::value... >( pointCoordsParent );
+    CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value... >( pointCoordsParent );
     // dimensional loop from domain to codomain
 
 #define VARIANT 1
 #if VARIANT==0
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... indices ) constexpr
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... dimIndices ) constexpr
     {
-      constexpr int ijk[DIMS] = { decltype(indices)::value... };
-      J( decltype(indices)::value... ) = J( decltype(indices)::value... ) 
-                                       + dNadXi(ijk[1]) * nodeCoords( decltype(icNa)::value..., ijk[0] );
+      constexpr int ijk[DIMS] = { decltype(dimIndices)::value... };
+      J( decltype(dimIndices)::value... ) = J( decltype(dimIndices)::value... ) 
+                                       + dNadXi(ijk[1]) * nodeCoords( decltype(ic_spIndices)::value..., ijk[0] );
     });
 #elif VARIANT==1
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... indices ) constexpr
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... dimIndices ) constexpr
     {
-      constexpr int i = IntPackPeeler< 0, decltype(indices)::value... >::value();
-      constexpr int j = IntPackPeeler< 1, decltype(indices)::value... >::value();
+      constexpr int i = IntPackPeeler< 0, decltype(dimIndices)::value... >::value();
+      constexpr int j = IntPackPeeler< 1, decltype(dimIndices)::value... >::value();
 
-      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( decltype(icNa)::value..., i );
+      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( decltype(ic_spIndices)::value..., i );
     });
 #else
     forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
     {
       constexpr int i = decltype(ici)::value;
       constexpr int j = decltype(icj)::value;
-      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( decltype(icNa)::value..., i );
+      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( decltype(ic_spIndices)::value..., i );
     });
 #endif
 
