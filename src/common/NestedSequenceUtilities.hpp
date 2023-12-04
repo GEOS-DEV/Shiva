@@ -61,21 +61,4 @@ constexpr void forNestedSequence( std::integer_sequence<int, ENDS...>,
   forNestedSequence< ENDS... >( std::forward<FUNC>( func ) );
 }
 
-template < std::size_t Size1, std::size_t Size2, typename FUNC >
-constexpr void forNestedSequenceSplit( FUNC && func )
-{
-  auto wrappedFunc = [&]( auto... indices )
-  {
-    // Make sequence from pack, Split the sequence
-    using SplitResult = Split< std::integer_sequence< decltype( indices )::value ... >, Size1, Size2 >;
-    using FirstSeq = typename SplitResult::first;
-    using SecondSeq = typename SplitResult::second;
-
-    callWithSequences( func, FirstSeq{}, SecondSeq{} );
-  };
-  // Call the wrapped function with the original nested sequence expansion
-  forNestedSequence( wrappedFunc );
-}
-
-
 }
