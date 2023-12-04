@@ -31,6 +31,10 @@ namespace geometry
 template< typename REAL_TYPE, int N, int MIN, int MAX, int DIVISOR >
 class NCube
 {
+private:
+template < int ... INDEX_EXTENTS >
+using rtCArrayND = CArray< REAL_TYPE, INDEX_EXTENTS... >;
+
 public:
 
   static_assert( MIN < MAX, "MIN must be less than MAX" );
@@ -40,16 +44,18 @@ public:
    * @brief The number of dimension of the cube.
    * @return The number dimension of the cube.
    */
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numDims() {return N;}
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numDims = N
 
   /// Alias for the floating point type.
   using RealType = REAL_TYPE;
 
-  /// Alias for the floating point type for the coordinates.
-  using CoordType = REAL_TYPE[N];
+  /// The index space for the coordinate type
+  using CoordIndexSpace = SingleValueSequence_t< N >;
 
-  // /// Alias for the index type of the cube.
-  // using IndexType = MultiIndexRange< int, 2, 2, 2 >;
+  /// Alias for the floating point type for the coordinates.
+  using CoordType = typename SequenceAlias_t< rtCArrayND, CoordIndexSpace >;
+  // using CoordType = REAL_TYPE[N];
+
 
   /**
    * @brief Returns the number of m-cubes in the n-cube.

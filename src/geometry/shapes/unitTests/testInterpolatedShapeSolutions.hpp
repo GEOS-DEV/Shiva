@@ -6,17 +6,15 @@ struct TestInterpolatedShapeHelper;
 template<>
 struct TestInterpolatedShapeHelper< InterpolatedShape< double,
                                                        Cube< double >,
-                                                       LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                                                       LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                                                       LagrangeBasis< double, 1, GaussLobattoSpacing >
-                                                       > >
+                                                       BasisProduct< LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                                                     LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                                                     LagrangeBasis< double, 1, GaussLobattoSpacing > > > >
 {
   using InterpolatedShapeType = InterpolatedShape< double,
                                                    Cube< double >,
-                                                   LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                                                   LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                                                   LagrangeBasis< double, 1, GaussLobattoSpacing >
-                                                   >;
+                                                   BasisProduct< LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                                                 LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                                                 LagrangeBasis< double, 1, GaussLobattoSpacing > > >;
 
   static constexpr int order = 1;
   static constexpr double testCoords[3] = { 0.31415, -0.161803, 0.69314 };
@@ -33,18 +31,16 @@ struct TestInterpolatedShapeHelper< InterpolatedShape< double,
 template<>
 struct TestInterpolatedShapeHelper< InterpolatedShape< double,
                                                        Cube< double >,
-                                                       LagrangeBasis< double, 3, GaussLobattoSpacing >,
-                                                       LagrangeBasis< double, 3, GaussLobattoSpacing >,
-                                                       LagrangeBasis< double, 3, GaussLobattoSpacing >
-                                                       > >
+                                                       BasisProduct< LagrangeBasis< double, 3, GaussLobattoSpacing >,
+                                                                     LagrangeBasis< double, 3, GaussLobattoSpacing >,
+                                                                     LagrangeBasis< double, 3, GaussLobattoSpacing > > > >
 {
 
   using InterpolatedShapeType = InterpolatedShape< double,
                                                    Cube< double >,
-                                                   LagrangeBasis< double, 3, GaussLobattoSpacing >,
-                                                   LagrangeBasis< double, 3, GaussLobattoSpacing >,
-                                                   LagrangeBasis< double, 3, GaussLobattoSpacing >
-                                                   >;
+                                                   BasisProduct< LagrangeBasis< double, 3, GaussLobattoSpacing >,
+                                                                 LagrangeBasis< double, 3, GaussLobattoSpacing >,
+                                                                 LagrangeBasis< double, 3, GaussLobattoSpacing > > >;
 
   static constexpr int order = 3;
   static constexpr double testCoords[3] = { 0.31415, -0.161803, 0.69314};

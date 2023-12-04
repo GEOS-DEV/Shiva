@@ -27,22 +27,18 @@ struct BasisProduct
   using RealType = REAL_TYPE;
 
   /// Alias for the type that represents a coordinate
-  using CoordType = REAL_TYPE[numDims];
+  // using CoordType = REAL_TYPE[numDims];
 
-  using IndexType = typename SequenceAlias< MultiIndexRangeI, 
-                                            std::integer_sequence< int, BASIS_TYPES::numSupportPoints... > >::type;
+  using IndexType = SequenceAlias_t< MultiIndexRangeI, std::integer_sequence< int, BASIS_TYPES::numSupportPoints... > >;
 
-
-  using numSupportPoints = std::integer_sequence< int, BASIS_TYPES::numSupportPoints... >;
+  using SupportPointsSequence = std::integer_sequence< int, BASIS_TYPES::numSupportPoints... >;
 
   template < typename FUNC >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
   supportLoop( FUNC && func )
   {
-    forNestedSequence<BASIS_TYPES::numSupportPoints...>( std::forward< FUNC >( func ) );
+    forNestedSequence< BASIS_TYPES::numSupportPoints... >( std::forward< FUNC >( func ) );
   }
-
-
 
   /**
    * @brief Calculates the value of the basis function at the specified parent

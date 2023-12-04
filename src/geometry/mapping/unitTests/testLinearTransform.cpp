@@ -92,9 +92,11 @@ SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
   LinearTransform< REAL_TYPE,
                    InterpolatedShape< double,
                                       Cube< double >,
-                                      LagrangeBasis< double, 1, EqualSpacing >,
-                                      LagrangeBasis< double, 1, EqualSpacing >,
-                                      LagrangeBasis< double, 1, EqualSpacing > > > cell;
+                                      BasisProduct < LagrangeBasis< double, 1, EqualSpacing >,
+                                                     LagrangeBasis< double, 1, EqualSpacing >,
+                                                     LagrangeBasis< double, 1, EqualSpacing > >
+                                    >
+                  > cell;
 
   typename decltype(cell)::SupportIndexType index;
 

@@ -24,68 +24,39 @@ namespace geometry
  * @tparam BASIS_TYPE Pack of basis types to apply to each direction of the
  * parent element. There should be a basis defined for each direction.
  */
-template< typename REAL_TYPE, typename STANDARD_GEOMETRY, typename ... BASIS_TYPE >
+template< typename REAL_TYPE, typename STANDARD_GEOMETRY, typename BASIS_COMBINATION_TYPE >
 class InterpolatedShape
 {
-
 public:
-
-  /// The type used to represent the cell/geometry
-  using StandardGeom = STANDARD_GEOMETRY;
-//  using FunctionalSpaceType = FUNCTIONAL_SPACE_TYPE;
-//  using IndexType = typename Geometry::IndexType;
 
   /// Alias for the floating point type
   using RealType = REAL_TYPE;
 
-  /// Alias for the type that represents a coordinate
-  using CoordType = typename StandardGeom::CoordType;
+  /// The type used to represent the cell/geometry
+  using StandardGeom = STANDARD_GEOMETRY;
 
   /// The type used to represent the product of basis functions
-  using BasisCombinationType = functions::BasisProduct< REAL_TYPE, BASIS_TYPE... >;
-
-  /// The number of dimensions on the InterpolatedShape
-  static inline constexpr int numDims = sizeof...(BASIS_TYPE);
-
-  /// The number of vertices on the InterpolatedShape
-  static inline constexpr int numVertices = StandardGeom::numVertices();
-
-  static inline constexpr std::integer_sequence< int, BASIS_TYPE::numSupportPoints... > basisSupportCounts{};  
-
-  using numSupportPointsSequence = std::integer_sequence< int, BASIS_TYPE::numSupportPoints... >;
-
-  template< typename T >
-  using numSupportPointsPacker = ParameterPacker< T, BASIS_TYPE::numSupportPoints... >;
-
-
-  static_assert( numDims == StandardGeom::numDims(), "numDims mismatch between cell and number of basis specified" );
-
-  template < typename FUNC >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-  supportLoop( FUNC && func )
-  {
-    BasisCombinationType::supportLoop( std::forward< FUNC >( func ) );
-  }
+  using BasisCombinationType = BASIS_COMBINATION_TYPE;
 
   /**
    * @copydoc functions::BasisProduct::value
    */
-  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType
-  value( COORD_TYPE const & parentCoord )
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = StandardGeom::CoordType >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+  RealType value( COORD_TYPE const & parentCoord )
   {
-    static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
+    static_assert( sizeof...(BASIS_FUNCTION_INDICES) = StandardGeom::numDims, "Wrong number of basis function indicies specified" );
     return ( BasisCombinationType::template value< BASIS_FUNCTION_INDICES... >( parentCoord ) );
   }
 
   /**
    * @copydoc functions::BasisProduct::gradient
    */
-  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = RealType[numDims] >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArrayNd< RealType, numDims >
-  gradient( COORD_TYPE const & parentCoord )
+  template< int ... BASIS_FUNCTION_INDICES, typename COORD_TYPE = StandardGeom::CoordType >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+  CArrayNd< RealType, StandardGeom::numDims > gradient( COORD_TYPE const & parentCoord )
   {
-    static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
+    static_assert( sizeof...(BASIS_FUNCTION_INDICES) == StandardGeom::numDims, "Wrong number of basis function indicies specified" );
     return ( BasisCombinationType::template gradient< BASIS_FUNCTION_INDICES... >( parentCoord ) );
   }
 };

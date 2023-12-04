@@ -145,9 +145,9 @@ TEST( testInterpolatedShape, testBasicUsage )
 
   InterpolatedShape< double,
                      Cube< double >,
-                     LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                     LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                     LagrangeBasis< double, 1, GaussLobattoSpacing >
+                     BasisProduct< LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                   LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                   LagrangeBasis< double, 1, GaussLobattoSpacing > >
                      >::template value< 1, 1, 1 >( {0.5, 0, 1} );
 }
 
@@ -155,10 +155,9 @@ TEST( testInterpolatedShape, testCubeLagrangeBasisGaussLobatto_O1 )
 {
   using InterpolatedShapeType = InterpolatedShape< double,
                                                    Cube< double >,
-                                                   LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                                                   LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                                                   LagrangeBasis< double, 1, GaussLobattoSpacing >
-                                                   >;
+                                                   BasisProduct< LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                                                 LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                                                 LagrangeBasis< double, 1, GaussLobattoSpacing > > >;
   using TEST_INTERPOLATED_SHAPE_HELPER = TestInterpolatedShapeHelper< InterpolatedShapeType >;
 
   testInterpolatedShapeAtCompileTime< TEST_INTERPOLATED_SHAPE_HELPER >();
@@ -169,10 +168,9 @@ TEST( testInterpolatedShape, testCubeLagrangeBasisGaussLobatto_O3 )
 {
   using InterpolatedShapeType = InterpolatedShape< double,
                                                    Cube< double >,
-                                                   LagrangeBasis< double, 3, GaussLobattoSpacing >,
-                                                   LagrangeBasis< double, 3, GaussLobattoSpacing >,
-                                                   LagrangeBasis< double, 3, GaussLobattoSpacing >
-                                                   >;
+                                                   BasisProduct< LagrangeBasis< double, 3, GaussLobattoSpacing >,
+                                                                 LagrangeBasis< double, 3, GaussLobattoSpacing >,
+                                                                 LagrangeBasis< double, 3, GaussLobattoSpacing > > >;
   using TEST_INTERPOLATED_SHAPE_HELPER = TestInterpolatedShapeHelper< InterpolatedShapeType >;
 
   testInterpolatedShapeAtCompileTime< TEST_INTERPOLATED_SHAPE_HELPER >();

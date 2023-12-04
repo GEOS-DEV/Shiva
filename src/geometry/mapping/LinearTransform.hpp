@@ -26,8 +26,8 @@ namespace geometry
 {
 
 /**
- * @brief Class to represent a cuboid
  * @tparam REAL_TYPE The type of real numbers used for floating point data.
+ * @tparam INTERPOLATED_SHAPE Interpolation machinery + ideal shape being transformed from one space into another.
  *
  * The term cuboid is used here to define a 3-dimensional volume with 6
  * quadralateral sides.
@@ -35,37 +35,32 @@ namespace geometry
  *(Wikipedia)</a>
  */
 template< typename REAL_TYPE,
-          typename INTERPOLATED_SHAPE >
-class LinearTransform
+          typename INTERPOLATED_SHAPE,
+          typename CODOMAIN_COORD_INDEX_SPACE = INTERPOLATED_SHAPE::StandardGeom::CoordIndexSpace >
+class MultiLinearTransform
 {
+private:
+template < int ... INDEX_EXTENTS >
+using rtCArrayND = CArrayND< REAL_TYPE, INDEX_EXTENTS ... >;
 public:
-  using InterpolatedShape = INTERPOLATED_SHAPE;
-
-  /// number of vertices in the geometric object that will be transformed.
-  static inline constexpr int numVertices = InterpolatedShape::numVertices;
-
-  /// number of dimensions of the geometric object that will be transformed.
-  static inline constexpr int numDims =  InterpolatedShape::numDims;
-
   /// Alias for the floating point type for the transform.
   using RealType = REAL_TYPE;
 
+  using InterpolatedShape = INTERPOLATED_SHAPE;
+
+  using DomainCoordIndexSpace = InterpolatedShape::StandardGeom::CoordIndexSpace;
+  using CodomainCoordIndexSpace = CODOMAIN_COORD_INDEX_SPACE;
+
   /// The type used to represent the Jacobian transformation operation
-  using JacobianType = CArrayNd< REAL_TYPE, numDims, numDims >;
+  using JacobianIndexSpace = typename Concat_t< CodomainCoordIndexSpace, DomainCoordIndexSpace >;
+  using JacobianType = typename SequenceAlias< rtCArrayND, JacobianIndexSpace >;
 
   /// The type used to represent the data stored at the vertices of the cell
-//  using DataType = CArrayNd<REAL_TYPE, InterpolatedShape::BasisCombinationType::numSupportPoints..., numDims >;
-//  using DataType = CArrayNd<REAL_TYPE, numVertices, numDims >;
-
-//  using DataType = typename InterpolatedShape::template numSupportPointsPacker< REAL_TYPE >::template type< CArrayNd, numDims >;
-
-  template< int ... NUM_SUPPORT_POINTS >
-  using RealCArrayDims = CArrayNd< REAL_TYPE, NUM_SUPPORT_POINTS..., numDims >;
-  using DataType = typename SequenceAlias< RealCArrayDims, typename InterpolatedShape::numSupportPointsSequence >::type;
+  using CoordDataIndexSpace = Concat_t< InterpolatedShape::BasisCombinationType::SupportPointsSequence, DomainCoordIndexSpace >;
+  using CoordDataType = typename SequenceAlias< CArrayND, DataIndexSpace >::type;
 
   /// The type used to represent the index space of the cell
   using SupportIndexType = typename InterpolatedShape::BasisCombinationType::IndexType;
-  // using IndexType = typename SequenceAlias< MultiIndexRangeI, decltype(InterpolatedShape::basisSupportCounts) >::type;
 
   /**
    * @brief Returns a boolean indicating whether the Jacobian is constant in the
@@ -75,38 +70,33 @@ public:
    */
   constexpr static bool jacobianIsConstInCell() { return false; }
 
-
   /**
    * @brief Provides access to member data through reference to const.
    * @return a const reference to the member data.
    */
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType const & getData() const { return m_vertexCoords; }
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE CoordDataType const & getData() const { return m_coordData; }
 
   /**
    * @brief Provides non-const access to member data through reference.
    * @return a mutable reference to the member data.
    */
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType & getData() { return m_vertexCoords; }
-
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE CoordDataType & setData() { return m_coordData; }
 
   /**
    * @brief Sets the coordinates of the vertices of the cell
    * @param[in] coords The coordinates of the vertices of the cell
    */
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setData( DataType const & coords )
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setData( CoordDataType const & coords )
   {
-    for ( int a = 0; a < numVertices; ++a )
+    forNestedSequence< IndexSpace >( [&] ( auto const ... ai )
     {
-      for ( int i = 0; i < numDims; ++i )
-      {
-        m_vertexCoords[a][i] = coords[a][i];
-      }
-    }
+      m_coordData( decltype(ai)::value ... ) = coords( decltype(ai)::value ... );
+    } );
   }
 
 private:
-  /// Data member that stores the vertex coordinates of the cuboid
-  DataType m_vertexCoords;
+  /// Data member that stores the vertex coordinates of the ideal shape
+  CoordDataType m_coordData;
 };
 
 namespace utilities
@@ -120,8 +110,8 @@ namespace utilities
  * @tparam REAL_TYPE The floating point type.
  */
 template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const &,//cell,
-                                                             typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( MultiLinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const &,//cell,
+                                                             typename MultiLinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )
 {}
 
 /**
@@ -135,44 +125,50 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< RE
  */
 template< typename REAL_TYPE,
           typename INTERPOLATED_SHAPE,
-          typename COORD_TYPE = REAL_TYPE[INTERPOLATED_SHAPE::numDims] >
+          typename COORD_TYPE = typename INTERPOLATED_SHAPE::StandardGeom::CoordType >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
+jacobian( MultiLinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
           COORD_TYPE const & pointCoordsParent,
-          typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & J )
+          typename MultiLinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & J )
 {
   using Transform = std::remove_reference_t<decltype(transform)>;
   using InterpolatedShape = typename Transform::InterpolatedShape;
-  constexpr int DIMS = Transform::numDims;
+  constexpr int DIMS = Transform::StandardGeom::numDims;
 
-  auto const & nodeCoords = transform.getData();
-  InterpolatedShape::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr 
+  auto const & supportCoords = transform.getData();
+  InterpolatedShape::BasisCombinationType::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
   {
     CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value... >( pointCoordsParent );
     // dimensional loop from domain to codomain
 
 #define VARIANT 1
 #if VARIANT==0
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... dimIndices ) constexpr
+    forNestedSequence( JacobianIndexSpace, [&] ( auto const ... dimIndices ) constexpr
     {
       constexpr int ijk[DIMS] = { decltype(dimIndices)::value... };
-      J( decltype(dimIndices)::value... ) = J( decltype(dimIndices)::value... ) 
-                                       + dNadXi(ijk[1]) * nodeCoords( decltype(ic_spIndices)::value..., ijk[0] );
+      J( decltype(dimIndices)::value... ) = J( decltype(dimIndices)::value... )
+                                       + dNadXi(ijk[1]) * supportCoords( decltype(ic_spIndices)::value..., ijk[0] );
     });
 #elif VARIANT==1
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... dimIndices ) constexpr
+    forNestedSequence( JacobianIndexSpace, [&] ( auto const ... dimIndices ) constexpr
     {
-      constexpr int i = IntPackPeeler< 0, decltype(dimIndices)::value... >::value();
-      constexpr int j = IntPackPeeler< 1, decltype(dimIndices)::value... >::value();
-
-      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( decltype(ic_spIndices)::value..., i );
-    });
+      using ij = SplitPack< decltype(dimIndices)::value_type, CodomainCoordIndexSpace::size(), DomainCoordIndexSpace::size(), decltype(dimIndices)::value... >;
+      using i = typename ij::first;
+      using j = typename ij::second;
+      unpack< i >( [&] ( auto... i )
+      {
+        unpack< j > ( [&] ( auto... j )
+        {
+          J( decltype(dimIndices)::value... ) = J( decltype(dimIndices)::value... ) + dNadXi( j... ) * supportCoords( decltype(ic_spIndices)::value..., i... );
+        } );
+      } );
+    } );
 #else
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
+    forNestedSequence( JacobianIndexSpace, [&] ( auto const ici, auto const icj ) constexpr
     {
       constexpr int i = decltype(ici)::value;
       constexpr int j = decltype(icj)::value;
-      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( decltype(ic_spIndices)::value..., i );
+      J(i,j) = J(i,j) + dNadXi(j) * supportCoords( decltype(ic_spIndices)::value..., i );
     });
 #endif
 
@@ -195,9 +191,9 @@ template< typename REAL_TYPE,
           typename INTERPOLATED_SHAPE,
           typename COORD_TYPE = REAL_TYPE[INTERPOLATED_SHAPE::numDims] >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
-inverseJacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
+inverseJacobian( MultiLinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
                  COORD_TYPE const & parentCoords,
-                 typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & invJ,
+                 typename MultiLinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & invJ,
                  REAL_TYPE & detJ )
 {
   jacobian( transform, parentCoords, invJ );

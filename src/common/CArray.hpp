@@ -179,6 +179,16 @@ using ScalarView = CArray< T, T, 1 >;
 template< typename T, int ... DIMS >
 using CArrayViewNd = CArray< T, T * const, DIMS ... >;
 
+template< int ... DIMS >
+using fCArrayND = CArrayND< float, DIMS ... >;
 
+template< int ... DIMS >
+using dCArrayND = CArray< double, DIMS ... >;
+
+template< int ... DIMS >
+using iCArrayND = CArray< int, DIMS ... >;
+
+template< int ... DIMS >
+using lCArrayND = CArray< long, DIMS ... >;
 
 } // namespace shiva
