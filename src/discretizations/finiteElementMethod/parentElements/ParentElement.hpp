@@ -44,7 +44,7 @@ public:
   using CoordType = typename ShapeType::CoordType;
 
   /// The type used to represent the product of basis functions
-  using BASIS_PRODUCT_TYPE = functions::BasisProduct< REAL_TYPE, BASIS_TYPE... >;
+  using BASIS_PRODUCT_TYPE = functions::BasisProduct< REAL_TYPE, BASIS_TYPE ... >;
 
 
   /// The number of dimensions on the ParentElement
@@ -52,7 +52,7 @@ public:
 
   /// The number of degrees of freedom on the ParentElement in each
   /// dimension/basis.
-  static inline constexpr int numSupportPoints[numDims] = {BASIS_TYPE::numSupportPoints...};
+  static inline constexpr int numSupportPoints[numDims] = {BASIS_TYPE::numSupportPoints ...};
 
 
   static_assert( numDims == ShapeType::numDims(), "numDims mismatch between cell and number of basis specified" );
@@ -82,8 +82,16 @@ public:
 
 
 
-  template<typename VAR_TYPE >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE 
+  /**
+   * @brief Evaluate the interpolation of a variable at a parent coordinate.
+   * @tparam VAR_TYPE The type of the variable to interpolate.
+   * @param parentCoord The parent coordinate at which to interpolate the
+   * variable.
+   * @param var Object containing the variable data
+   * @return The interpolated value of the variable.
+   */
+  template< typename VAR_TYPE >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
   value( CoordType const & parentCoord, VAR_TYPE const & var )
   {
     REAL_TYPE rval = {0};
@@ -98,22 +106,29 @@ public:
         forSequence< numSupportPoints[2] >( [&] ( auto const icc ) constexpr
         {
           constexpr int c = decltype(icc)::value;
-          rval = rval + ( value< a, b, c >( parentCoord ) * var(a,b,c) );
-        });
-      });
-    });
+          rval = rval + ( value< a, b, c >( parentCoord ) * var( a, b, c ) );
+        } );
+      } );
+    } );
 #else
     forNestedSequence< BASIS_TYPE::numSupportPoints... >( [&] ( auto const ... ic_indices ) constexpr
     {
-      rval = rval + ( value< decltype(ic_indices)::value ... >( parentCoord ) * var(decltype(ic_indices)::value ...) );
-    });
+      rval = rval + ( value< decltype(ic_indices)::value ... >( parentCoord ) * var( decltype(ic_indices)::value ... ) );
+    } );
 #endif
     return rval;
   }
 
-
-  template<typename VAR_TYPE >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArrayNd< RealType, numDims > 
+  /**
+   * @brief Evaluate the gradient of a variable at a parent coordinate.
+   * @tparam VAR_TYPE The type of the variable that grad will apply to.
+   * @param parentCoord The parent coordinate at which to interpolate the
+   * variable.
+   * @param var Object containing the variable data
+   * @return The gradient of the variable.
+   */
+  template< typename VAR_TYPE >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArrayNd< RealType, numDims >
   gradient( CoordType const & parentCoord, VAR_TYPE const & var )
   {
     CArrayNd< RealType, numDims > rval = {0.0};
@@ -128,21 +143,21 @@ public:
         {
           constexpr int c = decltype(icc)::value;
           CArrayNd< RealType, numDims > const grad = gradient< a, b, c >( parentCoord );
-          rval(0) = rval(0) + grad(0) * var(a,b,c) ;
-          rval(1) = rval(1) + grad(1) * var(a,b,c) ;
-          rval(2) = rval(2) + grad(2) * var(a,b,c) ;
-        });
-      });
-    });
+          rval( 0 ) = rval( 0 ) + grad( 0 ) * var( a, b, c );
+          rval( 1 ) = rval( 1 ) + grad( 1 ) * var( a, b, c );
+          rval( 2 ) = rval( 2 ) + grad( 2 ) * var( a, b, c );
+        } );
+      } );
+    } );
 #else
-  forNestedSequence< BASIS_TYPE::numSupportPoints... >( [&] ( auto const ... ic_indices ) constexpr
-  {
-    CArrayNd< RealType, numDims > const grad = gradient< decltype(ic_indices)::value ... >( parentCoord );
-    forSequence<numDims>([&]( auto const a ) constexpr
+    forNestedSequence< BASIS_TYPE::numSupportPoints... >( [&] ( auto const ... ic_indices ) constexpr
     {
-      rval(a) = rval(a) + grad(a) * var( decltype(ic_indices)::value ... ) ;
-    });
-  });
+      CArrayNd< RealType, numDims > const grad = gradient< decltype(ic_indices)::value ... >( parentCoord );
+      forSequence< numDims >( [&] ( auto const a ) constexpr
+      {
+        rval( a ) = rval( a ) + grad( a ) * var( decltype(ic_indices)::value ... );
+      } );
+    } );
 
 #endif
     return rval;

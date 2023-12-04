@@ -12,6 +12,7 @@
 #include "common/NestedSequenceUtilities.hpp"
 #include "common/CArray.hpp"
 
+#define VARIANT 1 ///< temporary preprocessor variable to test different variants of the loop
 
 /**
  * namespace to encapsulate all shiva code
@@ -39,6 +40,7 @@ template< typename REAL_TYPE,
 class LinearTransform
 {
 public:
+  /// Alias for the interpolated shape type
   using InterpolatedShape = INTERPOLATED_SHAPE;
 
   /// number of vertices in the geometric object that will be transformed.
@@ -53,14 +55,16 @@ public:
   /// The type used to represent the Jacobian transformation operation
   using JacobianType = CArrayNd< REAL_TYPE, numDims, numDims >;
 
-  /// The type used to represent the data stored at the vertices of the cell
-//  using DataType = CArrayNd<REAL_TYPE, InterpolatedShape::BasisCombinationType::numSupportPoints..., numDims >;
-//  using DataType = CArrayNd<REAL_TYPE, numVertices, numDims >;
 
-//  using DataType = typename InterpolatedShape::template numSupportPointsPacker< REAL_TYPE >::template type< CArrayNd, numDims >;
-
+  /**
+   * @brief Alias to help define Carray dimensions for the vertex coordinates
+   * @tparam ...NUM_SUPPORT_POINTS The integer pack containing the number of
+   * support points in each basis function.
+   */
   template< int ... NUM_SUPPORT_POINTS >
   using RealCArrayDims = CArrayNd< REAL_TYPE, NUM_SUPPORT_POINTS..., numDims >;
+
+  /// The type used to represent the data stored at the vertices of the cell
   using DataType = typename SequenceAlias< RealCArrayDims, typename InterpolatedShape::numSupportPointsSequence >::type;
 
   /// The type used to represent the index space of the cell
@@ -141,45 +145,47 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
           COORD_TYPE const & pointCoordsParent,
           typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & J )
 {
-  using Transform = std::remove_reference_t<decltype(transform)>;
+  using Transform = std::remove_reference_t< decltype(transform) >;
   using InterpolatedShape = typename Transform::InterpolatedShape;
   constexpr int DIMS = Transform::numDims;
 
   auto const & nodeCoords = transform.getData();
-  InterpolatedShape::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr 
+  InterpolatedShape::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
   {
-    CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value... >( pointCoordsParent );
+    CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( pointCoordsParent );
     // dimensional loop from domain to codomain
 
-#define VARIANT 1
-#if VARIANT==0
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... dimIndices ) constexpr
-    {
-      constexpr int ijk[DIMS] = { decltype(dimIndices)::value... };
-      J( decltype(dimIndices)::value... ) = J( decltype(dimIndices)::value... ) 
-                                       + dNadXi(ijk[1]) * nodeCoords( decltype(ic_spIndices)::value..., ijk[0] );
-    });
-#elif VARIANT==1
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... dimIndices ) constexpr
-    {
-      constexpr int i = IntPackPeeler< 0, decltype(dimIndices)::value... >::value();
-      constexpr int j = IntPackPeeler< 1, decltype(dimIndices)::value... >::value();
 
-      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( decltype(ic_spIndices)::value..., i );
-    });
+
+#if VARIANT == 0
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... dimIndices ) constexpr
+    {
+      constexpr int ijk[DIMS] = { decltype(dimIndices)::value ... };
+      J( decltype(dimIndices)::value ... ) = J( decltype(dimIndices)::value ... )
+                                             + dNadXi( ijk[1] ) * nodeCoords( decltype(ic_spIndices)::value ..., ijk[0] );
+    } );
+#elif VARIANT == 1
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... dimIndices ) constexpr
+    {
+      constexpr int i = IntPackPeeler< 0, decltype(dimIndices)::value ... >::value();
+      constexpr int j = IntPackPeeler< 1, decltype(dimIndices)::value ... >::value();
+
+      J( i, j ) = J( i, j ) + dNadXi( j ) * nodeCoords( decltype(ic_spIndices)::value ..., i );
+    } );
 #else
     forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
     {
       constexpr int i = decltype(ici)::value;
       constexpr int j = decltype(icj)::value;
-      J(i,j) = J(i,j) + dNadXi(j) * nodeCoords( decltype(ic_spIndices)::value..., i );
-    });
+      J( i, j ) = J( i, j ) + dNadXi( j ) * nodeCoords( decltype(ic_spIndices)::value ..., i );
+    } );
 #endif
 
-#undef VARIANT
 
-  });
+  } );
 }
+
+#undef VARIANT
 
 /**
  * @brief Calculates the inverse Jacobian transformation of a cuboid from a

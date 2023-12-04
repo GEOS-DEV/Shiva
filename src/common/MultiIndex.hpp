@@ -64,7 +64,11 @@ struct MultiIndexRange
   BASE_INDEX_TYPE data[NUM_INDICES] = {0};
 };
 
-template < int... RANGES >
+/**
+ * @brief Alias for a MultiIndexRange of type int.
+ * @tparam ...RANGES The ranges for each index.
+ */
+template< int... RANGES >
 using MultiIndexRangeI = MultiIndexRange< int, RANGES... >;
 
 } // namespace shiva

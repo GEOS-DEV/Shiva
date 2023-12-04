@@ -14,33 +14,41 @@ namespace shiva
 
 // Helper class to capture the int pack from std::integer_sequence
 // to assist in `using` statements
-template < template <int...> class Template, typename T>
+
+
+/**
+ * @brief Dummy declaration struct to capture the int pack from
+ * std::integer_sequence and pass to a templated type declaration through an
+ * alias.
+ * @tparam Template the templated type to alias
+ * @tparam T what will be the integer_sequence type in the specilization.
+ */
+template< template< int... > class Template, typename T >
 struct SequenceAlias;
 
-template < template <int...> class Template, int... Seq >
-struct SequenceAlias< Template, std::integer_sequence<int, Seq...> > 
+
+/**
+ * @brief Dummy declaration struct to capture the int pack from
+ * std::integer_sequence and pass to a templated type declaration through an
+ * alias.
+ * @tparam Template the templated type to alias
+ * @tparam ...Seq The integer pack to pass to the templated type.
+ */
+template< template< int... > class Template, int... Seq >
+struct SequenceAlias< Template, std::integer_sequence< int, Seq... > >
 {
-  using type = Template<Seq...>;
+  /// The type of the alias of the templated type with the integer pack.
+  using type = Template< Seq... >;
 };
 
 
 
-template< int I, typename T, typename ... Ts>
-struct PackPeeler
-{
-  /// The type of the first value in the pack.
-  using type = typename PackPeeler< I - 1, Ts... >::type;
-};
-
-template< typename T, typename ... Ts>
-struct PackPeeler<0,T,Ts...>
-{
-  /// The type of the first value in the pack.
-  using type = T;
-};
-
-
-
+/**
+ * @brief Struct to peel an integer off an integer pack using recursion.
+ * @tparam I The number of the integer to peel off.
+ * @tparam FIRST The first integer in the pack.
+ * @tparam ...REST The rest of the pack.
+ */
 template< int I, int FIRST, int ... REST >
 struct IntPackPeeler
 {
@@ -48,22 +56,18 @@ struct IntPackPeeler
   static constexpr int value() { return IntPackPeeler< I - 1, REST... >::value(); }
 };
 
-template< int FIRST, int ... REST>
-struct IntPackPeeler<0,FIRST,REST...>
+/**
+ * @brief Specialization of struct to peel an integer off an integer pack using
+ * recursion. This is the specialization that returns the specified integer.
+ * @tparam FIRST This is integer to return.
+ * @tparam ...REST The rest of the pack.
+ */
+template< int FIRST, int ... REST >
+struct IntPackPeeler< 0, FIRST, REST... >
 {
   /// The type of the first value in the pack.
   static constexpr int value() { return FIRST; }
 };
-
-
-template <typename T, int ...PACK> struct ParameterPacker
-{
-    template <template <typename, int...> typename TT, int ... OTHER_DIMS > 
-    using type = TT<T, PACK..., OTHER_DIMS...>;
-};
-
-
-
 
 
 /**
@@ -207,7 +211,6 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto forSequence( FUNC && func )
     sequenceUtilitiesImpl::SequenceExpansion< std::make_integer_sequence< int, END > >::
     template staticFor( std::forward< FUNC >( func ) );
 }
-
 
 
 

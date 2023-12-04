@@ -42,7 +42,7 @@ public:
   using CoordType = typename StandardGeom::CoordType;
 
   /// The type used to represent the product of basis functions
-  using BasisCombinationType = functions::BasisProduct< REAL_TYPE, BASIS_TYPE... >;
+  using BasisCombinationType = functions::BasisProduct< REAL_TYPE, BASIS_TYPE ... >;
 
   /// The number of dimensions on the InterpolatedShape
   static inline constexpr int numDims = sizeof...(BASIS_TYPE);
@@ -50,17 +50,19 @@ public:
   /// The number of vertices on the InterpolatedShape
   static inline constexpr int numVertices = StandardGeom::numVertices();
 
-  static inline constexpr std::integer_sequence< int, BASIS_TYPE::numSupportPoints... > basisSupportCounts{};  
-
+  /// alias for an integer_sequence that contains the number of support points
+  /// in each basis.
   using numSupportPointsSequence = std::integer_sequence< int, BASIS_TYPE::numSupportPoints... >;
 
-  template< typename T >
-  using numSupportPointsPacker = ParameterPacker< T, BASIS_TYPE::numSupportPoints... >;
+  /// Instantiation of the integer sequence that holds the number of support points in each basis.
+  static inline constexpr numSupportPointsSequence basisSupportCounts{};
+
 
 
   static_assert( numDims == StandardGeom::numDims(), "numDims mismatch between cell and number of basis specified" );
 
-  template < typename FUNC >
+  /// @copydoc functions::BasisProduct::supportLoop
+  template< typename FUNC >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
   supportLoop( FUNC && func )
   {

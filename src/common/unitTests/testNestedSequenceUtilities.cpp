@@ -6,7 +6,7 @@
 
 using namespace shiva;
 
-struct Data
+struct NestedData
 {
   static constexpr int h[10] = {11, 22, 33, 44, 55, 66, 77, 88, 99, 100};
   static constexpr int sum_of_h = 595;
@@ -38,15 +38,15 @@ void testForNestedSequenceLambdaHelper()
     constexpr auto helper = [] ( auto const & h ) constexpr
     {
       int staticSum0 = 0;
-      forNestedSequence< 10 > (
+      forNestedSequence< 10 >(
         [&] ( auto const a ) constexpr
       {
         staticSum0 += h[a];
       } );
       return staticSum0;
     };
-    constexpr int staticSum0 = helper( Data::h );
-    static_assert( staticSum0 == Data::sum_of_h );
+    constexpr int staticSum0 = helper( NestedData::h );
+    static_assert( staticSum0 == NestedData::sum_of_h );
   } );
 
 
@@ -55,15 +55,15 @@ void testForNestedSequenceLambdaHelper()
     constexpr auto helper = [] ( auto const & h ) constexpr
     {
       int staticSum0 = 0;
-      forNestedSequence< 10, 8 > (
+      forNestedSequence< 10, 8 >(
         [&] ( auto const a, auto const b ) constexpr
       {
         staticSum0 += h[a] + h[b];
       } );
       return staticSum0;
     };
-    constexpr int staticSum0 = helper( Data::h );
-    static_assert( staticSum0 == Data::double_nested_to_8_sum );
+    constexpr int staticSum0 = helper( NestedData::h );
+    static_assert( staticSum0 == NestedData::double_nested_to_8_sum );
   } );
 
   kernelLaunch([] SHIVA_HOST_DEVICE ()
@@ -71,15 +71,15 @@ void testForNestedSequenceLambdaHelper()
     constexpr auto helper = [] ( auto const & h ) constexpr
     {
       int staticSum0 = 0;
-      forNestedSequence< 10, 8, 6, 4, 2 > (
+      forNestedSequence< 10, 8, 6, 4, 2 >(
         [&] ( auto const a, auto const b, auto const c, auto const d, auto const e ) constexpr
       {
         staticSum0 += h[a] + h[b] + h[c] + h[d] + h[e];
       } );
       return staticSum0;
     };
-    constexpr int staticSum0 = helper( Data::h );
-    static_assert( staticSum0 == Data::quad_nested_evens_sum );
+    constexpr int staticSum0 = helper( NestedData::h );
+    static_assert( staticSum0 == NestedData::quad_nested_evens_sum );
   } );
 }
 
