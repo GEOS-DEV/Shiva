@@ -6,6 +6,7 @@ set( geometry_headers
      mapping/UniformScaling.hpp
      shapes/InterpolatedShape.hpp
      shapes/NCube.hpp
+     shapes/NSimplex.hpp
      )
 
 set( geometry_sources

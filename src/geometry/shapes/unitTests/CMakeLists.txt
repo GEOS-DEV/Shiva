@@ -4,6 +4,7 @@
 
 set( unit_tests_sources
      testNCube.cpp
+     testNSimplex.cpp
      testInterpolatedShape.cpp
      )
 
