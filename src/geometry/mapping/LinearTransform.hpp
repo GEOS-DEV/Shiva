@@ -12,8 +12,6 @@
 #include "common/NestedSequenceUtilities.hpp"
 #include "common/CArray.hpp"
 
-#define VARIANT 2 ///< temporary preprocessor variable to test different variants of the loop
-
 /**
  * namespace to encapsulate all shiva code
  */
@@ -154,38 +152,15 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
   {
     CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( pointCoordsParent );
     // dimensional loop from domain to codomain
-
-
-
-#if VARIANT == 0
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... dimIndices ) constexpr
-    {
-      constexpr int ijk[DIMS] = { decltype(dimIndices)::value ... };
-      J( decltype(dimIndices)::value ... ) = J( decltype(dimIndices)::value ... )
-                                             + dNadXi( ijk[1] ) * nodeCoords( decltype(ic_spIndices)::value ..., ijk[0] );
-    } );
-#elif VARIANT == 1
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ... dimIndices ) constexpr
-    {
-      constexpr int i = IntPackPeeler< 0, decltype(dimIndices)::value ... >::value();
-      constexpr int j = IntPackPeeler< 1, decltype(dimIndices)::value ... >::value();
-
-      J( i, j ) = J( i, j ) + dNadXi( j ) * nodeCoords( decltype(ic_spIndices)::value ..., i );
-    } );
-#else
     forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
     {
       constexpr int i = decltype(ici)::value;
       constexpr int j = decltype(icj)::value;
       J( i, j ) = J( i, j ) + dNadXi( j ) * nodeCoords( decltype(ic_spIndices)::value ..., i );
     } );
-#endif
-
 
   } );
 }
-
-#undef VARIANT
 
 /**
  * @brief Calculates the inverse Jacobian transformation of a cuboid from a
