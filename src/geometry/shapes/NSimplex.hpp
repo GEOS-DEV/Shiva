@@ -131,7 +131,7 @@ public:
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numHyperFaces()
   {
-    return numMSimplexes< N - 1>();
+    return numMSimplexes< N - 1 >();
   }
 
   /**
