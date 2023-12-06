@@ -10,7 +10,7 @@ using namespace shiva::geometry;
 template< typename NSIMPLEX >
 struct NSimplexSolutions;
 
-#define NSIMPLEX( NSIMPLEX_NAME, N, MIN, MAX, DIVISOR, NUM_VERTICES, NUM_EDGES, NUM_FACES, NUM_HYPERFACES, MIN_COORD, MAX_COORD, LENGTH, VOLUME ) \
+#define NSIMPLEX( NSIMPLEX_NAME, N, MIN, MAX, DIVISOR, NUM_VERTICES, NUM_EDGES, NUM_FACES, NUM_CELLS, NUM_HYPERFACES, MIN_COORD, MAX_COORD, LENGTH, VOLUME ) \
         using NSIMPLEX_NAME = NSimplex< double, N, MIN, MAX, DIVISOR >; \
         template<> \
         struct NSimplexSolutions< NSIMPLEX_NAME > \
@@ -19,6 +19,7 @@ struct NSimplexSolutions;
           static constexpr int numVertices() { return NUM_VERTICES;} \
           static constexpr int numEdges() { return NUM_EDGES;} \
           static constexpr int numFaces() { return NUM_FACES;} \
+          static constexpr int numCells() { return NUM_CELLS;} \
           static constexpr int numHyperFaces() { return NUM_HYPERFACES;} \
           static constexpr double minCoord() { return MIN_COORD;} \
           static constexpr double maxCoord() { return MAX_COORD;} \
@@ -29,57 +30,57 @@ struct NSimplexSolutions;
 //*****************************************************************************
 NSIMPLEX( NSimplex_1_0_1_1,
           1, 0, 1, 1,
-          2, 1, 0, 2, 0.0, 1.0, 1.0, 1.0 )
+          2, 1, 0, 0, 2, 0.0, 1.0, 1.0, 1.0 )
 
 NSIMPLEX( NSimplex_1_m1_1_1,
           1, -1, 1, 1,
-          2, 1, 0, 2, -1.0, 1.0, 2.0, 2.0 )
+          2, 1, 0, 0, 2, -1.0, 1.0, 2.0, 2.0 )
 
 NSIMPLEX( NSimplex_1_m1_1_2,
           1, -1, 1, 2,
-          2, 1, 0, 2, -0.5, 0.5, 1.0, 1.0 )
+          2, 1, 0, 0, 2, -0.5, 0.5, 1.0, 1.0 )
 
 
 //*****************************************************************************
 NSIMPLEX( NSimplex_2_0_1_1,
           2, 0, 1, 1,
-          3, 3, 1, 3, 0.0, 1.0, 1.0, 0.5 )
+          3, 3, 1, 0, 3, 0.0, 1.0, 1.0, 0.5 )
 
 NSIMPLEX( NSimplex_2_m1_1_1,
           2, -1, 1, 1,
-          3, 3, 1, 3, -1.0, 1.0, 2.0, 2.0 )
+          3, 3, 1, 0, 3, -1.0, 1.0, 2.0, 2.0 )
 
 NSIMPLEX( NSimplex_2_m1_1_2,
           2, -1, 1, 2,
-          3, 3, 1, 3, -0.5, 0.5, 1.0, 0.5 )
+          3, 3, 1, 0, 3, -0.5, 0.5, 1.0, 0.5 )
 
 
 //*****************************************************************************
 NSIMPLEX( NSimplex_3_0_1_1,
           3, 0, 1, 1,
-          4, 6, 4, 4, 0.0, 1.0, 1.0, 1.0 / 6.0 )
+          4, 6, 4, 1, 4, 0.0, 1.0, 1.0, 1.0 / 6.0 )
 
 NSIMPLEX( NSimplex_3_m1_1_1,
           3, -1, 1, 1,
-          4, 6, 4, 4, -1.0, 1.0, 2.0, 8.0 / 6.0 )
+          4, 6, 4, 1, 4, -1.0, 1.0, 2.0, 8.0 / 6.0 )
 
 NSIMPLEX( NSimplex_3_m1_1_2,
           3, -1, 1, 2,
-          4, 6, 4, 4, -0.5, 0.5, 1.0, 1.0 / 6.0 )
+          4, 6, 4, 1, 4, -0.5, 0.5, 1.0, 1.0 / 6.0 )
 
 
 //*****************************************************************************
 NSIMPLEX( NSimplex_4_0_1_1,
           4, 0, 1, 1,
-          5, 10, 10, 5, 0.0, 1.0, 1.0, 1.0 / 24.0 )
+          5, 10, 10, 5, 5, 0.0, 1.0, 1.0, 1.0 / 24.0 )
 
 NSIMPLEX( NSimplex_4_m1_1_1,
           4, -1, 1, 1,
-          5, 10, 10, 5, -1.0, 1.0, 2.0, 16.0 / 24.0 )
+          5, 10, 10, 5, 5, -1.0, 1.0, 2.0, 16.0 / 24.0 )
 
 NSIMPLEX( NSimplex_4_m1_1_2,
           4, -1, 1, 2,
-          5, 10, 10, 5, -0.5, 0.5, 1.0, 1.0 / 24.0 )
+          5, 10, 10, 5, 5, -0.5, 0.5, 1.0, 1.0 / 24.0 )
 
 
 template< typename NSIMPLEX >
@@ -90,6 +91,7 @@ testNSimplexHelper()
   static_assert( NSIMPLEX::numVertices() == NSimplexSolutions< NSIMPLEX >::numVertices() );
   static_assert( NSIMPLEX::numEdges() == NSimplexSolutions< NSIMPLEX >::numEdges() );
   static_assert( NSIMPLEX::numFaces() == NSimplexSolutions< NSIMPLEX >::numFaces() );
+  static_assert( NSIMPLEX::numCells() == NSimplexSolutions< NSIMPLEX >::numCells() );
   static_assert( NSIMPLEX::numHyperFaces() == NSimplexSolutions< NSIMPLEX >::numHyperFaces() );
   static_assert( pmpl::check( NSIMPLEX::minCoord(), NSimplexSolutions< NSIMPLEX >::minCoord(), 1.0e-12 ) );
   static_assert( pmpl::check( NSIMPLEX::maxCoord(), NSimplexSolutions< NSIMPLEX >::maxCoord(), 1.0e-12 ) );
@@ -118,12 +120,12 @@ TEST( testNCube, testTetrahedra )
   testNSimplexHelper< NSimplex_3_m1_1_2 >( );
 }
 
-// TEST( testNCube, test5Cells )
-// {
-//   testNSimplexHelper< NSimplex_4_0_1_1 >( );
-//   testNSimplexHelper< NSimplex_4_m1_1_1 >( );
-//   testNSimplexHelper< NSimplex_4_m1_1_2 >( );
-// }
+TEST( testNCube, test5Cells )
+{
+  testNSimplexHelper< NSimplex_4_0_1_1 >( );
+  testNSimplexHelper< NSimplex_4_m1_1_1 >( );
+  testNSimplexHelper< NSimplex_4_m1_1_2 >( );
+}
 
 int main( int argc, char * * argv )
 {
