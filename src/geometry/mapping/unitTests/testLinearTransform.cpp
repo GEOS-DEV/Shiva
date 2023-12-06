@@ -96,9 +96,9 @@ SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
                                       LagrangeBasis< double, 1, EqualSpacing >,
                                       LagrangeBasis< double, 1, EqualSpacing > > > cell;
 
-  typename decltype(cell)::IndexType index;
+  typename decltype(cell)::SupportIndexType index;
 
-  auto & transformData = cell.setData();
+  auto & transformData = cell.getData();
 
   forRange( index = {0, 0, 0}, [&transformData, &X] ( auto const & i )
   {
@@ -108,7 +108,7 @@ SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 
     for ( int j = 0; j < 3; ++j )
     {
-      transformData[ linearIndex( i ) ][j] = X[ a + 2 * b + 4 * c ][j];
+      transformData( a, b, c, j ) = X[ a + 2 * b + 4 * c ][j];
     }
   } );
 
@@ -121,7 +121,7 @@ void testConstructionAndSettersHelper()
   pmpl::genericKernelWrapper( 8 * 3, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto const cell = makeLinearTransform( Xref );
-    typename decltype(cell)::IndexType index{0, 0, 0};
+    typename decltype(cell)::SupportIndexType index{0, 0, 0};
 
     auto const & transformData = cell.getData();
 
@@ -133,7 +133,7 @@ void testConstructionAndSettersHelper()
 
       for ( int j = 0; j < 3; ++j )
       {
-        kernelData[ 3 * ( a + 2 * b + 4 * c ) + j ] = transformData[linearIndex( i )][j];
+        kernelData[ 3 * ( a + 2 * b + 4 * c ) + j ] = transformData( a, b, c, j );
       }
     } );
   } );

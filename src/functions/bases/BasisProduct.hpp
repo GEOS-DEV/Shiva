@@ -1,6 +1,7 @@
 #pragma once
 
-#include "common/SequenceUtilities.hpp"
+#include "common/NestedSequenceUtilities.hpp"
+#include "common/MultiIndex.hpp"
 #include "common/CArray.hpp"
 
 namespace shiva
@@ -24,6 +25,31 @@ struct BasisProduct
 
   /// Alias for the floating point type
   using RealType = REAL_TYPE;
+
+  /// Alias for the type that represents a coordinate
+  using CoordType = REAL_TYPE[numDims];
+
+  /// Alias for the a integer sequence holding the number of support points in each basis.
+  using IndexType = typename SequenceAlias< MultiIndexRangeI,
+                                            std::integer_sequence< int, BASIS_TYPES::numSupportPoints... > >::type;
+
+
+  /// Alias for the a integer sequence holding the number of support points in each basis.
+  using numSupportPoints = std::integer_sequence< int, BASIS_TYPES::numSupportPoints... >;
+
+
+  /**
+   * @brief Function to loop over the support points of the basis functions.
+   * @tparam FUNC The function type to execute on each support point.
+   * @param func the function to execute at each support point
+   */
+  template< typename FUNC >
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
+  supportLoop( FUNC && func )
+  {
+    forNestedSequence< BASIS_TYPES::numSupportPoints... >( std::forward< FUNC >( func ) );
+  }
+
 
 
   /**

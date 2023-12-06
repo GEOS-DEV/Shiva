@@ -9,7 +9,24 @@ namespace ShivaInterface {
 
 namespace Geometry {
 namespace Cell {
-interface Cell {
+
+interface NCube {
+  Basic geometry for a n-cube
+}
+
+interface Tet{
+  Basic geometry for a triangle
+}
+
+interface Pyramid{
+  Basic geometry for a pyramid
+}
+
+interface Wedge{
+  Basic geometry for a wedge
+}
+
+interface MappingData {
   This family of classes have a dual role.
   There is type information and constexpr quantities for use from the type,
   and there is data that is for use when instantiated.
@@ -19,7 +36,7 @@ interface Cell {
   +constexpr int numFaces()
 }
 
-class CellTetrahedron_Pyramid_Wedge_Hexahdron {
+class LinearTransform {
   +using IndexType = int;
   +using JacobianType = real64[3][3];
   +constexpr bool jacobianIsConstInCell = false;
@@ -28,7 +45,7 @@ class CellTetrahedron_Pyramid_Wedge_Hexahdron {
   +inline vertexCoords( IndexType const vindex, int const component ) override final;
 }
 
-class CellHexahedronIJK {
+class Scaling {
   +using IndexType = <int,int,int>};
   +using JacobianType = real64[3];
   +constexpr bool jacobianIsConstInCell = true;
@@ -37,7 +54,7 @@ class CellHexahedronIJK {
   +inline vertexCoords( IndexType const vindex, int const component ) override final;
 }
 
-class CellHexahedronUniformIJK {
+class UniformScaling {
   +using IndexType = <int,int,int>};
   +using JacobianType = real64;
   +constexpr bool jacobianIsConstInCell = true;
@@ -46,9 +63,9 @@ class CellHexahedronUniformIJK {
   +inline vertexCoords( IndexType const vindex, int const component ) override final;
 }
 
-Cell <|-- CellTetrahedron_Pyramid_Wedge_Hexahdron
-Cell <|--- CellHexahedronIJK
-Cell <|---- CellHexahedronUniformIJK
+Mapping <|-- UniformScaling
+Mapping <|--- Scaling
+Mapping <|---- LinearTransform
 }
 
 
@@ -179,7 +196,7 @@ note as N1
   }
 endnote
 
-class ParentElement< FUNCSPACE, CELL, BASIS > {
+class ParentElement< CELL, BASIS > {
   +using FunctionSpaceType = FUNCSPACE;
   +using CellType = CELL;
   +using BasisType = BASIS;

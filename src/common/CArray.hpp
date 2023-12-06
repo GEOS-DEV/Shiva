@@ -38,14 +38,14 @@ struct CArray
   using index_type = int;
 
   /// The number of dimensions in the array.
-  static inline constexpr int rank() { return sizeof ... ( DIMS ); }
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int rank() { return sizeof ... ( DIMS ); }
 
   /// The dimensions of the array.
   template< int INDEX >
-  static inline constexpr int extent() { return CArrayHelper::get< INDEX, DIMS ... >(); }
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int extent() { return CArrayHelper::get< INDEX, DIMS ... >(); }
 
   /// The size of the data in array...i.e. the product of the dimensions.
-  static inline constexpr int size() { return ( DIMS * ... ); }
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int size() { return ( DIMS * ... ); }
 
   /**
    * @brief Constructor for wrapping a pointer to data
@@ -55,7 +55,7 @@ struct CArray
    */
   template< typename U = DATA_BUFFER,
             std::enable_if_t< std::is_pointer_v< U >, int > ENABLE = 0 >
-  constexpr explicit CArray( T const (&buffer)[ CArrayHelper::size< DIMS... >() ] ):
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE explicit CArray( T const (&buffer)[ CArrayHelper::size< DIMS... >() ] ):
     m_data( buffer )
   {}
 
@@ -64,7 +64,7 @@ struct CArray
    */
   template< typename U = DATA_BUFFER,
             std::enable_if_t< std::is_pointer_v< U >, int > = 0 >
-  constexpr explicit CArray( std::remove_const_t< T >(&buffer)[ CArrayHelper::size< DIMS... >() ] ):
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE explicit CArray( std::remove_const_t< T >(&buffer)[ CArrayHelper::size< DIMS... >() ] ):
     m_data( buffer )
   {}
 
@@ -74,7 +74,7 @@ struct CArray
    * @param ...args the data to initialize the array with.
    */
   template< typename ... U >
-  constexpr CArray( U ... args ): m_data{ args ... }
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArray( U ... args ): m_data{ args ... }
   {}
 
   /**
