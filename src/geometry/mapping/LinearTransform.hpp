@@ -12,7 +12,7 @@
 #include "common/NestedSequenceUtilities.hpp"
 #include "common/CArray.hpp"
 
-#define VARIANT 1 ///< temporary preprocessor variable to test different variants of the loop
+#define VARIANT 2 ///< temporary preprocessor variable to test different variants of the loop
 
 /**
  * namespace to encapsulate all shiva code

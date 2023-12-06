@@ -96,26 +96,10 @@ public:
   {
     REAL_TYPE rval = {0};
 
-  #if 0
-    forSequence< numSupportPoints[0] >( [&] ( auto const ica ) constexpr
-    {
-      constexpr int a = decltype(ica)::value;
-      forSequence< numSupportPoints[1] >( [&] ( auto const icb ) constexpr
-      {
-        constexpr int b = decltype(icb)::value;
-        forSequence< numSupportPoints[2] >( [&] ( auto const icc ) constexpr
-        {
-          constexpr int c = decltype(icc)::value;
-          rval = rval + ( value< a, b, c >( parentCoord ) * var( a, b, c ) );
-        } );
-      } );
-    } );
-#else
     forNestedSequence< BASIS_TYPE::numSupportPoints... >( [&] ( auto const ... ic_indices ) constexpr
     {
       rval = rval + ( value< decltype(ic_indices)::value ... >( parentCoord ) * var( decltype(ic_indices)::value ... ) );
     } );
-#endif
     return rval;
   }
 
@@ -132,24 +116,6 @@ public:
   gradient( CoordType const & parentCoord, VAR_TYPE const & var )
   {
     CArrayNd< RealType, numDims > rval = {0.0};
-#if 0
-    forSequence< numSupportPoints[0] >( [&] ( auto const ica ) constexpr
-    {
-      constexpr int a = decltype(ica)::value;
-      forSequence< numSupportPoints[1] >( [&] ( auto const icb ) constexpr
-      {
-        constexpr int b = decltype(icb)::value;
-        forSequence< numSupportPoints[2] >( [&] ( auto const icc ) constexpr
-        {
-          constexpr int c = decltype(icc)::value;
-          CArrayNd< RealType, numDims > const grad = gradient< a, b, c >( parentCoord );
-          rval( 0 ) = rval( 0 ) + grad( 0 ) * var( a, b, c );
-          rval( 1 ) = rval( 1 ) + grad( 1 ) * var( a, b, c );
-          rval( 2 ) = rval( 2 ) + grad( 2 ) * var( a, b, c );
-        } );
-      } );
-    } );
-#else
     forNestedSequence< BASIS_TYPE::numSupportPoints... >( [&] ( auto const ... ic_indices ) constexpr
     {
       CArrayNd< RealType, numDims > const grad = gradient< decltype(ic_indices)::value ... >( parentCoord );
@@ -158,8 +124,6 @@ public:
         rval( a ) = rval( a ) + grad( a ) * var( decltype(ic_indices)::value ... );
       } );
     } );
-
-#endif
     return rval;
   }
 
