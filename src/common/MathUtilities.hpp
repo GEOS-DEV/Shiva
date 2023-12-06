@@ -73,6 +73,10 @@ struct binomialCoefficient
 {
   static_assert( 0 <= K, "K must be greater or equal than 0" );
   static_assert( K <= N, "N must be greater or equal than K" );
+  
+  /**
+   * @brief The binomial coefficient N over K
+   */
   static constexpr T value = factorial< T, N >::value / ( factorial< T, K >::value * factorial< T, N - K >::value );
 };
 
