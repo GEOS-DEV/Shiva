@@ -15,18 +15,18 @@ namespace geometry
 {
 
 /**
- * @brief NCube represents a n-cube.
+ * @brief NSimplex represents a n-simplex.
  * @tparam REAL_TYPE The floating point type.
- * @tparam N The number of dimensions of the n-cube.
- * @tparam MIN The minimum coordinate of the n-cube.
- * @tparam MAX The maximum coordinate of the n-cube.
- * @tparam DIVISOR The divisor of the coordinates of the n-cube. This is
- * required because the coordinates of the n-cube are integers, but the
- * coordinates of the n-cube are floating point numbers.
+ * @tparam N The number of dimensions of the n-simplex.
+ * @tparam MIN The minimum coordinate of the n-simplex.
+ * @tparam MAX The maximum coordinate of the n-simplex.
+ * @tparam DIVISOR The divisor of the coordinates of the n-simplex. This is
+ * required because the coordinates of the n-simplex are integers, but the
+ * coordinates of the n-simplex are floating point numbers.
  *
- * A n-cube is a generalization of a cube in n-dimensions.
- * <a href="https://en.wikipedia.org/wiki/Hypercube"> Wikipedia Hypercube</a>
- * <a href="https://mathworld.wolfram.com/Hypercube.html"> Wolfram Hypercube</a>
+ * A n-simplex is a generalization of a triangle (n = 2) or tetrahedron (n = 3)
+ * to arbitrary dimensions
+ * <a href="https://en.wikipedia.org/wiki/Simplex"> Wikipedia Simplex</a>
  */
 template< typename REAL_TYPE, int N, int MIN, int MAX, int DIVISOR >
 class NSimplex
@@ -37,8 +37,8 @@ public:
   static_assert( DIVISOR > 0, "DIVISOR must be greater than 0" );
 
   /**
-   * @brief The number of dimension of the cube.
-   * @return The number dimension of the cube.
+   * @brief The number of dimension of the simplex.
+   * @return The number dimension of the simplex.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numDims() {return N;}
 
@@ -48,16 +48,13 @@ public:
   /// Alias for the floating point type for the coordinates.
   using CoordType = REAL_TYPE[N];
 
-  // /// Alias for the index type of the cube.
-  // using IndexType = MultiIndexRange< int, 2, 2, 2 >;
-
   /**
-   * @brief Returns the number of m-cubes in the n-cube.
-   * @tparam M The number of dimensions of the m-cube.
-   * @return The number of m-cubes in the n-cube. An m-cube is the lower
-   * dimensional object contained in the n-cube. For instance, the 0-cube is a
-   * vertex, the 1-cube is a line, the 2-cube is a square, the 3-cube is a cube,
-   * etc. M must be less than or equal to N
+   * @brief Returns the number of m-simplexes in the n-simplex.
+   * @tparam M The number of dimensions of the m-simplex.
+   * @return The number of m-simplexes in the n-simplex. An m-simplex is the lower
+   * dimensional object contained in the n-simplex. For instance, the 0-simplex is a
+   * vertex, the 1-simplex is a line, the 2-simplex is a triangle, the 3-simplex is
+   * a tetrahedron, etc. M must be less than or equal to N
    */
   template< int M >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numMSimplexes()
@@ -67,8 +64,8 @@ public:
   }
 
   /**
-   * @brief Returns the number of vertices (0-cube) in the n-cube.
-   * @return The number of vertices (0-cube) in the n-cube.
+   * @brief Returns the number of vertices (0-simplex) in the n-simplex.
+   * @return The number of vertices (0-simplex) in the n-simplex.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numVertices()
   {
@@ -76,8 +73,8 @@ public:
   }
 
   /**
-   * @brief Returns the number of edges (1-cube) in the n-cube.
-   * @return The number of edges (1-cube) in the n-cube.
+   * @brief Returns the number of edges (1-simplex) in the n-simplex.
+   * @return The number of edges (1-simplex) in the n-simplex.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numEdges()
   {
@@ -92,8 +89,8 @@ public:
   }
 
   /**
-   * @brief Returns the number of faces (2-cube) in the n-cube.
-   * @return The number of faces (2-cube) in the n-cube.
+   * @brief Returns the number of faces (2-simplex) in the n-simplex.
+   * @return The number of faces (2-simplex) in the n-simplex.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numFaces()
   {
@@ -108,8 +105,8 @@ public:
   }
 
   /**
-   * @brief Returns the number of cells (3-cube) in the n-cube.
-   * @return The number of cells (3-cube) in the n-cube.
+   * @brief Returns the number of cells (3-simplex) in the n-simplex.
+   * @return The number of cells (3-simplex) in the n-simplex.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numCells()
   {
@@ -124,13 +121,13 @@ public:
   }
 
   /**
-   * @brief Returns the number of hyperfaces (n-1-cube) in the n-cube.
-   * @return The number of hyperfaces (n-1-cube) in the n-cube.
+   * @brief Returns the number of hyperfaces (n-1-simplex) in the n-simplex.
+   * @return The number of hyperfaces (n-1-simplex) in the n-simplex.
    *
    * The hyperfaces can be considered the number of n-1 dimensional objects in
-   * an n-cube. For instance, the hyperfaces of a cube are the faces of the cube.
-   * The hyperfaces of a square are the edges of the square. The hyperfaces of a
-   * line are the vertices of the line.
+   * an n-simplex. For instance, the hyperfaces of a tetrahedron are the faces of
+   * the tetrahedron. The hyperfaces of a triangle are the edges of the triangle.
+   * The hyperfaces of a line are the vertices of the line.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numHyperFaces()
   {
@@ -138,7 +135,7 @@ public:
   }
 
   /**
-   * @brief returns the minimum coordinate of the n-cube.
+   * @brief returns the minimum coordinate of the n-simplex.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE minCoord()
   {
@@ -146,7 +143,7 @@ public:
   }
 
   /**
-   * @brief returns the maximum coordinate of the n-cube.
+   * @brief returns the maximum coordinate of the n-simplex.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE maxCoord()
   {
@@ -155,8 +152,8 @@ public:
 
 
   /**
-   * @brief Returns the length dimension of the cube.
-   * @return The length of the cube.
+   * @brief Returns the length dimension of the simplex.
+   * @return The length of the simplex.
    */
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE length()
   {
@@ -165,8 +162,8 @@ public:
 
 
   /**
-   * @brief Returns the volume of the n-cube.
-   * @return The volume of the n-cube.
+   * @brief Returns the volume of the n-simplex.
+   * @return The volume of the n-simplex.
    */
   template< int DIM = N >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE
@@ -181,7 +178,7 @@ private:
   /**
    * @brief Helper recusive function for volume calculation.
    * @tparam DIM The current dimension for the recursion.
-   * @return The volume of the n-cube.
+   * @return The volume of the n-simplex.
    */
   template< int DIM = N >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
