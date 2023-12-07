@@ -3,8 +3,10 @@
 #
 
 set( unit_tests_sources
+     testCArray.cpp
      testIndexTypes.cpp
      testSequenceUtilities.cpp
+     testNestedSequenceUtilities.cpp
      )
 
 set( dependencyList ${parallelDeps} gtest common )

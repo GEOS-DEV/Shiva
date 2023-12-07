@@ -91,14 +91,14 @@ SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 {
   LinearTransform< REAL_TYPE,
                    InterpolatedShape< double,
-                                  Cube< double >,
-                                  LagrangeBasis< double, 1, EqualSpacing >,
-                                  LagrangeBasis< double, 1, EqualSpacing >,
-                                  LagrangeBasis< double, 1, EqualSpacing > > > cell;
+                                      Cube< double >,
+                                      LagrangeBasis< double, 1, EqualSpacing >,
+                                      LagrangeBasis< double, 1, EqualSpacing >,
+                                      LagrangeBasis< double, 1, EqualSpacing > > > cell;
 
-  typename decltype(cell)::IndexType index;
+  typename decltype(cell)::SupportIndexType index;
 
-  auto & transformData = cell.setData();
+  auto & transformData = cell.getData();
 
   forRange( index = {0, 0, 0}, [&transformData, &X] ( auto const & i )
   {
@@ -108,7 +108,7 @@ SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
 
     for ( int j = 0; j < 3; ++j )
     {
-      transformData[ linearIndex( i ) ][j] = X[ a + 2 * b + 4 * c ][j];
+      transformData( a, b, c, j ) = X[ a + 2 * b + 4 * c ][j];
     }
   } );
 
@@ -121,7 +121,7 @@ void testConstructionAndSettersHelper()
   pmpl::genericKernelWrapper( 8 * 3, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto const cell = makeLinearTransform( Xref );
-    typename decltype(cell)::IndexType index{0, 0, 0};
+    typename decltype(cell)::SupportIndexType index{0, 0, 0};
 
     auto const & transformData = cell.getData();
 
@@ -133,7 +133,7 @@ void testConstructionAndSettersHelper()
 
       for ( int j = 0; j < 3; ++j )
       {
-        kernelData[ 3 * ( a + 2 * b + 4 * c ) + j ] = transformData[linearIndex( i )][j];
+        kernelData[ 3 * ( a + 2 * b + 4 * c ) + j ] = transformData( a, b, c, j );
       }
     } );
   } );
@@ -170,13 +170,13 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
 
     for ( int q = 0; q < 8; ++q )
     {
-      typename std::remove_reference_t< decltype(cell) >::JacobianType::type J = { {0} };
+      typename std::remove_reference_t< decltype(cell) >::JacobianType J{ 0.0 };
       jacobian( cell, qCoords[q], J );
       for ( int i = 0; i < 3; ++i )
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 9 * q + 3 * i + j ] = J[i][j];
+          kernelData[ 9 * q + 3 * i + j ] = J( i, j );
         }
       }
     }
@@ -214,7 +214,7 @@ void testJacobianFunctionReturnByValueHelper()
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 9 * q + 3 * i + j ] = J.data[i][j];
+          kernelData[ 9 * q + 3 * i + j ] = J( i, j );
         }
       }
     }
@@ -247,7 +247,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
     auto cell = makeLinearTransform( Xref );
     for ( int q = 0; q < 8; ++q )
     {
-      typename std::remove_reference_t< decltype(cell) >::JacobianType::type invJ = { {0} };
+      typename std::remove_reference_t< decltype(cell) >::JacobianType invJ{0.0};
       double detJ;
 
       inverseJacobian( cell, qCoords[q], invJ, detJ );
@@ -257,7 +257,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ[i][j];
+          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ( i, j );
         }
       }
     }
@@ -299,7 +299,7 @@ void testInvJacobianFunctionReturnByValueHelper()
       {
         for ( int j = 0; j < 3; ++j )
         {
-          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ.data[i][j];
+          kernelData[ 10 * q + 3 * i + j + 1 ] = invJ( i, j );
         }
       }
     }

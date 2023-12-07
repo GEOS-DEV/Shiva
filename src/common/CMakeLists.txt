@@ -1,11 +1,14 @@
 
 set( common_headers
+     CArray.hpp
+     CArrayHelper.hpp
      IndexTypes.hpp
      LinearIndex.hpp
      MathUtilities.hpp
      MultiIndex.hpp
      pmpl.hpp
      SequenceUtilities.hpp
+     NestedSequenceUtilities.hpp
      ShivaMacros.hpp
      types.hpp
      )

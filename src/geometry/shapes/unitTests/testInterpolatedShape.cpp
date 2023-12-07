@@ -41,13 +41,13 @@ SHIVA_GLOBAL void compileTimeKernel()
                                       TEST_INTERPOLATED_SHAPE_HELPER::testCoords[2] };
 
         constexpr double value = InterpolatedShapeType::template value< a, b, c >( coord );
-        constexpr CArray1d< double, 3 > gradient = InterpolatedShapeType::template gradient< a, b, c >( coord );
+        constexpr CArrayNd< double, 3 > gradient = InterpolatedShapeType::template gradient< a, b, c >( coord );
         constexpr double tolerance = 1.0e-12;
 
         static_assert( pmpl::check( value, TEST_INTERPOLATED_SHAPE_HELPER::referenceValues[a][b][c], tolerance ) );
-        static_assert( pmpl::check( gradient[0], TEST_INTERPOLATED_SHAPE_HELPER::referenceGradients[a][b][c][0], tolerance ) );
-        static_assert( pmpl::check( gradient[1], TEST_INTERPOLATED_SHAPE_HELPER::referenceGradients[a][b][c][1], tolerance ) );
-        static_assert( pmpl::check( gradient[2], TEST_INTERPOLATED_SHAPE_HELPER::referenceGradients[a][b][c][2], tolerance ) );
+        static_assert( pmpl::check( gradient( 0 ), TEST_INTERPOLATED_SHAPE_HELPER::referenceGradients[a][b][c][0], tolerance ) );
+        static_assert( pmpl::check( gradient( 1 ), TEST_INTERPOLATED_SHAPE_HELPER::referenceGradients[a][b][c][1], tolerance ) );
+        static_assert( pmpl::check( gradient( 2 ), TEST_INTERPOLATED_SHAPE_HELPER::referenceGradients[a][b][c][2], tolerance ) );
       } );
     } );
   } );
@@ -87,12 +87,12 @@ SHIVA_GLOBAL void runTimeKernel( double * const values,
       {
         constexpr int c = decltype(icc)::value;
         double const value = InterpolatedShapeType::template value< a, b, c >( coord );
-        CArray1d< double, 3 > const gradient = InterpolatedShapeType::template gradient< a, b, c >( coord );
+        CArrayNd< double, 3 > const gradient = InterpolatedShapeType::template gradient< a, b, c >( coord );
 
         values[ a * N * N + b * N + c ] = value;
-        gradients[ 3 * (a * N * N + b * N + c) + 0 ] = gradient[0];
-        gradients[ 3 * (a * N * N + b * N + c) + 1 ] = gradient[1];
-        gradients[ 3 * (a * N * N + b * N + c) + 2 ] = gradient[2];
+        gradients[ 3 * (a * N * N + b * N + c) + 0 ] = gradient( 0 );
+        gradients[ 3 * (a * N * N + b * N + c) + 1 ] = gradient( 1 );
+        gradients[ 3 * (a * N * N + b * N + c) + 2 ] = gradient( 2 );
       } );
     } );
   } );
@@ -144,21 +144,21 @@ TEST( testInterpolatedShape, testBasicUsage )
 {
 
   InterpolatedShape< double,
-                 Cube< double >,
-                 LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                 LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                 LagrangeBasis< double, 1, GaussLobattoSpacing >
-                 >::template value< 1, 1, 1 >( {0.5, 0, 1} );
+                     Cube< double >,
+                     LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                     LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                     LagrangeBasis< double, 1, GaussLobattoSpacing >
+                     >::template value< 1, 1, 1 >( {0.5, 0, 1} );
 }
 
 TEST( testInterpolatedShape, testCubeLagrangeBasisGaussLobatto_O1 )
 {
   using InterpolatedShapeType = InterpolatedShape< double,
-                                           Cube< double >,
-                                           LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                                           LagrangeBasis< double, 1, GaussLobattoSpacing >,
-                                           LagrangeBasis< double, 1, GaussLobattoSpacing >
-                                           >;
+                                                   Cube< double >,
+                                                   LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                                   LagrangeBasis< double, 1, GaussLobattoSpacing >,
+                                                   LagrangeBasis< double, 1, GaussLobattoSpacing >
+                                                   >;
   using TEST_INTERPOLATED_SHAPE_HELPER = TestInterpolatedShapeHelper< InterpolatedShapeType >;
 
   testInterpolatedShapeAtCompileTime< TEST_INTERPOLATED_SHAPE_HELPER >();
@@ -168,11 +168,11 @@ TEST( testInterpolatedShape, testCubeLagrangeBasisGaussLobatto_O1 )
 TEST( testInterpolatedShape, testCubeLagrangeBasisGaussLobatto_O3 )
 {
   using InterpolatedShapeType = InterpolatedShape< double,
-                                           Cube< double >,
-                                           LagrangeBasis< double, 3, GaussLobattoSpacing >,
-                                           LagrangeBasis< double, 3, GaussLobattoSpacing >,
-                                           LagrangeBasis< double, 3, GaussLobattoSpacing >
-                                           >;
+                                                   Cube< double >,
+                                                   LagrangeBasis< double, 3, GaussLobattoSpacing >,
+                                                   LagrangeBasis< double, 3, GaussLobattoSpacing >,
+                                                   LagrangeBasis< double, 3, GaussLobattoSpacing >
+                                                   >;
   using TEST_INTERPOLATED_SHAPE_HELPER = TestInterpolatedShapeHelper< InterpolatedShapeType >;
 
   testInterpolatedShapeAtCompileTime< TEST_INTERPOLATED_SHAPE_HELPER >();
