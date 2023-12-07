@@ -108,6 +108,22 @@ public:
   }
 
   /**
+   * @brief Returns the number of cells (3-cube) in the n-cube.
+   * @return The number of cells (3-cube) in the n-cube.
+   */
+  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int numCells()
+  {
+    if constexpr ( N > 2 )
+    {
+      return numMCubes< 3 >();
+    }
+    else
+    {
+      return 0;
+    }
+  }
+
+  /**
    * @brief Returns the number of hyperfaces (n-1-cube) in the n-cube.
    * @return The number of hyperfaces (n-1-cube) in the n-cube.
    *

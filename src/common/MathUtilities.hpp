@@ -62,7 +62,23 @@ struct factorial< T, N, std::integer_sequence< T, ISEQ... > >
   static constexpr T value = (static_cast< T >(1) * ... *(ISEQ + 1));
 };
 
+/**
+ * @brief Struct that computes the binomial coefficient N over K
+ * @tparam T The type of the number
+ * @tparam N The number of objects in the set
+ * @tparam K The number of objects to be chose (irrespective of the order) from the set
+ */
+template< typename T, T N, T K >
+struct binomialCoefficient
+{
+  static_assert( 0 <= K, "K must be greater or equal than 0" );
+  static_assert( K <= N, "N must be greater or equal than K" );
 
+  /**
+   * @brief The binomial coefficient N over K
+   */
+  static constexpr T value = factorial< T, N >::value / ( factorial< T, K >::value * factorial< T, N - K >::value );
+};
 
 /**
  * @brief Inverse of a 3x3 matrix
