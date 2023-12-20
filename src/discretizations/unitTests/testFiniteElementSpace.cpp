@@ -1,9 +1,9 @@
 
 #include "../finiteElementMethod/FiniteElementSpace.hpp"
 #include "../finiteElementMethod/parentElements/ParentElement.hpp"
-#include "../finiteElementMethod/bases/LagrangeBasis.hpp"
-#include "../spacing/Spacing.hpp"
-#include "geometry/Cube.hpp"
+#include "functions/bases/LagrangeBasis.hpp"
+#include "functions/spacing/Spacing.hpp"
+#include "geometry/shapes/NCube.hpp"
 #include "common/ShivaMacros.hpp"
 #include "common/pmpl.hpp"
 
@@ -14,7 +14,7 @@
 
 using namespace shiva;
 using namespace shiva::discretizations::finiteElementMethod;
-using namespace shiva::discretizations::finiteElementMethod::basis;
+using namespace shiva::functions;
 using namespace shiva::geometry;
 
 #include "testParentElementSolutions.hpp"
