@@ -1,0 +1,1724 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 6.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     59225,       1716]
+NotebookOptionsPosition[     57034,       1669]
+NotebookOutlinePosition[     57453,       1686]
+CellTagsIndexPosition[     57410,       1683]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Define Coordinate Values", "Section",
+ CellChangeTimes->{{3.4580516293511887`*^9, 3.458051631599039*^9}, {
+  3.458051663718669*^9, 
+  3.458051668262589*^9}},ExpressionUUID->"8b31aa25-dd6b-4165-aee3-\
+35efcd5247f2"],
+
+Cell[CellGroupData[{
+
+Cell["Parent Coordinates", "Subsection",
+ CellChangeTimes->{{3.875120799855116*^9, 
+  3.875120806839703*^9}},ExpressionUUID->"62f42fbf-ba99-4885-aebe-\
+670602557af9"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"\[Xi]n", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"+", "1"}], ",", 
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"+", "1"}], ",", 
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"+", "1"}], ",", 
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"+", "1"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Eta]n", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"+", "1"}], ",", 
+     RowBox[{"+", "1"}], ",", 
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"+", "1"}], ",", 
+     RowBox[{"+", "1"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Zeta]n", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"+", "1"}], ",", 
+     RowBox[{"+", "1"}], ",", 
+     RowBox[{"+", "1"}], ",", 
+     RowBox[{"+", "1"}]}], "}"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.457984556512702*^9, 3.457984600172765*^9}, {
+   3.457984908888283*^9, 3.457984975952107*^9}, {3.4579856267308292`*^9, 
+   3.457985654225143*^9}, {3.457987168915943*^9, 3.457987200015539*^9}, 
+   3.4579873780772448`*^9, 3.457987408419403*^9, 3.457987452283338*^9, 
+   3.458042696842671*^9, 3.458042729458177*^9, 3.458050331908927*^9, {
+   3.458050362579797*^9, 3.4580503628369217`*^9}, {3.4580621255338373`*^9, 
+   3.4580621294856367`*^9}, {3.4580649727629423`*^9, 3.458065072661509*^9}, {
+   3.706619637868957*^9, 3.706619726134544*^9}, {3.706621281533835*^9, 
+   3.706621305489779*^9}, {3.710687023843382*^9, 3.710687028171077*^9}, {
+   3.8751208581196423`*^9, 3.8751208606815033`*^9}, {3.903535951951599*^9, 
+   3.903536047106945*^9}},
+ CellLabel->
+  "In[340]:=",ExpressionUUID->"b53d5652-f599-43d2-91c9-0766fafd94ce"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Physical Coordinates", "Subsection",
+ CellChangeTimes->{{3.875120866171836*^9, 
+  3.875120871647874*^9}},ExpressionUUID->"4ac64fab-452f-4be5-91e1-\
+72baeac612d0"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"x", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "1.31"}], ",", "1.38", ",", 
+     RowBox[{"-", "1.31"}], ",", "1.32", ",", 
+     RowBox[{"-", "1.23"}], ",", "1.27", ",", 
+     RowBox[{"-", "1.29"}], ",", "1.39"}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"y", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "1.15"}], ",", 
+     RowBox[{"-", "1.22"}], ",", "1.12", ",", "1.17", ",", 
+     RowBox[{"-", "1.25"}], ",", 
+     RowBox[{"-", "1.34"}], ",", "1.28", ",", "1.24"}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"z", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "1.23"}], ",", 
+     RowBox[{"-", "1.17"}], ",", 
+     RowBox[{"-", "1.31"}], ",", 
+     RowBox[{"-", "1.37"}], ",", "1.27", ",", "1.24", ",", "1.41", ",", 
+     "1.36"}], "}"}]}], ";"}]}], "Input",
+ CellChangeTimes->{
+  3.875120924521161*^9, {3.875120961736114*^9, 3.875120962739257*^9}, {
+   3.903536074642415*^9, 3.9035361621499662`*^9}},
+ CellLabel->
+  "In[343]:=",ExpressionUUID->"a8d49d6f-dfb5-481f-b5b0-88c08968cfed"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Define Shape Functions and Derivatives", "Section",
+ CellChangeTimes->{{3.458051671698904*^9, 3.4580516884408293`*^9}, {
+  3.8751210038771563`*^9, 
+  3.875121011834753*^9}},ExpressionUUID->"1190687f-f294-4ec9-8097-\
+e8495453c2ab"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"\[Psi]\[Xi]", "[", 
+   RowBox[{"a_", ",", "\[Xi]_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"1", "/", "2"}], 
+   RowBox[{"(", 
+    RowBox[{"1", "+", 
+     RowBox[{
+      RowBox[{"\[Xi]n", "[", 
+       RowBox[{"[", "a", "]"}], "]"}], "\[Xi]"}]}], 
+    ")"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Psi]\[Eta]", "[", 
+   RowBox[{"a_", ",", "\[Eta]_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"1", "/", "2"}], 
+   RowBox[{"(", 
+    RowBox[{"1", "+", 
+     RowBox[{
+      RowBox[{"\[Eta]n", "[", 
+       RowBox[{"[", "a", "]"}], "]"}], "\[Eta]"}]}], 
+    ")"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Psi]\[Zeta]", "[", 
+   RowBox[{"a_", ",", "\[Zeta]_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"1", "/", "2"}], 
+   RowBox[{"(", 
+    RowBox[{"1", "+", 
+     RowBox[{
+      RowBox[{"\[Zeta]n", "[", 
+       RowBox[{"[", "a", "]"}], "]"}], "\[Zeta]"}]}], 
+    ")"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[CapitalPhi]", "[", 
+   RowBox[{"a_", ",", "\[Xi]_", ",", "\[Eta]_", ",", "\[Zeta]_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"\[Psi]\[Xi]", "[", 
+    RowBox[{"a", ",", "\[Xi]"}], "]"}], " ", 
+   RowBox[{"\[Psi]\[Eta]", "[", 
+    RowBox[{"a", ",", "\[Eta]"}], "]"}], " ", 
+   RowBox[{"\[Psi]\[Zeta]", "[", 
+    RowBox[{"a", ",", "\[Zeta]"}], "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"d\[CapitalPhi]d\[Xi]", "[", 
+   RowBox[{"a_", ",", "\[Xi]_", ",", "\[Eta]_", ",", "\[Zeta]_"}], "]"}], ":=", 
+  RowBox[{
+   FractionBox["1", "8"], "  ", 
+   RowBox[{"\[Xi]n", "[", 
+    RowBox[{"[", "a", "]"}], "]"}], 
+   RowBox[{"(", 
+    RowBox[{"1", "+", 
+     RowBox[{
+      RowBox[{"\[Eta]n", "[", 
+       RowBox[{"[", "a", " ", "]"}], "]"}], "\[Eta]"}]}], ")"}], 
+   RowBox[{"(", 
+    RowBox[{"1", "+", 
+     RowBox[{
+      RowBox[{"\[Zeta]n", "[", 
+       RowBox[{"[", "a", "]"}], "]"}], "\[Zeta]"}]}], 
+    ")"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"d\[CapitalPhi]d\[Eta]", "[", 
+   RowBox[{"a_", ",", "\[Xi]_", ",", "\[Eta]_", ",", "\[Zeta]_"}], "]"}], ":=", 
+  RowBox[{
+   FractionBox["1", "8"], "  ", 
+   RowBox[{"(", 
+    RowBox[{"1", "+", 
+     RowBox[{
+      RowBox[{"\[Xi]n", "[", 
+       RowBox[{"[", "a", "]"}], "]"}], " ", "\[Xi]"}]}], ")"}], 
+   RowBox[{"\[Eta]n", "[", 
+    RowBox[{"[", "a", "]"}], "]"}], 
+   RowBox[{"(", 
+    RowBox[{"1", "+", 
+     RowBox[{
+      RowBox[{"\[Zeta]n", "[", 
+       RowBox[{"[", "a", "]"}], "]"}], "\[Zeta]"}]}], 
+    ")"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"d\[CapitalPhi]d\[Zeta]", "[", 
+   RowBox[{"a_", ",", "\[Xi]_", ",", "\[Eta]_", ",", "\[Zeta]_"}], "]"}], ":=", 
+  RowBox[{
+   FractionBox["1", "8"], "  ", 
+   RowBox[{"(", 
+    RowBox[{"1", "+", 
+     RowBox[{
+      RowBox[{"\[Xi]n", "[", 
+       RowBox[{"[", "a", "]"}], "]"}], "\[Xi]"}]}], ")"}], 
+   RowBox[{"(", 
+    RowBox[{"1", "+", 
+     RowBox[{
+      RowBox[{"\[Eta]n", "[", 
+       RowBox[{"[", "a", "]"}], "]"}], "\[Eta]"}]}], ")"}], 
+   RowBox[{"\[Zeta]n", "[", 
+    RowBox[{"[", "a", "]"}], "]"}]}]}]}], "Input",
+ CellChangeTimes->{{3.457984578838181*^9, 3.4579846071462727`*^9}, {
+   3.457984853210539*^9, 3.457984884535342*^9}, {3.4579849274150553`*^9, 
+   3.457985032341457*^9}, {3.457985076711286*^9, 3.4579850794601727`*^9}, {
+   3.4579854031472054`*^9, 3.457985473974872*^9}, {3.458062131497254*^9, 
+   3.458062150961012*^9}, {3.4580623055322647`*^9, 3.4580623154567738`*^9}, {
+   3.4580624818636847`*^9, 3.458062490539545*^9}, {3.458065099512356*^9, 
+   3.458065218600437*^9}, 3.798569558778376*^9, 3.798569594595985*^9, 
+   3.798569647698073*^9, {3.7985696796171303`*^9, 3.7985698163808203`*^9}, {
+   3.875121144676688*^9, 3.875121169915654*^9}},
+ CellLabel->
+  "In[346]:=",ExpressionUUID->"b75a16f1-b077-4c6e-956e-6758f2309f94"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"d\[CapitalPhi]d\[Xi]", "[", 
+  RowBox[{"2", ",", "0", ",", "0", ",", "0"}], "]"}]], "Input",
+ CellChangeTimes->{{3.903463537384074*^9, 3.9034635373868923`*^9}, {
+  3.9034635928462954`*^9, 3.903463616223901*^9}},
+ CellLabel->
+  "In[353]:=",ExpressionUUID->"c3267a60-5aae-4739-879a-db9cbc87d5a3"],
+
+Cell[BoxData[
+ FractionBox["1", "8"]], "Output",
+ CellChangeTimes->{
+  3.903463538276513*^9, {3.90346359375601*^9, 3.9034636166005774`*^9}, 
+   3.903535752847994*^9, 3.903536184096602*^9, 3.903536592005232*^9, 
+   3.9035398919915333`*^9},
+ CellLabel->
+  "Out[353]=",ExpressionUUID->"cce3af73-cf59-4f19-94fe-872b17813b1b"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Jacobian", "Section",
+ CellChangeTimes->{
+  3.458060352246215*^9, 3.458060409295169*^9, {3.458061297751841*^9, 
+   3.458061310382745*^9}, {3.458061387591073*^9, 3.458061404036194*^9}, {
+   3.4580615042412643`*^9, 3.458061506814012*^9}, {3.458061626233444*^9, 
+   3.4580616272083483`*^9}, 3.458061665449296*^9, {3.875122056722826*^9, 
+   3.875122072747511*^9}},ExpressionUUID->"49288c5b-bf92-413f-8edc-\
+93b8abfaaefb"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"J", "[", 
+   RowBox[{"\[Xi]_", ",", "\[Eta]_", ",", "\[Zeta]_"}], "]"}], ":=", 
+  RowBox[{"(", GridBox[{
+     {
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"a", "=", "1"}], "8"], 
+       RowBox[{
+        RowBox[{"x", "[", 
+         RowBox[{"[", "a", "]"}], "]"}], 
+        RowBox[{"d\[CapitalPhi]d\[Xi]", "[", 
+         RowBox[{"a", ",", "\[Xi]", ",", "\[Eta]", ",", "\[Zeta]"}], 
+         "]"}]}]}], 
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"a", "=", "1"}], "8"], 
+       RowBox[{
+        RowBox[{"x", "[", 
+         RowBox[{"[", "a", "]"}], "]"}], 
+        RowBox[{"d\[CapitalPhi]d\[Eta]", "[", 
+         RowBox[{"a", ",", "\[Xi]", ",", "\[Eta]", ",", "\[Zeta]"}], 
+         "]"}]}]}], 
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"a", "=", "1"}], "8"], 
+       RowBox[{
+        RowBox[{"x", "[", 
+         RowBox[{"[", "a", "]"}], "]"}], 
+        RowBox[{"d\[CapitalPhi]d\[Zeta]", "[", 
+         RowBox[{"a", ",", "\[Xi]", ",", "\[Eta]", ",", "\[Zeta]"}], 
+         "]"}]}]}]},
+     {
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"a", "=", "1"}], "8"], 
+       RowBox[{
+        RowBox[{"y", "[", 
+         RowBox[{"[", "a", "]"}], "]"}], 
+        RowBox[{"d\[CapitalPhi]d\[Xi]", "[", 
+         RowBox[{"a", ",", "\[Xi]", ",", "\[Eta]", ",", "\[Zeta]"}], 
+         "]"}]}]}], 
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"a", "=", "1"}], "8"], 
+       RowBox[{
+        RowBox[{"y", "[", 
+         RowBox[{"[", "a", "]"}], "]"}], 
+        RowBox[{"d\[CapitalPhi]d\[Eta]", "[", 
+         RowBox[{"a", ",", "\[Xi]", ",", "\[Eta]", ",", "\[Zeta]"}], 
+         "]"}]}]}], 
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"a", "=", "1"}], "8"], 
+       RowBox[{
+        RowBox[{"y", "[", 
+         RowBox[{"[", "a", "]"}], "]"}], 
+        RowBox[{"d\[CapitalPhi]d\[Zeta]", "[", 
+         RowBox[{"a", ",", "\[Xi]", ",", "\[Eta]", ",", "\[Zeta]"}], 
+         "]"}]}]}]},
+     {
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"a", "=", "1"}], "8"], 
+       RowBox[{
+        RowBox[{"z", "[", 
+         RowBox[{"[", "a", "]"}], "]"}], 
+        RowBox[{"d\[CapitalPhi]d\[Xi]", "[", 
+         RowBox[{"a", ",", "\[Xi]", ",", "\[Eta]", ",", "\[Zeta]"}], 
+         "]"}]}]}], 
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"a", "=", "1"}], "8"], 
+       RowBox[{
+        RowBox[{"z", "[", 
+         RowBox[{"[", "a", "]"}], "]"}], 
+        RowBox[{"d\[CapitalPhi]d\[Eta]", "[", 
+         RowBox[{"a", ",", "\[Xi]", ",", "\[Eta]", ",", "\[Zeta]"}], 
+         "]"}]}]}], 
+      RowBox[{
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{"a", "=", "1"}], "8"], 
+       RowBox[{
+        RowBox[{"z", "[", 
+         RowBox[{"[", "a", "]"}], "]"}], 
+        RowBox[{"d\[CapitalPhi]d\[Zeta]", "[", 
+         RowBox[{"a", ",", "\[Xi]", ",", "\[Eta]", ",", "\[Zeta]"}], "]"}]}]}]}
+    }], ")"}]}]], "Input",
+ CellChangeTimes->{{3.875131245609273*^9, 3.8751312716093884`*^9}},
+ CellLabel->
+  "In[354]:=",ExpressionUUID->"bfd3c6fa-6ab0-4641-8940-abade69e47ba"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"qCoords", "=", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "0.9"}], ",", 
+        RowBox[{"-", "0.5"}], ",", 
+        RowBox[{"-", "0.6"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "0.9"}], ",", 
+        RowBox[{"-", "0.5"}], ",", "0.6"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "0.9"}], ",", "0.5", ",", 
+        RowBox[{"-", "0.6"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "0.9"}], ",", "0.5", ",", "0.6"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"0.9", ",", 
+        RowBox[{"-", "0.5"}], ",", 
+        RowBox[{"-", "0.6"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"0.9", ",", 
+        RowBox[{"-", "0.5"}], ",", "0.6"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"0.9", ",", "0.5", ",", 
+        RowBox[{"-", "0.6"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"0.9", ",", "0.5", ",", "0.6"}], "}"}]}], "}"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Jq", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{"0", ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "8"}], "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"invJ", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{"0", ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "8"}], "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"detJ", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{"0", ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", "8"}], "}"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"For", "[", 
+  RowBox[{
+   RowBox[{"q", "=", "1"}], ",", 
+   RowBox[{"q", "<=", "8"}], ",", 
+   RowBox[{"q", "++"}], ",", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Jq", "[", 
+      RowBox[{"[", "q", "]"}], "]"}], "=", 
+     RowBox[{"J", "[", 
+      RowBox[{
+       RowBox[{"qCoords", "[", 
+        RowBox[{"[", 
+         RowBox[{"q", ",", "1"}], "]"}], "]"}], ",", 
+       RowBox[{"qCoords", "[", 
+        RowBox[{"[", 
+         RowBox[{"q", ",", "2"}], "]"}], "]"}], ",", 
+       RowBox[{"qCoords", "[", 
+        RowBox[{"[", 
+         RowBox[{"q", ",", "3"}], "]"}], "]"}]}], "]"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"invJ", "[", 
+      RowBox[{"[", "q", "]"}], "]"}], " ", "=", " ", 
+     RowBox[{"Inverse", "[", 
+      RowBox[{"Jq", "[", 
+       RowBox[{"[", "q", "]"}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"detJ", "[", 
+      RowBox[{"[", "q", "]"}], "]"}], "=", 
+     RowBox[{"Det", "[", 
+      RowBox[{"Jq", "[", 
+       RowBox[{"[", "q", "]"}], "]"}], "]"}]}], ";"}]}], 
+  "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"ScientificForm", "[", 
+  RowBox[{"Jq", ",", "14"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"ScientificForm", "[", 
+  RowBox[{"invJ", ",", "14"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"ScientificForm", "[", 
+  RowBox[{"detJ", ",", "14"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.903535515321003*^9, 3.903535533560153*^9}, {
+   3.903535572258912*^9, 3.903535662235208*^9}, {3.903536237727089*^9, 
+   3.903536244737309*^9}, {3.9035363001778107`*^9, 3.9035364873596287`*^9}, {
+   3.903536735770451*^9, 3.903536759226212*^9}, {3.903536800936509*^9, 
+   3.903536864527179*^9}, {3.903536908176198*^9, 3.903537187596301*^9}, {
+   3.9035373528736753`*^9, 3.903537356732765*^9}, {3.903537394557328*^9, 
+   3.9035373981756763`*^9}, {3.9035374517021313`*^9, 3.903537459130625*^9}, 
+   3.903537491934761*^9},
+ CellLabel->
+  "In[355]:=",ExpressionUUID->"093eb4a2-7533-40e7-b3f5-5f6e37720ba1"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox["\<\"1.3245\"\>",
+          ShowStringCharacters->False],
+         1.3245000000000002`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-6.3\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.006300000000000027,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"2.925\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.029250000000000036`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.375\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.02375000000000005,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.16365\"\>",
+          ShowStringCharacters->False],
+         1.1636499999999999`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.84375\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.018437500000000058`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.5\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.008500000000000014,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.05\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.0205000000000001,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.275875\"\>",
+          ShowStringCharacters->False],
+         1.2758749999999996`,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox["\<\"1.2855\"\>",
+          ShowStringCharacters->False],
+         1.2855,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.07\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.020700000000000048`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"2.925\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.029250000000000036`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-3.5\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.03500000000000003,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.2406\"\>",
+          ShowStringCharacters->False],
+         1.2406,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.84375\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.018437500000000058`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.1\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.010999999999999982`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"4.7\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.04699999999999993,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.275875\"\>",
+          ShowStringCharacters->False],
+         1.2758749999999996`,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox["\<\"1.3215\"\>",
+          ShowStringCharacters->False],
+         1.3215000000000003`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-6.3\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.006300000000000027,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.725\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.017250000000000102`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"2.7499999999999\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.002749999999999947,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.16365\"\>",
+          ShowStringCharacters->False],
+         1.1636499999999999`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"4.56875\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.045687499999999936`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.65\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.0165,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.05\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.0205000000000001,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.332125\"\>",
+          ShowStringCharacters->False],
+         1.332125,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox["\<\"1.3185\"\>",
+          ShowStringCharacters->False],
+         1.3185000000000002`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.07\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.020700000000000048`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.725\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.017250000000000102`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.9\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.019000000000000017`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.2406\"\>",
+          ShowStringCharacters->False],
+         1.2406,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"4.56875\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.045687499999999936`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.1\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.020999999999999963`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"4.7\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.04699999999999993,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.332125\"\>",
+          ShowStringCharacters->False],
+         1.332125,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox["\<\"1.3245\"\>",
+          ShowStringCharacters->False],
+         1.3245000000000002`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.17\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.01169999999999996,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.925\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.029249999999999943`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.375\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.02375000000000005,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.21135\"\>",
+          ShowStringCharacters->False],
+         1.21135,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-3.53125\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.03531250000000008,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.5\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.008500000000000014,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-6.55\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.06550000000000003,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.246625\"\>",
+          ShowStringCharacters->False],
+         1.2466249999999997`,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox["\<\"1.2855\"\>",
+          ShowStringCharacters->False],
+         1.2855,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"3.87\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.03870000000000001,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.925\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.029249999999999943`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-3.5\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.03500000000000003,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.2694\"\>",
+          ShowStringCharacters->False],
+         1.2693999999999999`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-3.53125\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.03531250000000008,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.1\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.010999999999999982`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"2.9\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.029000000000000026`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.246625\"\>",
+          ShowStringCharacters->False],
+         1.2466249999999997`,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox["\<\"1.3215\"\>",
+          ShowStringCharacters->False],
+         1.3215000000000003`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.17\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.01169999999999996,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.275\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.012749999999999984`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"2.7499999999999\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.002749999999999947,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.21135\"\>",
+          ShowStringCharacters->False],
+         1.21135,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.30625\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.013062500000000032`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.65\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.0165,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-6.55\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.06550000000000003,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.325375\"\>",
+          ShowStringCharacters->False],
+         1.325375,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox["\<\"1.3185\"\>",
+          ShowStringCharacters->False],
+         1.3185000000000002`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"3.87\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.03870000000000001,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.275\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.012749999999999984`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.9\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.019000000000000017`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.2694\"\>",
+          ShowStringCharacters->False],
+         1.2693999999999999`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.30625\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.013062500000000032`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.1\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.020999999999999963`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"2.9\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.029000000000000026`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox["\<\"1.325375\"\>",
+          ShowStringCharacters->False],
+         1.325375,
+         AutoDelete->True]}], "}"}]}], "}"}]}], "}"}],
+  ScientificForm[#, 14]& ]], "Output",
+ CellChangeTimes->{{3.9035368577800913`*^9, 3.903536864843326*^9}, {
+   3.903536911983255*^9, 3.903536940149022*^9}, {3.9035369877636023`*^9, 
+   3.903536990807424*^9}, {3.903537034461625*^9, 3.903537073839122*^9}, {
+   3.9035371191606913`*^9, 3.903537133202457*^9}, {3.9035371664952908`*^9, 
+   3.9035371882009363`*^9}, {3.903537372538052*^9, 3.903537398804652*^9}, 
+   3.9035375191122017`*^9, 3.9035398920072803`*^9},
+ CellLabel->
+  "Out[360]//ScientificForm=",ExpressionUUID->"bb3cf560-6cfa-4104-aa8b-\
+5495784e4680"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.5518050317544\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7551805031754387,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"3.7845098812477\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.0037845098812476934`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.725815837519\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.017258158375190447`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.5337360823102\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.015337360823101697`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.5966062432681\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.8596606243268148,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.2071225595728\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.012071225595728404`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-4.784652399426\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.004784652399426006,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.3787302411842\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.013787302411842218`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.8408476886129\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7840847688612927,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.7812816372463\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7781281637246289,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.3651790001633\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.013651790001633237`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.7641652913326\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.017641652913326394`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"2.2040308761543\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.022040308761542657`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.0600721432107\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.8060072143210689,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.1142219247787\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.011142219247786527`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"5.8967495163542\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.005896749516354191,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.957356275738\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.029573562757380017`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.8321329088924\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.783213290889239,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.565836884692\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.756583688469195,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"3.9211774440993\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.003921177444099333,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-9.931663635598\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.009931663635597995,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.1546321329131\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.002154632132913141,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.5883484385508\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.8588348438550798,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.9427305638987\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.029427305638987444`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"9.338058291089\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.009338058291089048,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.3265131820855\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.013265131820855298`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.501044329807\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7501044329806988,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.5846203705445\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7584620370544498,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.3044334658016\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.013044334658016386`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.0268881057617\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.010268881057616563`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.1190189368391\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.011190189368391095`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.0730273673882\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.8073027367388166,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.783272932447\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.027832729324469837`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.1561800790338\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.011561800790338026`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.8277599773975\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.028277599773974656`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.5150041608411\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7515004160841064,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.5503486460179\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7550348646017923,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.2631892175591\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.008263189217559119,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.7949715158005\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.017949715158004566`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.4675786248095\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.014675786248094874`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.2695222317457\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.8269522231745731,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"2.3768989975822\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.02376898997582189,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-4.3770438984178\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.004377043898417753,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"4.3393268632977\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.0433932686329773,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.0329232629265\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.803292326292649,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.7740146085247\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7774014608524684,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.410163122351\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.024101631223509945`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.7557728970103\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.01755772897010285,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"2.1611414506272\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.021611414506272266`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.8659427371398\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7865942737139805,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"2.2788524347605\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.02278852434760531,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"6.3569117005477\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.006356911700547674,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.8511061370632\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.01851106137063196,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.0179064900238\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.8017906490023791,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.5660974382485\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7566097438248522,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"6.9105787290405\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.006910578729040529,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-7.346632966832\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.0073466329668319865`,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.8182541770253\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.0018182541770253493`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"8.2506893149255\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.8250689314925478,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-8.1141414142144\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.00811414141421436,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"9.3294087518739\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         0.009329408751873923,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"4.0860918277311\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.040860918277311004`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.5401098126448\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7540109812644845,
+         AutoDelete->True]}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.5799440223966\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7579944022396571,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-2.2947438633317\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.022947438633316754`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-7.0656815704294\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.007065681570429437,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.1224373599541\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.011224373599541267`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.8761135930028\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7876113593002787,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-7.8704397957213\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-3\"\>"]}],
+          ShowStringCharacters->False],
+         -0.007870439795721261,
+         AutoDelete->True]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"1.1764501075278\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         0.01176450107527762,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"-1.7597001324914\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-2\"\>"]}],
+          ShowStringCharacters->False],
+         -0.017597001324913895`,
+         AutoDelete->True], ",", 
+        InterpretationBox[
+         StyleBox[
+          RowBox[{"\<\"7.5456369966319\"\>", "\[Times]", 
+           SuperscriptBox["10", "\<\"-1\"\>"]}],
+          ShowStringCharacters->False],
+         0.7545636996631874,
+         AutoDelete->True]}], "}"}]}], "}"}]}], "}"}],
+  ScientificForm[#, 14]& ]], "Output",
+ CellChangeTimes->{{3.9035368577800913`*^9, 3.903536864843326*^9}, {
+   3.903536911983255*^9, 3.903536940149022*^9}, {3.9035369877636023`*^9, 
+   3.903536990807424*^9}, {3.903537034461625*^9, 3.903537073839122*^9}, {
+   3.9035371191606913`*^9, 3.903537133202457*^9}, {3.9035371664952908`*^9, 
+   3.9035371882009363`*^9}, {3.903537372538052*^9, 3.903537398804652*^9}, 
+   3.9035375191122017`*^9, 3.9035398920112553`*^9},
+ CellLabel->
+  "Out[361]//ScientificForm=",ExpressionUUID->"c69c1fb9-4fd6-41fa-b870-\
+172a05627551"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"{", 
+   RowBox[{
+    InterpretationBox[
+     StyleBox["\<\"1.9654823830313\"\>",
+      ShowStringCharacters->False],
+     1.9654823830312498`,
+     AutoDelete->True], ",", 
+    InterpretationBox[
+     StyleBox["\<\"2.035290793125\"\>",
+      ShowStringCharacters->False],
+     2.0352907931249993`,
+     AutoDelete->True], ",", 
+    InterpretationBox[
+     StyleBox["\<\"2.0500889374688\"\>",
+      ShowStringCharacters->False],
+     2.0500889374687503`,
+     AutoDelete->True], ",", 
+    InterpretationBox[
+     StyleBox["\<\"2.17609699875\"\>",
+      ShowStringCharacters->False],
+     2.17609699875,
+     AutoDelete->True], ",", 
+    InterpretationBox[
+     StyleBox["\<\"1.9969756307812\"\>",
+      ShowStringCharacters->False],
+     1.9969756307812494`,
+     AutoDelete->True], ",", 
+    InterpretationBox[
+     StyleBox["\<\"2.0369010315\"\>",
+      ShowStringCharacters->False],
+     2.0369010314999993`,
+     AutoDelete->True], ",", 
+    InterpretationBox[
+     StyleBox["\<\"2.1230873817188\"\>",
+      ShowStringCharacters->False],
+     2.1230873817187508`,
+     AutoDelete->True], ",", 
+    InterpretationBox[
+     StyleBox["\<\"2.219082631125\"\>",
+      ShowStringCharacters->False],
+     2.219082631125,
+     AutoDelete->True]}], "}"}],
+  ScientificForm[#, 14]& ]], "Output",
+ CellChangeTimes->{{3.9035368577800913`*^9, 3.903536864843326*^9}, {
+   3.903536911983255*^9, 3.903536940149022*^9}, {3.9035369877636023`*^9, 
+   3.903536990807424*^9}, {3.903537034461625*^9, 3.903537073839122*^9}, {
+   3.9035371191606913`*^9, 3.903537133202457*^9}, {3.9035371664952908`*^9, 
+   3.9035371882009363`*^9}, {3.903537372538052*^9, 3.903537398804652*^9}, 
+   3.9035375191122017`*^9, 3.9035398920147343`*^9},
+ CellLabel->
+  "Out[362]//ScientificForm=",ExpressionUUID->"5b2905e0-4086-4cfa-a48d-\
+3860ab0edfe3"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["PrintPrecision"], "Input",
+ CellChangeTimes->{{3.903537191439793*^9, 3.903537214375967*^9}},
+ CellLabel->
+  "In[363]:=",ExpressionUUID->"e16bca1b-930f-42b8-9035-881a4681bc98"],
+
+Cell[BoxData["PrintPrecision"], "Output",
+ CellChangeTimes->{{3.903537193924447*^9, 3.903537214794661*^9}, 
+   3.903539892017645*^9},
+ CellLabel->
+  "Out[363]=",ExpressionUUID->"25bf8fca-99e5-49ac-9244-62fada59cb52"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{3015, 1735},
+WindowMargins->{{-74, Automatic}, {Automatic, 82}},
+Magnification->1.5,
+FrontEndVersion->"13.0 for Mac OS X ARM (64-bit) (December 3, 2021)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"a105411d-7c33-4814-9e32-ba6674e0c25f"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[567, 22, 220, 4, 101, "Section",ExpressionUUID->"8b31aa25-dd6b-4165-aee3-35efcd5247f2"],
+Cell[CellGroupData[{
+Cell[812, 30, 166, 3, 81, "Subsection",ExpressionUUID->"62f42fbf-ba99-4885-aebe-670602557af9"],
+Cell[981, 35, 1897, 49, 126, "Input",ExpressionUUID->"b53d5652-f599-43d2-91c9-0766fafd94ce"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2915, 89, 168, 3, 81, "Subsection",ExpressionUUID->"4ac64fab-452f-4be5-91e1-72baeac612d0"],
+Cell[3086, 94, 1094, 32, 126, "Input",ExpressionUUID->"a8d49d6f-dfb5-481f-b5b0-88c08968cfed"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4229, 132, 236, 4, 101, "Section",ExpressionUUID->"1190687f-f294-4ec9-8097-e8495453c2ab"],
+Cell[4468, 138, 3750, 107, 331, "Input",ExpressionUUID->"b75a16f1-b077-4c6e-956e-6758f2309f94"],
+Cell[CellGroupData[{
+Cell[8243, 249, 318, 6, 63, "Input",ExpressionUUID->"c3267a60-5aae-4739-879a-db9cbc87d5a3"],
+Cell[8564, 257, 321, 7, 87, "Output",ExpressionUUID->"cce3af73-cf59-4f19-94fe-872b17813b1b"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8934, 270, 423, 7, 101, "Section",ExpressionUUID->"49288c5b-bf92-413f-8edc-93b8abfaaefb"],
+Cell[9360, 279, 3162, 91, 128, "Input",ExpressionUUID->"bfd3c6fa-6ab0-4641-8940-abade69e47ba"],
+Cell[CellGroupData[{
+Cell[12547, 374, 3704, 104, 467, "Input",ExpressionUUID->"093eb4a2-7533-40e7-b3f5-5f6e37720ba1"],
+Cell[16254, 480, 17859, 533, 177, "Output",ExpressionUUID->"bb3cf560-6cfa-4104-aa8b-5495784e4680"],
+Cell[34116, 1015, 20599, 581, 317, "Output",ExpressionUUID->"c69c1fb9-4fd6-41fa-b870-172a05627551"],
+Cell[54718, 1598, 1843, 53, 69, "Output",ExpressionUUID->"5b2905e0-4086-4cfa-a48d-3860ab0edfe3"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[56598, 1656, 189, 3, 63, "Input",ExpressionUUID->"e16bca1b-930f-42b8-9035-881a4681bc98"],
+Cell[56790, 1661, 216, 4, 86, "Output",ExpressionUUID->"25bf8fca-99e5-49ac-9244-62fada59cb52"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

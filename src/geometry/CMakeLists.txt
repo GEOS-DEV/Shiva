@@ -1,10 +1,21 @@
 
 set( geometry_headers
-     CellHexahedron.hpp
+     mapping/JacobianTransforms.hpp
+     mapping/LinearTransform.hpp
+     mapping/Scaling.hpp
+     mapping/UniformScaling.hpp
+     shapes/InterpolatedShape.hpp
+     shapes/NCube.hpp
+     shapes/NSimplex.hpp
      )
 
 set( geometry_sources
      )
+
+set( geometry_dependencies
+     common
+     )
+
 
 blt_add_library( NAME             geometry
 #                 SOURCES          ${geometry_sources}
@@ -12,22 +23,14 @@ blt_add_library( NAME             geometry
                  DEPENDS_ON       ${geometry_dependencies}
                  )
 
-target_include_directories( geometry 
-                            INTERFACE 
-                            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include> )
-
-
 install( FILES ${geometry_headers} 
          DESTINATION include/geometry )
 
 install( TARGETS geometry
-         EXPORT geometry
+         EXPORT shiva-targets
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
 
-install( EXPORT geometry
-         DESTINATION share/shiva/cmake/ )
-
-
-add_subdirectory( unitTests )
+add_subdirectory( mapping/unitTests )
+add_subdirectory( shapes/unitTests )

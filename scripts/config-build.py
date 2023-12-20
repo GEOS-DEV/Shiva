@@ -166,5 +166,10 @@ os.chmod("%s/cmake_cmd" % buildpath, st.st_mode | stat.S_IEXEC)
 print("Changing to build directory...")
 os.chdir(buildpath)
 print("Executing cmake line: '%s'\n" % cmakeline)
-subprocess.call(cmakeline,shell=True)
+
+try:
+    subprocess.call(cmakeline,shell=True)
+except:
+    print("CMake failed.  See above output for details.")
+    sys.exit(1)
 

@@ -32,8 +32,32 @@ macro(shiva_add_code_checks)
         endforeach()
     endif()
 
+    set( CPPCHECK_FLAGS --std=c++17 
+                        --enable=all 
+                        --suppress=missingIncludeSystem 
+                        --suppress=missingInclude 
+                        --suppress=noConstructor 
+                        --suppress=unusedFunction 
+                        --suppress=constStatement 
+                        --suppress=unusedStructMember )
+                        
     blt_add_code_checks( PREFIX    ${arg_PREFIX}
                          SOURCES   ${_sources}
-                         UNCRUSTIFY_CFG_FILE ${PROJECT_SOURCE_DIR}/uncrustify.cfg
-                       )
+                         UNCRUSTIFY_CFG_FILE ${PROJECT_SOURCE_DIR}/src/uncrustify.cfg
+                         CPPCHECK_FLAGS ${CPPCHECK_FLAGS}
+                         )
+
+    if( CPPCHECK_FOUND )
+        add_test( NAME testCppCheck
+                COMMAND bash -c "make cppcheck_check 2> >(tee cppcheck.err) >/dev/null && exit $(cat cppcheck.err | wc -l)"
+                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                )
+    endif()
+
+    if( CLANGTIDY_FOUND )
+        add_test( NAME testClangTidy
+                COMMAND bash -c "make clang_tidy_check 2> >(tee tidyCheck.err) >/dev/null && exit $(cat tidyCheck.err | wc -l)"
+                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                )
+    endif()
 endmacro(shiva_add_code_checks)
