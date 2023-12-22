@@ -64,6 +64,10 @@ jobs:
             CMAKE_BUILD_TYPE: Release
             BUILD_AND_TEST_ARGS: --code_checks
           run: ./scripts/ci_build_and_test.sh
+        - name: Upload coverage reports to Codecov
+          uses: codecov/codecov-action@v3
+          env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   linux_builds:
     name: ${{matrix.name}}
