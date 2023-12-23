@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/667204042.svg)](https://zenodo.org/doi/10.5281/zenodo.10425646)
+
 # Shiva
 Shiva Discretization Library
 
