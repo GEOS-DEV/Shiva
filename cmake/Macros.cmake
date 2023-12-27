@@ -60,4 +60,11 @@ macro(shiva_add_code_checks)
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 )
     endif()
+
+
+    if (ENABLE_COVERAGE)
+        blt_add_code_coverage_target(NAME   ${arg_PREFIX}_coverage
+                                    RUNNER ${CMAKE_MAKE_PROGRAM} test
+                                    SOURCE_DIRECTORIES ${PROJECT_SOURCE_DIR}/src )
+    endif()
 endmacro(shiva_add_code_checks)
