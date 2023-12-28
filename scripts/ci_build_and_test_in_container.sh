@@ -77,6 +77,8 @@ if [[ "$*" == *--build-exe* ]]; then
 
   if [[ "$*" == *--code-coverage* ]]; then
   or_die make shiva_coverage
+  cp -r ${SHIVA_BUILD_DIR}/shiva_coverage.info.cleaned /tmp/Shiva/shiva_coverage.info.cleaned
+  fi
   fi
 
   if [[ "$*" != *--disable-unit-tests* ]]; then
