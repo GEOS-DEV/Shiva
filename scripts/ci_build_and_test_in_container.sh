@@ -33,8 +33,6 @@ if [[ -z "${CMAKE_BUILD_TYPE}" ]]; then
 fi
 
 if [[ "$*" == *--code-coverage* ]]; then
-  apt-get update
-  apt-get install -y --no-install-recommends lcov
   ENABLE_COVERAGE=ON
 else
   ENABLE_COVERAGE=OFF
