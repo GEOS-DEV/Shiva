@@ -32,8 +32,10 @@ if [[ -z "${CMAKE_BUILD_TYPE}" ]]; then
   exit 1
 fi
 
-if [[ "$*" == *----code_checks* ]]; then
+if [[ "$*" == *--code-coverage* ]]; then
   ENABLE_COVERAGE=ON
+else
+  ENABLE_COVERAGE=OFF
 fi
 
 SHIVA_BUILD_DIR=/tmp/build
