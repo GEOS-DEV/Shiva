@@ -218,7 +218,7 @@ jobs:
           with:
             submodules: true
             lfs: false
-        - name: code_checks
+        - name: run code coverage
           env:
             DOCKER_REPOSITORY: geosx/ubuntu:22.04
             HOST_CONFIG: hostconfigs/environment.cmake
@@ -229,6 +229,9 @@ jobs:
           run: ./scripts/ci_build_and_test.sh
         - name: Upload coverage reports to Codecov
           uses: codecov/codecov-action@v3
+          with:
+            files: shiva_coverage.info.cleaned
+            fail_ci_if_error: true
           env:
             CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     
