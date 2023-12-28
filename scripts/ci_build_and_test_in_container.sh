@@ -32,13 +32,18 @@ if [[ -z "${CMAKE_BUILD_TYPE}" ]]; then
   exit 1
 fi
 
+if [[ "$*" == *----code_checks* ]]; then
+  ENABLE_COVERAGE=ON
+fi
+
 SHIVA_BUILD_DIR=/tmp/build
 SHIVA_INSTALL_DIR=/tmp/install
 or_die python3 scripts/config-build.py \
                -hc ${HOST_CONFIG} \
                -bt ${CMAKE_BUILD_TYPE} \
                -bp ${SHIVA_BUILD_DIR} \
-               -ip ${SHIVA_INSTALL_DIR}
+               -ip ${SHIVA_INSTALL_DIR}\
+               -DENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE}
 
 or_die cd ${SHIVA_BUILD_DIR}
 
