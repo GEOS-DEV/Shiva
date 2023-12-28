@@ -225,7 +225,7 @@ jobs:
             CMAKE_CXX_COMPILER: /usr/bin/g++
             CMAKE_C_COMPILER: /usr/bin/gcc
             CMAKE_BUILD_TYPE: Debug
-            BUILD_AND_TEST_ARGS: --code-coverage
+            BUILD_AND_TEST_ARGS: "--build-exe --code-coverage"
           run: ./scripts/ci_build_and_test.sh
         - name: Upload coverage reports to Codecov
           uses: codecov/codecov-action@v3
