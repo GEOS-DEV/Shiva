@@ -62,7 +62,7 @@ jobs:
             CMAKE_CXX_COMPILER: /usr/bin/clang++
             CMAKE_C_COMPILER: /usr/bin/clang
             CMAKE_BUILD_TYPE: Release
-            BUILD_AND_TEST_ARGS: --code_checks
+            BUILD_AND_TEST_ARGS: --code-checks
           run: ./scripts/ci_build_and_test.sh
 
   linux_builds:

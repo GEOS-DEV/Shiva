@@ -62,7 +62,7 @@ if [[ "$*" == *--test-doxygen* ]]; then
 fi
 
 # code checks
-if [[ "$*" == *----code_checks* ]]; then
+if [[ "$*" == *--code-checks* ]]; then
   or_die ctest --output-on-failure -R "testCppCheck|testClangTidy"
   exit 0
 fi
