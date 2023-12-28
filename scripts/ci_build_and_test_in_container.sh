@@ -60,8 +60,15 @@ if [[ "$*" == *----code_checks* ]]; then
   exit 0
 fi
 
+
+
+
 if [[ "$*" == *--build-exe* ]]; then
   or_die make -j $(nproc)
+
+  if [[ "$*" == *--code-coverage* ]]; then
+  or_die make shiva_coverage
+  fi
 
   if [[ "$*" != *--disable-unit-tests* ]]; then
     or_die ctest --output-on-failure -E "testUncrustifyCheck|testDoxygenCheck|testCppCheck|testClangTidy"
