@@ -34,7 +34,7 @@ macro(shiva_add_code_checks)
 
     set( CPPCHECK_FLAGS --std=c++17 
                         --enable=all 
-                        --suppress=missingIncludeSystem 
+                        --suppress=unmatchedSuppression                        --suppress=missingIncludeSystem 
                         --suppress=missingInclude 
                         --suppress=noConstructor 
                         --suppress=unusedFunction 
