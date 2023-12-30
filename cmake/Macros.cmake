@@ -34,7 +34,8 @@ macro(shiva_add_code_checks)
 
     set( CPPCHECK_FLAGS --std=c++17 
                         --enable=all 
-                        --suppress=unmatchedSuppression                        --suppress=missingIncludeSystem 
+                        --suppress=missingIncludeSystem
+                        --suppress=unmatchedSuppression
                         --suppress=missingInclude 
                         --suppress=noConstructor 
                         --suppress=noExplicitConstructor
@@ -65,7 +66,7 @@ macro(shiva_add_code_checks)
 
     if (ENABLE_COVERAGE)
         blt_add_code_coverage_target(NAME   ${arg_PREFIX}_coverage
-                                    RUNNER ${CMAKE_MAKE_PROGRAM} test
-                                    SOURCE_DIRECTORIES ${PROJECT_SOURCE_DIR}/src )
+                                     RUNNER ${CMAKE_MAKE_PROGRAM} test
+                                     SOURCE_DIRECTORIES ${PROJECT_SOURCE_DIR}/src )
     endif()
 endmacro(shiva_add_code_checks)
