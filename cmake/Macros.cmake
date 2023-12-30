@@ -34,9 +34,11 @@ macro(shiva_add_code_checks)
 
     set( CPPCHECK_FLAGS --std=c++17 
                         --enable=all 
-                        --suppress=missingIncludeSystem 
+                        --suppress=missingIncludeSystem
+                        --suppress=unmatchedSuppression
                         --suppress=missingInclude 
                         --suppress=noConstructor 
+                        --suppress=noExplicitConstructor
                         --suppress=unusedFunction 
                         --suppress=constStatement 
                         --suppress=unusedStructMember )
@@ -59,5 +61,12 @@ macro(shiva_add_code_checks)
                 COMMAND bash -c "make clang_tidy_check 2> >(tee tidyCheck.err) >/dev/null && exit $(cat tidyCheck.err | wc -l)"
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 )
+    endif()
+
+
+    if (ENABLE_COVERAGE)
+        blt_add_code_coverage_target(NAME   ${arg_PREFIX}_coverage
+                                     RUNNER ${CMAKE_MAKE_PROGRAM} test
+                                     SOURCE_DIRECTORIES ${PROJECT_SOURCE_DIR}/src )
     endif()
 endmacro(shiva_add_code_checks)

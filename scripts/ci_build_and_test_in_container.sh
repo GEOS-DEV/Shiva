@@ -32,13 +32,20 @@ if [[ -z "${CMAKE_BUILD_TYPE}" ]]; then
   exit 1
 fi
 
+if [[ "$*" == *--code-coverage* ]]; then
+  ENABLE_COVERAGE=ON
+else
+  ENABLE_COVERAGE=OFF
+fi
+
 SHIVA_BUILD_DIR=/tmp/build
 SHIVA_INSTALL_DIR=/tmp/install
 or_die python3 scripts/config-build.py \
                -hc ${HOST_CONFIG} \
                -bt ${CMAKE_BUILD_TYPE} \
                -bp ${SHIVA_BUILD_DIR} \
-               -ip ${SHIVA_INSTALL_DIR}
+               -ip ${SHIVA_INSTALL_DIR}\
+               -DENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE}
 
 or_die cd ${SHIVA_BUILD_DIR}
 
@@ -55,13 +62,21 @@ if [[ "$*" == *--test-doxygen* ]]; then
 fi
 
 # code checks
-if [[ "$*" == *----code_checks* ]]; then
+if [[ "$*" == *--code-checks* ]]; then
   or_die ctest --output-on-failure -R "testCppCheck|testClangTidy"
   exit 0
 fi
 
+
+
+
 if [[ "$*" == *--build-exe* ]]; then
   or_die make -j $(nproc)
+
+  if [[ "$*" == *--code-coverage* ]]; then
+    or_die make shiva_coverage
+    cp -r ${SHIVA_BUILD_DIR}/shiva_coverage.info.cleaned /tmp/Shiva/shiva_coverage.info.cleaned
+  fi
 
   if [[ "$*" != *--disable-unit-tests* ]]; then
     or_die ctest --output-on-failure -E "testUncrustifyCheck|testDoxygenCheck|testCppCheck|testClangTidy"

@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "Publications that present Shiva and/or results using Shiva should cite as follows:"
+authors:
+- family-names: "Settgast"
+  given-names: "Randolph Richard"
+  orcid: "https://orcid.org/0000-0002-2536-7867"
+- family-names: "Tobin"
+  given-names: "William"
+  orcid: "https://orcid.org/0009-0001-3960-6064"
+- family-names: "Castelletto"
+  given-names: "Nicola"
+  orcid: "https://orcid.org/0000-0001-6816-6769"
+- family-names: "Klevtsov"
+  given-names: "Sergey"
+  orcid: "https://orcid.org/0000-0001-9044-1827"
+- family-names: "Cusini"
+  given-names: "Matteo"
+  orcid: "https://orcid.org/0000-0002-6024-861X"
+- family-names: "Gazzola"
+  given-names: "Thomas"
+  orcid: "https://orcid.org/0000-0002-6103-4605"
+title: "Shiva"
+version: 0.1
+doi: 10.5281/zenodo.10425647
+date-released: 2023-12-19
+url: "https://github.com/GEOS-DEV/Shiva"
