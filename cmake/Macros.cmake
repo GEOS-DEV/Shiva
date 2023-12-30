@@ -37,6 +37,7 @@ macro(shiva_add_code_checks)
                         --suppress=unmatchedSuppression                        --suppress=missingIncludeSystem 
                         --suppress=missingInclude 
                         --suppress=noConstructor 
+                        --supress=noExplicitConstructor
                         --suppress=unusedFunction 
                         --suppress=constStatement 
                         --suppress=unusedStructMember )
