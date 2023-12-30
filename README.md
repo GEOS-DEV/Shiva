@@ -1,4 +1,5 @@
 [![DOI](https://zenodo.org/badge/667204042.svg)](https://zenodo.org/doi/10.5281/zenodo.10425646)
+[![codecov](https://codecov.io/gh/GEOS-DEV/Shiva/graph/badge.svg?token=rE4QnY9daH)](https://codecov.io/gh/GEOS-DEV/Shiva)
 
 # Shiva
 Shiva Discretization Library
