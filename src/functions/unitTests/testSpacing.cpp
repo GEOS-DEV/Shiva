@@ -22,6 +22,7 @@
 
 using namespace shiva;
 
+  template struct shiva::EqualSpacing<float, 6>;
 
 
 template< typename ... T >
@@ -217,7 +218,6 @@ TEST( testSpacing, testGaussLobattoSpacingCT )
   testSpacingValuesAtCompileTime< GaussLobattoSpacing, double >( std::make_index_sequence< 5 >{} );
 }
 
-//  template struct shiva::EqualSpacing<float, 6>;
 
 int main( int argc, char * * argv )
 {
