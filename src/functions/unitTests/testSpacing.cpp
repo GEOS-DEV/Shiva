@@ -23,6 +23,7 @@
 using namespace shiva;
 
 
+template struct shiva::EqualSpacing<float, 6>;
 
 template< typename ... T >
 struct ReferenceSolution;
@@ -220,6 +221,7 @@ TEST( testSpacing, testGaussLobattoSpacingCT )
 
 int main( int argc, char * * argv )
 {
+
   ::testing::InitGoogleTest( &argc, argv );
   int const result = RUN_ALL_TESTS();
   return result;
