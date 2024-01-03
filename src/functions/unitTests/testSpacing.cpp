@@ -224,7 +224,7 @@ TEST( testSpacing, testGaussLobattoSpacingCT )
 int main( int argc, char * * argv )
 {
   shiva::EqualSpacing<float, 6> junk;
-  std::cout<<junk.coordinate(0)<<std::endl;
+  std::cout<<junk.coordinate<0>()<<std::endl;
 
   ::testing::InitGoogleTest( &argc, argv );
   int const result = RUN_ALL_TESTS();
