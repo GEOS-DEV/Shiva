@@ -210,8 +210,8 @@ jobs:
 
   code_coverage:
         runs-on: ubuntu-22.04
-        needs:
-          - linux_builds
+        # needs:
+        #   - linux_builds
         steps:
         - name: Checkout Repository
           uses: actions/checkout@v3
