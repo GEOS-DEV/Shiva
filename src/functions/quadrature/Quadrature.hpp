@@ -150,9 +150,7 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
     else if constexpr ( N == 5 )
     {
       assert( index >= 0 && index < 5 );
-      double rval = 0.1 + (index & 1) * 0.4444444444444444444444444444444444 ;
-      if ( index == 2 ) rval = 0.7111111111111111111111111111111111;
-      return rval;
+      return 0.1 + (index & 1) * 0.4444444444444444444444444444444444 + !( index - 2 ) * 0.6111111111111111111111111111111111;
     }
   }
 
