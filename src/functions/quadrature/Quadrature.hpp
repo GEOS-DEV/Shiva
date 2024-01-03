@@ -139,24 +139,21 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
     }
     else if constexpr ( N == 3 )
     {
+      assert( index >= 0 && index < 3 );
       return 0.3333333333333333333333333333333333 + ( index & 1 );
     }
     else if constexpr ( N == 4 )
     {
-      if ( index == 0 ) return 0.1666666666666666666666666666666667;
-      if ( index == 1 ) return 0.8333333333333333333333333333333333;
-      if ( index == 2 ) return 0.8333333333333333333333333333333333;
-      if ( index == 3 ) return 0.1666666666666666666666666666666667;
+      assert( index >= 0 && index < 4 );
+      return 0.1666666666666666666666666666666667 + ( ((index + 1) & 2) >> 1 ) * 0.6666666666666666666666666666666667;
     }
     else if constexpr ( N == 5 )
     {
-      if ( index == 0 ) return 0.1;
-      if ( index == 1 ) return 0.5444444444444444444444444444444444;
-      if ( index == 2 ) return 0.7111111111111111111111111111111111;
-      if ( index == 3 ) return 0.5444444444444444444444444444444444;
-      if ( index == 4 ) return 0.1;
+      assert( index >= 0 && index < 5 );
+      double rval = 0.1 + (index & 1) * 0.4444444444444444444444444444444444 ;
+      if ( index == 2 ) rval = 0.7111111111111111111111111111111111;
+      return rval;
     }
-    return 0;
   }
 
   /**
