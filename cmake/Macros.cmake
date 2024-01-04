@@ -66,7 +66,7 @@ macro(shiva_add_code_checks)
 
     if (ENABLE_COVERAGE)
         blt_add_code_coverage_target(NAME   ${arg_PREFIX}_coverage
-                                     RUNNER ${CMAKE_MAKE_PROGRAM} test
+                                     RUNNER ctest -E 'blt_gtest_smoke|testCppCheck|testClangTidy|testUncrustifyCheck|testDoxygenCheck|testCppCheck|testClangTidy'
                                      SOURCE_DIRECTORIES ${PROJECT_SOURCE_DIR}/src )
     endif()
 endmacro(shiva_add_code_checks)
