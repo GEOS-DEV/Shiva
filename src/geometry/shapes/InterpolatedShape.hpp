@@ -70,6 +70,7 @@ public:
   /// Instantiation of the integer sequence that holds the number of support points in each basis.
   static inline constexpr numSupportPointsSequence basisSupportCounts{};
 
+  static inline constexpr int numVerticesInBasis[numDims] = {BASIS_TYPE::numSupportPoints...};
 
 
   static_assert( numDims == StandardGeom::numDims(), "numDims mismatch between cell and number of basis specified" );
