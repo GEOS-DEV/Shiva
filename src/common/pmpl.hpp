@@ -77,6 +77,10 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func )
 {
   func();
 }
+SHIVA_GLOBAL void testKernel( )
+{
+  printf("breakpoint testKernel\n");
+}
 
 /**
  * @brief This function provides a wrapper to the genericKernel function.
@@ -95,6 +99,7 @@ void genericKernelWrapper( LAMBDA && func )
   genericKernel( std::forward< LAMBDA >( func ) );
 #endif
 }
+
 
 
 /**
@@ -140,6 +145,7 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
            <<hostData[3]<<", "
            <<hostData[4]<<std::endl;
   genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ), deviceData );
+//  testKernel<<<1,1>>>();
   deviceDeviceSynchronize();
   deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
   std::cout<<"breakpoint genericKernelWrapper 3: "
