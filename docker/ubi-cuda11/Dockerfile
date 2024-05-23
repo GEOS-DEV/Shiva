@@ -1,5 +1,5 @@
 ARG TMP_DIR=/tmp 
-FROM nvidia/cuda:11.8.0-devel-ubi8 AS ubi8-cuda11
+FROM nvidia/cuda:11.8.0-devel-ubi8 AS ubi8.8-cuda11
 
 
 # install required packages 

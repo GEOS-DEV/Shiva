@@ -7,6 +7,54 @@ set separator .
 namespace ShivaInterface {
 
 
+namespace functions {
+
+namespace spacing {
+  class EqualSpacing {
+  }
+  class GaussLegendreSpacing {
+  }
+  class GaussLobattoSpacing {
+  }
+}
+
+class LagrangeBasis< REAL_TYPE, ORDER, SPACING_TYPE > {
+  using SpacingType = SPACING_TYPE;
+  constexpr REAL_TYPE value( REAL_TYPE const & coord );
+  constexpr REAL_TYPE gradient( REAL_TYPE const & coord );
+}
+
+
+class BasisNURBS {
+}
+
+
+LagrangeBasis::SpacingType <-- EqualSpacing
+LagrangeBasis::SpacingType <-- GaussLegendreSpacing
+LagrangeBasis::SpacingType <-- GaussLobattoSpacing
+
+
+namespace Quadrature {
+
+interface Quadrature{}
+
+class QuadratureGaussLegendre<INDEX_TYPE, REAL_TYPE, NUM_PTS> {
++constexpr int m_numPoints = NUM_PTS;
++constexpr getCoord( INDEX_TYPE const qi );
+}
+
+class QuadratureGaussLobatto<INDEX_TYPE, REAL_TYPE, NUM_PTS> {
+  +constexpr int m_numPoints = NUM_PTS;
+  +constexpr getCoord( INDEX_TYPE const qi );
+}
+
+}
+
+GaussLegendreSpacing <|-- QuadratureGaussLegendre
+GaussLobattoSpacing <|-- QuadratureGaussLobatto
+
+}
+
 namespace Geometry {
 namespace Cell {
 
@@ -75,126 +123,13 @@ entity Mapping {
 
   +inverseJacobianTransform<CELL,JACOBIAN>( CELL const & cell, JACOBIAN & invJ, real64 & detJ )
 }
-  note as jacobianTransformNote
-  jacobianTransform<CELL,BASIS,JACOBIAN>( CELL const & cell, REAL_TYPE const &(parentCoord)[3], real64 (&J)[3][3] )
-  for( int a=0; a<CELL::numVertices(); ++a )
-  {
-    REAL_TYPE const dNdXi[3] = { BASIS::gradient(a,coord) };
-    for( int i=0; i<3; ++i )
-    {
-      for( int j=0; j<3; ++j )
-      {
-        J[i][j] = J[i][j] + dNdXi[ j ] * cell.vertexCoords(a,i);
-      }
-    }
-  }
-
-  jacobianTransform<CellHexUniformIJK,BASIS,real64>( CellHexUniformIJK const & cell, REAL_TYPE const &(parentCoord)[3], real64 & J )
-  {
-    J = cell.m_h / 2 ;
-  }
-
-  jacobianTransform<CellHexIJK,BASIS,real64[3]>( CellHexIJK const & cell, REAL_TYPE const &(parentCoord)[3], real64 &(J)[3] )
-  {
-    for( int i=0; i<3; ++i )
-    {
-      J[i] = cell.m_h[i] / 2 ;
-    }
-  }
-
-
-  inverseJacobianTransform<CELL,JACOBIAN>( CELL const & cell, JACOBIAN & invJ, real64 & detJ )
-  { 
-    // no-op
-  }
-
-  inverseJacobianTransform( CellHexIJK const & cell, real64 &(invJ)[3], real64 & detJ )
-  {
-    for( int i=0; i<3; ++i )
-    {
-      detJ *= cell.m_h[i] / 2 
-      invJ[i] = 2 / cell.m_h[i];
-    }
-  }
-  
-  inverseJacobianTransform( CellHexUniformIJK const & cell, real64 & invJ, real64 & detJ )
-  {
-    invJ = 2 / cell.m_h;
-    detJ = cell.m_h*cell.m_h*cell.m_h /8;
-  }
-
-  inverseJacobianTransform<CELL,BASIS,JACOBIAN>( CELL const & cell, REAL_TYPE const &(parentCoord)[3], JACOBIAN & invJ, real64 & detJ )
-  {
-    JACOBIAN J;
-    jacobianTransform<CELL,BASIS,JACOBIAN>( CELL const & cell, REAL_TYPE const &(parentCoord)[3], real64 (&J)[3][3] )
-    detJ = LvArray::tensorOps::invert< 3 >( Jinv, J );
-  }
-
-  inverseJacobianTransform<CellHexIJK,BASIS,JACOBIAN>( CellHexIJK const & cell, REAL_TYPE const &(parentCoord)[3], JACOBIAN & invJ, real64 & detJ )
-  {
-  }
-
-  inverseJacobianTransform<CellHexUniformIJK,BASIS,JACOBIAN>( CellHexUniformIJK const & cell, REAL_TYPE const &(parentCoord)[3], JACOBIAN & invJ, real64 & detJ )
-  {
-  }
-
-
-  endnote
 
   Mapping::jacobianTransform -- jacobianTransformNote
 }
 
 namespace FiniteElementMethod {
 
-note as N1
-  // launch with single thread per element
 
-  template< typename FE_INTERFACE, CONSTITUTIVE >
-  kernel( ...... )
-  {
-    using IndexType = FE_INTERFACE::IndexType;
-    using CELLTYPE = FE_INTERFACE::CellType;
-
-    kernelLaunch<POLICY>( 0, n, [=]( localIndex const k )
-    {
-      IndexType const index( k );
-
-      // gather coords, DOFs
-      CELLTYPE celldata = FE_INTERFACE::DATA::createCell();
-      FE_SPACE::LOCAL_DOF_ARRAY_TYPE localDofs;
-      FE_SPACE::fillLocalDofsArray( DofArrayView, localDofs );
-
-      FE_INTERFACE::JacobianType J;
-      FE_INTERFACE::JacobianType invJ;
-      
-      // Wrap s.t. CELL type based execution
-      // no-op if cell is NOT a rectangular prism (i.e constant for all q )
-      {
-        FE_INTERFACE::jacobianTransform( celldata, J );
-        detJ = JacobianTransformTypeHelper::inverse(J, invJ)
-      }
-
-      for( IndexType const q; q<numQuadrature; ++q )
-      {
-
-        // Wrap s.t. CELL type based execution
-        // no-op if cell is a rectangular prism (i.e. varies with q)
-        {
-          FE_INTERFACE::jacobianTransform( q, celldata, J );
-          detJ = JacobianTransformTypeHelper::inverse(J, invJ)
-        }
-        gradVar[3][3] = gradient<FE_SPACE>( q, localDofs, invJ );
-        
-        // constitutive updates
-        Dresult = constitutive.operatorD( constitutiveIndex(index, q), gradVar )
-
-        // integration 
-        result = plusGradNajAij<FE_SPACE >( q, invJ, Dresult );
-
-      }
-    });
-  }
-endnote
 
 class ParentElement< CELL, BASIS > {
   +using FunctionSpaceType = FUNCSPACE;
@@ -255,41 +190,6 @@ class DofArrayHelper<NUM_DOF_VALUES_PER_POINT,NSP>{
 FiniteElementInterface +-- DofArrayHelper
 
 
-namespace Basis {
-class Basis< INDEX_TYPE, REAL_TYPE > {
-  constexpr REAL_TYPE value( INDEX_TYPE const functionIndex, REAL_TYPE const coord );
-  constexpr REAL_TYPE[3] gradient( INDEX_TYPE const functionIndex, REAL_TYPE const coord );
-}
-
-class BasisLagrange<ORDER> {
-
-}
-
-class BasisNURBS {
-}
-
-Basis <|-- BasisLagrange
-Basis <|-- BasisNURBS
-
-}
-
-namespace Quadrature {
-
-interface Quadrature{}
-
-class QuadratureGaussLegendre<INDEX_TYPE, REAL_TYPE, NUM_PTS> {
-+constexpr int m_numPoints = NUM_PTS;
-+constexpr getCoord( INDEX_TYPE const qi );
-}
-
-class QuadratureGaussLobatto<INDEX_TYPE, REAL_TYPE, NUM_PTS> {
-  +constexpr int m_numPoints = NUM_PTS;
-  +constexpr getCoord( INDEX_TYPE const qi );
-}
-
-Quadrature <|-- QuadratureGaussLegendre
-Quadrature <|--- QuadratureGaussLobatto
-}
 
 
 
@@ -305,26 +205,6 @@ interface JacobianTransformTypeHelper {
   void inverseTransform<CELL,T>( T & Jinv, real64 & detJ )
 }
 
-note bottom of JacobianTransformTypeHelper
-  real64 inverse( real64 const & J, real64 & Jinv )
-  {
-    Jinv = 1/J;
-    return J*J*J;
-  }
-
-  real64 inverse( real64 const (&J)[3], real64 (&Jinv)[3] )
-  {
-    Jinv[0] = 1/J[0];
-    Jinv[1] = 1/J[1];
-    Jinv[2] = 1/J[2];
-    return J[0]*J[1]*J[2];
-  }
-
-  real64 inverse( real64 const (&J)[3][3], real64 (&Jinv)[3][3] )
-  {
-    return LvArray::tensorOps::invert< 3 >( Jinv, J );
-  }
-endnote
 
 FiniteElementInterface::FiniteElementSpaceType <-- FiniteElementSpace
 FiniteElementSpace::ParentElementType <-- ParentElement
