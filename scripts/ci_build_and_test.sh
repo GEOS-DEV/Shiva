@@ -15,6 +15,7 @@ docker run \
   --name=${CONTAINER_NAME} \
   --volume=${BUILD_DIR}:${BUILD_DIR_MOUNT_POINT} \
   --cap-add=ALL \
+  ${DOCKER_RUN_ARGS} \
   -e HOST_CONFIG=${HOST_CONFIG} \
   -e CMAKE_C_COMPILER=${CMAKE_C_COMPILER} \
   -e CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} \

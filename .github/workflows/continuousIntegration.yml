@@ -140,7 +140,7 @@ jobs:
             CMAKE_C_COMPILER: /usr/bin/gcc
             CMAKE_BUILD_TYPE: Release
             ENABLE_CUDA: ON
-#            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
+            DOCKER_RUN_ARGS: "--cpus=1 --memory=64g --runtime=nvidia --gpus all"
 
           - name: ubuntu22-gcc11-cuda11-dbg (ubuntu-22, gcc 11.4.0, cuda-11.8.0, Debug)
             DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8
@@ -205,6 +205,7 @@ jobs:
         CMAKE_BUILD_TYPE: ${{ matrix.CMAKE_BUILD_TYPE }}
         ENABLE_CUDA: ${{ matrix.ENABLE_CUDA }}
         BUILD_AND_TEST_ARGS: ${{ matrix.BUILD_AND_TEST_ARGS }} --build-exe
+        DOCKER_RUN_ARGS: ${{ matrix.DOCKER_RUN_ARGS }}
         HOST_CONFIG: hostconfigs/environment.cmake
       run: ./scripts/ci_build_and_test.sh
 
