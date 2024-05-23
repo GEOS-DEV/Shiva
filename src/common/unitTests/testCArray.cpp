@@ -175,7 +175,9 @@ void testLinearIndexCT()
 void testLinearIndexRT()
 {
   int * data = nullptr;
-  pmpl::genericKernelWrapper( TestCArrayHelper::Array3d::size(), data, [] SHIVA_DEVICE ( int * const kernelData )
+  constexpr int N = TestCArrayHelper::Array3d::size();
+  data = new int[N];
+  pmpl::genericKernelWrapper( N, data, [] SHIVA_DEVICE ( int * const kernelData )
   {
     int const na = TestCArrayHelper::array3d.extent< 0 >();
     int const nb = TestCArrayHelper::array3d.extent< 1 >();
@@ -197,7 +199,7 @@ void testLinearIndexRT()
   {
     EXPECT_EQ( data[a], a );
   }
-  pmpl::deallocateData( data );
+  delete [] data;
 
 }
 
@@ -244,7 +246,9 @@ void testParenthesesOperatorCT()
 void testParenthesesOperatorRT()
 {
   double * data = nullptr;
-  pmpl::genericKernelWrapper( TestCArrayHelper::Array3d::size(), data, [] SHIVA_DEVICE ( double * const kernelData )
+  constexpr int N = TestCArrayHelper::Array3d::size();
+  data = new double[N];
+  pmpl::genericKernelWrapper( N, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     TestCArrayHelper::Array3d const array{ initializer< TestCArrayHelper::Array3d >( std::make_integer_sequence< int, 2 * 3 * 4 >() ) };;
     int const na = array.extent< 0 >();
@@ -267,7 +271,7 @@ void testParenthesesOperatorRT()
   {
     EXPECT_EQ( data[a], 3.14159 * a );
   }
-  pmpl::deallocateData( data );
+  delete [] data;
 
 
 }
