@@ -12,7 +12,7 @@ CONTAINER_NAME=shiva_build
 # Now we can build shiva.
 docker run \
   --rm \
-  --name=${CONTAINER_NAME} \
+#  --name=${CONTAINER_NAME} \
   --volume=${BUILD_DIR}:${BUILD_DIR_MOUNT_POINT} \
   --cap-add=ALL \
   ${DOCKER_RUN_ARGS} \

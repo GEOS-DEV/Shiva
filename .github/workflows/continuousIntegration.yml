@@ -174,7 +174,7 @@ jobs:
             ENABLE_CUDA: ON
             DOCKER_RUN_ARGS: "--cpus=4 --memory=64g --runtime=nvidia --gpus all"
 
-          - name: RHEL8.9-gcc12-cuda12-rel (ubi8.8, gcc 13.2.1, cuda-12.4.1, Release)
+          - name: RHEL8.9-gcc13-cuda12-rel (ubi8.8, gcc 13.2.1, cuda-12.4.1, Release)
             DOCKER_REPOSITORY: geosx/ubi:8.9-cuda12.4.1
             RUNS_ON: streak
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-13/root/bin/g++
