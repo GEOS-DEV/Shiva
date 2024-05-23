@@ -119,7 +119,7 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func, DATA_TYPE * const data )
  * @tparam DATA_TYPE The type of the data pointer.
  * @tparam LAMBDA The type of the lambda function to execute.
  * @param N The size of the data array.
- * @param data The data pointer to pass to the lambda function.
+ * @param hostData The data pointer to pass to the lambda function.
  * @param func The lambda function to execute.
  *
  * This function will allocate the data pointer on the device, execute the
