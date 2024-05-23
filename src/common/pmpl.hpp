@@ -134,19 +134,19 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
   DATA_TYPE * deviceData;
   deviceMalloc( &deviceData, N * sizeof(DATA_TYPE) );
   std::cout<<"breakpoint genericKernelWrapper 2: "
-           <<hostData[0]
-           <<hostData[1]
-           <<hostData[2]
-           <<hostData[3]
+           <<hostData[0]<<", "
+           <<hostData[1]<<", "
+           <<hostData[2]<<", "
+           <<hostData[3]<<", "
            <<hostData[4]<<std::endl;
   genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ), deviceData );
   deviceDeviceSynchronize();
   deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
   std::cout<<"breakpoint genericKernelWrapper 3: "
-           <<hostData[0]
-           <<hostData[1]
-           <<hostData[2]
-           <<hostData[3]
+           <<hostData[0]<<", "
+           <<hostData[1]<<", "
+           <<hostData[2]<<", "
+           <<hostData[3]<<", "
            <<hostData[4]<<std::endl;
   deviceFree( deviceData );
 #else
