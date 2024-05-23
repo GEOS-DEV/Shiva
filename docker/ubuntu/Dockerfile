@@ -14,8 +14,8 @@ RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
         clang-tidy \
         lcov
 
-ARG CMAKE_VERSION=3.23.5
+ARG CMAKE_VERSION=3.28.5
 RUN curl -fsSL -k  https://cmake.org/files/v${CMAKE_VERSION%.[0-9]*}/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz | tar --directory=/usr/local --strip-components=1 -xzf -
 
-ARG DOXYGEN_VERSION=1.9.8
+ARG DOXYGEN_VERSION=1.11.0
 RUN curl -fsSL -k  https://www.doxygen.nl/files/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz | tar --directory=/usr/local --strip-components=1 -xzf -
