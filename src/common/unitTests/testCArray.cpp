@@ -91,7 +91,10 @@ TEST( testCArray, testViewInitialization )
 void testTraitsHelper()
 {
   int * data = nullptr;
-  pmpl::genericKernelWrapper( 5, data, [] SHIVA_DEVICE ( int * const kernelData )
+  constexpr int N = 5;
+  data = new int[N];
+  std::cout<<"breakpoint testTraitsHelper-0"<<std::endl;
+  pmpl::genericKernelWrapper( N, data, [] SHIVA_DEVICE ( int * const kernelData )
   {
     using Array = TestCArrayHelper::Array3d;
     static_assert( Array::rank() == 3 );
@@ -105,14 +108,21 @@ void testTraitsHelper()
     kernelData[2] = Array::extent< 1 >();
     kernelData[3] = Array::extent< 2 >();
     kernelData[4] = Array::size();
+    printf("breakpoint testTraitsHelper-kernel: %d %d %d %d %d\n", kernelData[0], kernelData[1], kernelData[2], kernelData[3], kernelData[4]);
   } );
+  std::cout<<std::endl;
+  std::cout<<"breakpoint testTraitsHelper 1"<<std::endl;
 
+  std::cout<<"breakpoint testTraitsHelper 2: "<<data<<std::endl;
   EXPECT_EQ( data[0], 3 );
   EXPECT_EQ( data[1], 2 );
   EXPECT_EQ( data[2], 3 );
   EXPECT_EQ( data[3], 4 );
   EXPECT_EQ( data[4], 24 );
-  pmpl::deallocateData( data );
+  std::cout<<"breakpoint testTraitsHelper 3"<<std::endl;
+
+  delete[] data;
+  std::cout<<"breakpoint testTraitsHelper 4"<<std::endl;
 
 }
 TEST( testCArray, testTraits )
@@ -193,8 +203,11 @@ void testLinearIndexRT()
 
 TEST( testCArray, testLinearIndex )
 {
+  std::cout<<"breakpoint testLinearIndex 1"<<std::endl;
   testLinearIndexCT();
+  std::cout<<"breakpoint testLinearIndex 2"<<std::endl;
   testLinearIndexRT();
+  std::cout<<"breakpoint testLinearIndex 3"<<std::endl;
 }
 
 

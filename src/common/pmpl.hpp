@@ -23,17 +23,21 @@
 
 
 #include "ShivaMacros.hpp"
-
+#include <iostream>
 namespace shiva
 {
 #if defined(SHIVA_USE_DEVICE)
   #if defined(SHIVA_USE_CUDA)
+    #define deviceMalloc( PTR, BYTES ) cudaMalloc( PTR, BYTES );
     #define deviceMallocManaged( PTR, BYTES ) cudaMallocManaged( PTR, BYTES );
     #define deviceDeviceSynchronize() cudaDeviceSynchronize();
+    #define deviceMemCpy( DST, SRC, BYTES, KIND ) cudaMemcpy( DST, SRC, BYTES, KIND );
     #define deviceFree( PTR ) cudaFree( PTR );
   #elif defined(SHIVA_USE_HIP)
+    #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
     #define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
     #define deviceDeviceSynchronize() hipDeviceSynchronize();
+    #define deviceMemCpy( DST, SRC, BYTES, KIND ) hipMemcpy( DST, SRC, BYTES, KIND );
     #define deviceFree( PTR ) hipFree( PTR );
   #endif
 #endif
@@ -122,16 +126,32 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func, DATA_TYPE * const data )
  * device.
  */
 template< typename DATA_TYPE, typename LAMBDA >
-void genericKernelWrapper( int const N, DATA_TYPE * & data, LAMBDA && func )
+void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && func )
 {
 
 #if defined(SHIVA_USE_DEVICE)
-  deviceMallocManaged( &data, N * sizeof(DATA_TYPE) );
-  genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ), data );
+  std::cout<<"breakpoint genericKernelWrapper 1"<<std::endl;
+  DATA_TYPE * deviceData;
+  deviceMalloc( &deviceData, N * sizeof(DATA_TYPE) );
+  std::cout<<"breakpoint genericKernelWrapper 2: "
+           <<hostData[0]
+           <<hostData[1]
+           <<hostData[2]
+           <<hostData[3]
+           <<hostData[4]<<std::endl;
+  genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ), deviceData );
   deviceDeviceSynchronize();
+  deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
+  std::cout<<"breakpoint genericKernelWrapper 3: "
+           <<hostData[0]
+           <<hostData[1]
+           <<hostData[2]
+           <<hostData[3]
+           <<hostData[4]<<std::endl;
+  deviceFree( deviceData );
 #else
-  data = new DATA_TYPE[N];
-  genericKernel( std::forward< LAMBDA >( func ), data );
+  SHIVA_UNUSED_VAR( N );
+  genericKernel( std::forward< LAMBDA >( func ), hostData );
 #endif
 }
 
