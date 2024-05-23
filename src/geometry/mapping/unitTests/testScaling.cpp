@@ -36,7 +36,7 @@ SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeScaling( REAL_TYPE const (&h)[3]
 void testConstructionAndSettersHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
-  double * data = nullptr;
+  double * data = new double[3];
   pmpl::genericKernelWrapper( 3, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeScaling( h );
@@ -49,7 +49,7 @@ void testConstructionAndSettersHelper()
   EXPECT_EQ( data[1], h[1] );
   EXPECT_EQ( data[2], h[2] );
 
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 TEST( testScaling, testConstructionAndSetters )
 {
@@ -60,7 +60,7 @@ TEST( testScaling, testConstructionAndSetters )
 void testJacobianFunctionModifyLvalueRefArgHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
-  double * data = nullptr;
+  double * data = new double[3];
   pmpl::genericKernelWrapper( 3, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeScaling( h );
@@ -75,7 +75,7 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
   EXPECT_EQ( data[1], ( h[1] / 2 ) );
   EXPECT_EQ( data[2], ( h[2] / 2 ) );
 
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 
 TEST( testScaling, testJacobianFunctionModifyLvalueRefArg )
@@ -86,7 +86,7 @@ TEST( testScaling, testJacobianFunctionModifyLvalueRefArg )
 void testJacobianFunctionReturnByValueHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
-  double * data = nullptr;
+  double * data = new double[3];
   pmpl::genericKernelWrapper( 3, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeScaling( h );
@@ -100,7 +100,7 @@ void testJacobianFunctionReturnByValueHelper()
   EXPECT_EQ( data[1], ( h[1] / 2 ) );
   EXPECT_EQ( data[2], ( h[2] / 2 ) );
 
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 TEST( testScaling, testJacobianFunctionReturnByValue )
 {
@@ -110,7 +110,7 @@ TEST( testScaling, testJacobianFunctionReturnByValue )
 void testInvJacobianFunctionModifyLvalueRefArgHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
-  double * data = nullptr;
+  double * data = new double[4];
   pmpl::genericKernelWrapper( 4, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeScaling( h );
@@ -128,7 +128,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
   EXPECT_EQ( data[2], ( 2 / h[1] ) );
   EXPECT_EQ( data[3], ( 2 / h[2] ) );
 
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 TEST( testScaling, testInvJacobianFunctionModifyLvalueRefArg )
 {
@@ -138,7 +138,7 @@ TEST( testScaling, testInvJacobianFunctionModifyLvalueRefArg )
 void testInvJacobianFunctionReturnByValueHelper()
 {
   constexpr double h[3] = { 10, 20, 30 };
-  double * data = nullptr;
+  double * data = new double[4];
   pmpl::genericKernelWrapper( 4, data, [ = ] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeScaling( h );
@@ -154,7 +154,7 @@ void testInvJacobianFunctionReturnByValueHelper()
   EXPECT_EQ( data[2], ( 2 / h[1] ) );
   EXPECT_EQ( data[3], ( 2 / h[2] ) );
 
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 TEST( testScaling, testInvJacobianFunctionReturnByValue )
 {
