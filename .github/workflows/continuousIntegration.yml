@@ -90,15 +90,15 @@ jobs:
           - name: RHEL8.9-gcc13-dbg (ubi8.9, gcc 13.2.1, Debug)
             DOCKER_REPOSITORY: geosx/ubi:8.9
             OS: ubuntu-22.04
-            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
-            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
+            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-13/root/bin/g++
+            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-13/root/bin/gcc
             CMAKE_BUILD_TYPE: Debug
 
           - name: RHEL8.9-gcc13-rel (ubi8.9, gcc 13.2.1, Release)
             DOCKER_REPOSITORY: geosx/ubi:8.9
             OS: ubuntu-22.04
-            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
-            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
+            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-13/root/bin/g++
+            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-13/root/bin/gcc
             CMAKE_BUILD_TYPE: Release
 
           - name: ubuntu22-gcc11-rel (ubuntu-22, gcc 11.4.0, Release)
