@@ -135,7 +135,7 @@ jobs:
 
           - name: ubuntu22-gcc11-cuda11-rel (ubuntu-22, gcc 11.4.0, cuda-11.8.0, Release)
             DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8
-            OS: ubuntu-22.04
+            OS: streak
             CMAKE_CXX_COMPILER: /usr/bin/g++
             CMAKE_C_COMPILER: /usr/bin/gcc
             CMAKE_BUILD_TYPE: Release
