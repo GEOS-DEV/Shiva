@@ -23,7 +23,6 @@
 
 
 #include "ShivaMacros.hpp"
-#include <iostream>
 namespace shiva
 {
 #if defined(SHIVA_USE_DEVICE)
