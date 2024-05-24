@@ -91,7 +91,9 @@ TEST( testCArray, testViewInitialization )
 void testTraitsHelper()
 {
   int * data = nullptr;
-  pmpl::genericKernelWrapper( 5, data, [] SHIVA_DEVICE ( int * const kernelData )
+  constexpr int N = 5;
+  data = new int[N];
+  pmpl::genericKernelWrapper( N, data, [] SHIVA_DEVICE ( int * const kernelData )
   {
     using Array = TestCArrayHelper::Array3d;
     static_assert( Array::rank() == 3 );
@@ -106,14 +108,13 @@ void testTraitsHelper()
     kernelData[3] = Array::extent< 2 >();
     kernelData[4] = Array::size();
   } );
-
   EXPECT_EQ( data[0], 3 );
   EXPECT_EQ( data[1], 2 );
   EXPECT_EQ( data[2], 3 );
   EXPECT_EQ( data[3], 4 );
   EXPECT_EQ( data[4], 24 );
-  pmpl::deallocateData( data );
 
+  delete[] data;
 }
 TEST( testCArray, testTraits )
 {
@@ -165,7 +166,9 @@ void testLinearIndexCT()
 void testLinearIndexRT()
 {
   int * data = nullptr;
-  pmpl::genericKernelWrapper( TestCArrayHelper::Array3d::size(), data, [] SHIVA_DEVICE ( int * const kernelData )
+  constexpr int N = TestCArrayHelper::Array3d::size();
+  data = new int[N];
+  pmpl::genericKernelWrapper( N, data, [] SHIVA_DEVICE ( int * const kernelData )
   {
     int const na = TestCArrayHelper::array3d.extent< 0 >();
     int const nb = TestCArrayHelper::array3d.extent< 1 >();
@@ -187,7 +190,7 @@ void testLinearIndexRT()
   {
     EXPECT_EQ( data[a], a );
   }
-  pmpl::deallocateData( data );
+  delete [] data;
 
 }
 
@@ -231,7 +234,9 @@ void testParenthesesOperatorCT()
 void testParenthesesOperatorRT()
 {
   double * data = nullptr;
-  pmpl::genericKernelWrapper( TestCArrayHelper::Array3d::size(), data, [] SHIVA_DEVICE ( double * const kernelData )
+  constexpr int N = TestCArrayHelper::Array3d::size();
+  data = new double[N];
+  pmpl::genericKernelWrapper( N, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     TestCArrayHelper::Array3d const array{ initializer< TestCArrayHelper::Array3d >( std::make_integer_sequence< int, 2 * 3 * 4 >() ) };;
     int const na = array.extent< 0 >();
@@ -254,7 +259,7 @@ void testParenthesesOperatorRT()
   {
     EXPECT_EQ( data[a], 3.14159 * a );
   }
-  pmpl::deallocateData( data );
+  delete [] data;
 
 
 }

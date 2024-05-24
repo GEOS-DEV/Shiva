@@ -17,7 +17,7 @@ jobs:
   #   runs-on: ubuntu-22.04
   #   steps:
   #   - name: Checkout Repository
-  #     uses: actions/checkout@v3
+  #     uses: actions/checkout@v4.1.6
   #     with:
   #       submodules: true
   #       lfs: false
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4.1.6
       with:
         submodules: true
         lfs: false
@@ -51,7 +51,7 @@ jobs:
         runs-on: ubuntu-22.04
         steps:
         - name: Checkout Repository
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4.1.6
           with:
             submodules: true
             lfs: false
@@ -67,129 +67,137 @@ jobs:
 
   linux_builds:
     name: ${{matrix.name}}
-    runs-on: ${{matrix.os}}
+    runs-on: ${{matrix.RUNS_ON}}
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
       matrix:
         include:
-          - name: RHEL8.8-clang15-dbg (ubi8.8, clang-15.0.7, Debug)
-            DOCKER_REPOSITORY: geosx/ubi:8.8-854
-            OS: ubuntu-22.04
+          - name: RHEL8.9-clang17-dbg (ubi8.9, clang-17.0.6, Debug)
+            DOCKER_REPOSITORY: geosx/ubi:8.9
+            RUNS_ON: ubuntu-22.04
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Debug
 
-          - name: RHEL8.8-clang15-rel (ubi8.8, clang-15.0.7, Release)
-            DOCKER_REPOSITORY: geosx/ubi:8.8-854
-            OS: ubuntu-22.04
+          - name: RHEL8.9-clang17-rel (ubi8.9, clang-17.0.6, Release)
+            DOCKER_REPOSITORY: geosx/ubi:8.9
+            RUNS_ON: ubuntu-22.04
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Release
 
-          - name: RHEL8.8-gcc12-dbg (ubi8.8, gcc 12.2.1, Debug)
-            DOCKER_REPOSITORY: geosx/ubi:8.8-854
-            OS: ubuntu-22.04
-            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
-            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
+          - name: RHEL8.9-gcc13-dbg (ubi8.9, gcc 13.2.1, Debug)
+            DOCKER_REPOSITORY: geosx/ubi:8.9
+            RUNS_ON: ubuntu-22.04
+            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-13/root/bin/g++
+            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-13/root/bin/gcc
             CMAKE_BUILD_TYPE: Debug
 
-          - name: RHEL8.8-gcc12-rel (ubi8.8, gcc 12.2.1, Release)
-            DOCKER_REPOSITORY: geosx/ubi:8.8-854
-            OS: ubuntu-22.04
-            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
-            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
+          - name: RHEL8.9-gcc13-rel (ubi8.9, gcc 13.2.1, Release)
+            DOCKER_REPOSITORY: geosx/ubi:8.9
+            RUNS_ON: ubuntu-22.04
+            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-13/root/bin/g++
+            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-13/root/bin/gcc
             CMAKE_BUILD_TYPE: Release
 
           - name: ubuntu22-gcc11-rel (ubuntu-22, gcc 11.4.0, Release)
             DOCKER_REPOSITORY: geosx/ubuntu:22.04
-            OS: ubuntu-22.04
+            RUNS_ON: ubuntu-22.04
             CMAKE_CXX_COMPILER: /usr/bin/g++
             CMAKE_C_COMPILER: /usr/bin/gcc
             CMAKE_BUILD_TYPE: Release
-            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
 
           - name: ubuntu22-clang14-rel (ubuntu-22, clang-14.0.0, Release)
             DOCKER_REPOSITORY: geosx/ubuntu:22.04
-            OS: ubuntu-22.04
+            RUNS_ON: ubuntu-22.04
             CMAKE_CXX_COMPILER: /usr/bin/clang++
             CMAKE_C_COMPILER: /usr/bin/clang
             CMAKE_BUILD_TYPE: Release
-            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
 
           - name: ubuntu22-clang14-dbg (ubuntu-22, clang-14.0.0, Debug)
             DOCKER_REPOSITORY: geosx/ubuntu:22.04
-            OS: ubuntu-22.04
+            RUNS_ON: ubuntu-22.04
             CMAKE_CXX_COMPILER: /usr/bin/clang++
             CMAKE_C_COMPILER: /usr/bin/clang
             CMAKE_BUILD_TYPE: Debug
-            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
 
           - name: ubuntu22-gcc11-dbg (ubuntu-22, gcc 11.4.0, Release)
             DOCKER_REPOSITORY: geosx/ubuntu:22.04
-            OS: ubuntu-22.04
+            RUNS_ON: ubuntu-22.04
             CMAKE_CXX_COMPILER: /usr/bin/g++
             CMAKE_C_COMPILER: /usr/bin/gcc
             CMAKE_BUILD_TYPE: Debug
-            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
 
           - name: ubuntu22-gcc11-cuda11-rel (ubuntu-22, gcc 11.4.0, cuda-11.8.0, Release)
-            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8.0
-            OS: ubuntu-22.04
+            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8
+            RUNS_ON: streak2
             CMAKE_CXX_COMPILER: /usr/bin/g++
             CMAKE_C_COMPILER: /usr/bin/gcc
             CMAKE_BUILD_TYPE: Release
             ENABLE_CUDA: ON
-            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
+            CMAKE_CUDA_ARCHITECTURES: "86"
+            NPROC: 4
+            DOCKER_RUN_ARGS: "--cpus=4 --memory=64g --runtime=nvidia --gpus all"
 
           - name: ubuntu22-gcc11-cuda11-dbg (ubuntu-22, gcc 11.4.0, cuda-11.8.0, Debug)
-            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8.0
-            OS: ubuntu-22.04
+            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8
+            RUNS_ON: streak2
             CMAKE_CXX_COMPILER: /usr/bin/g++
             CMAKE_C_COMPILER: /usr/bin/gcc
             CMAKE_BUILD_TYPE: Debug
             ENABLE_CUDA: ON
-            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
+            CMAKE_CUDA_ARCHITECTURES: "86"
+            NPROC: 4
+            DOCKER_RUN_ARGS: "--cpus=4 --memory=64g --runtime=nvidia --gpus all"
 
           - name: ubuntu22-clang14-cuda11-rel (ubuntu-22, clang-14.0.0, cuda-11.8.0, Release)
-            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8.0
-            OS: ubuntu-22.04
+            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8
+            RUNS_ON: streak2
             CMAKE_CXX_COMPILER: /usr/bin/clang++
             CMAKE_C_COMPILER: /usr/bin/clang
             CMAKE_BUILD_TYPE: Release
             ENABLE_CUDA: ON
-            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
+            CMAKE_CUDA_ARCHITECTURES: "86"
+            NPROC: 4
+            DOCKER_RUN_ARGS: "--cpus=4 --memory=64g --runtime=nvidia --gpus all"
 
           - name: ubuntu22-clang14-cuda11-dbg (ubuntu-22, clang-14.0.0, cuda-11.8.0, Debug)
-            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8.0
-            OS: ubuntu-22.04
+            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8
+            RUNS_ON: streak2
             CMAKE_CXX_COMPILER: /usr/bin/clang++
             CMAKE_C_COMPILER: /usr/bin/clang
             CMAKE_BUILD_TYPE: Debug
             ENABLE_CUDA: ON
-            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
+            CMAKE_CUDA_ARCHITECTURES: "86"
+            NPROC: 4
+            DOCKER_RUN_ARGS: "--cpus=4 --memory=64g --runtime=nvidia --gpus all"
 
-          - name: RHEL8.8-clang15-cuda12-rel (ubi8.8, clang-15.0.7, cuda-12.2.2, Release)
-            DOCKER_REPOSITORY: geosx/ubi:8.8-cuda12.2.2
-            OS: ubuntu-22.04
+          - name: RHEL8.9-clang17-cuda12-rel (ubi8.9, clang-17.0.6, cuda-12.4.1, Release)
+            DOCKER_REPOSITORY: geosx/ubi:8.9-cuda12.4.1
+            RUNS_ON: streak2
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Release
             ENABLE_CUDA: ON
-            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
+            CMAKE_CUDA_ARCHITECTURES: "86"
+            NPROC: 4
+            DOCKER_RUN_ARGS: "--cpus=4 --memory=64g --runtime=nvidia --gpus all"
 
-          - name: RHEL8.8-gcc12-cuda12-rel (ubi8.8, gcc 12.2.1, cuda-12.2.2, Release)
-            DOCKER_REPOSITORY: geosx/ubi:8.8-cuda12.2.2
-            OS: ubuntu-22.04
-            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-12/root/bin/g++
-            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-12/root/bin/gcc
+          - name: RHEL8.9-gcc13-cuda12-rel (ubi8.8, gcc 13.2.1, cuda-12.4.1, Release)
+            DOCKER_REPOSITORY: geosx/ubi:8.9-cuda12.4.1
+            RUNS_ON: streak2
+            CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-13/root/bin/g++
+            CMAKE_C_COMPILER: /opt/rh/gcc-toolset-13/root/bin/gcc
             CMAKE_BUILD_TYPE: Release
             ENABLE_CUDA: ON
-            BUILD_AND_TEST_ARGS: "--disable-unit-tests"
+            CMAKE_CUDA_ARCHITECTURES: "86"
+            NPROC: 4
+            DOCKER_RUN_ARGS: "--cpus=4 --memory=64g --runtime=nvidia --gpus all"
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4.1.6
       with:
         submodules: true
         lfs: false
@@ -204,7 +212,10 @@ jobs:
         CMAKE_C_COMPILER: ${{ matrix.CMAKE_C_COMPILER }}
         CMAKE_BUILD_TYPE: ${{ matrix.CMAKE_BUILD_TYPE }}
         ENABLE_CUDA: ${{ matrix.ENABLE_CUDA }}
+        CMAKE_CUDA_ARCHITECTURES: ${{ matrix.CMAKE_CUDA_ARCHITECTURES }}
+        NPROC: ${{ matrix.NPROC }}
         BUILD_AND_TEST_ARGS: ${{ matrix.BUILD_AND_TEST_ARGS }} --build-exe
+        DOCKER_RUN_ARGS: ${{ matrix.DOCKER_RUN_ARGS }}
         HOST_CONFIG: hostconfigs/environment.cmake
       run: ./scripts/ci_build_and_test.sh
 
@@ -214,7 +225,7 @@ jobs:
         #   - linux_builds
         steps:
         - name: Checkout Repository
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4.1.6
           with:
             submodules: true
             lfs: false
