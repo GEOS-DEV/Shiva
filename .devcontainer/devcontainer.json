@@ -2,7 +2,7 @@
     "build": {
         "dockerfile": "Dockerfile",
         "args": {
-            "docker_image_tag_hash": "b5b06ad736cc8f2df227dabf8ff1da1a2f538939"
+            "docker_image_tag_hash": "024640295b871038cfa8c8d0f8bcd914f000b659"
         }
     },
     "runArgs": [
