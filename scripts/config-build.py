@@ -65,6 +65,11 @@ parser.add_argument("-hc",
                     type=str,
                     help="select a specific host-config file to initalize CMake's cache")
 
+parser.add_argument("-n", "--ninja", action='store_true', help="Create a ninja project.")
+parser.add_argument("-gvz", "--graphviz", action="store_true", help="Generate graphviz dependency graph")
+
+
+
 args, unknown_args = parser.parse_known_args()
 if unknown_args:
     print("[config-build]: Passing the following unknown arguments directly to cmake... %s" % unknown_args)
@@ -147,6 +152,14 @@ if args.eclipse:
 if args.xcode:
     cmakeline += ' -G Xcode'
 
+if args.ninja:
+    cmakeline += ' -GNinja'
+
+if args.graphviz:
+    cmakeline += " --graphviz=dependency.dot"
+    dot_line = "dot -Tpng dependency.dot -o dependency.png"
+
+
 if unknown_args:
     cmakeline += " " + " ".join( unknown_args )
 
@@ -169,6 +182,8 @@ print("Executing cmake line: '%s'\n" % cmakeline)
 
 try:
     subprocess.call(cmakeline,shell=True)
+    if args.graphviz:
+        subprocess.call(dot_line, shell=True)
 except:
     print("CMake failed.  See above output for details.")
     sys.exit(1)
