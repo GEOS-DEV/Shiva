@@ -1,6 +1,5 @@
 if( NOT SHIVA_FOUND )
-  get_filename_component(SHIVA_CMAKE_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-  include(${CMAKE_INSTALL_PREFIX}/lib/cmake/shiva/shiva-targets.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/../../../lib/cmake/shiva/shiva-targets.cmake)
 
 
   set(SHIVA_FOUND TRUE)
