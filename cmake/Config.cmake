@@ -34,8 +34,6 @@ install( FILES ${CMAKE_BINARY_DIR}/include/ShivaConfig.hpp
          DESTINATION include )
 
 # Configure and install the CMake config
-# configure_file( ${CMAKE_CURRENT_LIST_DIR}/shiva-config.cmake.in
-#                 ${PROJECT_BINARY_DIR}/share/shiva/cmake/shiva-config.cmake)
 
 # Set up cmake package config file
 
