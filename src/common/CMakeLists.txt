@@ -35,6 +35,7 @@ blt_add_library( NAME             common
 target_include_directories( common 
                             INTERFACE 
                             $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+                            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
                             $<INSTALL_INTERFACE:include> )
 
 install( FILES ${common_headers} 
