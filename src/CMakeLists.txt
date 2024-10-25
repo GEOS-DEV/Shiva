@@ -31,12 +31,12 @@ install( FILES ${shiva_headers}
 
 
 install( TARGETS shiva
-         EXPORT shiva-targets
+         EXPORT shiva
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib )
 
-install( EXPORT shiva-targets
+install( EXPORT shiva
          DESTINATION lib/cmake/shiva )
 
 shiva_add_code_checks( PREFIX shiva

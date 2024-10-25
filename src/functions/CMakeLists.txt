@@ -26,10 +26,12 @@ foreach( _header ${functions_headers} )
 endforeach()
 
 install( TARGETS functions
-         EXPORT shiva-targets
+         EXPORT shiva
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
 
 
-add_subdirectory( unitTests )
+if( SHIVA_ENABLE_UNIT_TESTS )
+     add_subdirectory( unitTests )
+endif()

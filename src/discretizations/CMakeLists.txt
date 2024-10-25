@@ -21,10 +21,11 @@ install( FILES ${discretizations_headers}
          DESTINATION include/discretizations )
 
 install( TARGETS discretizations
-         EXPORT shiva-targets
+         EXPORT shiva
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
 
-
-add_subdirectory( unitTests )
+if( SHIVA_ENABLE_UNIT_TESTS )
+     add_subdirectory( unitTests )
+endif()
