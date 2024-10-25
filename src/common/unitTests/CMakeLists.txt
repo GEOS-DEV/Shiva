@@ -27,10 +27,9 @@ foreach(test ${unit_tests_sources})
     set( header ${test} )
     string(REPLACE "test" "../" header ${header})
     string(REPLACE ".cpp" ".hpp" header ${header})
-    message("header is ${header}")
+#    message("header is ${header}")
 
     get_filename_component( test_name ${test} NAME_WE )
-    message( "test_name is ${test_name}" )
     blt_add_executable( NAME ${test_name}
                         SOURCES ${test}
                         HEADERS ${header}
