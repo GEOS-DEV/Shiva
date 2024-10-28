@@ -67,7 +67,6 @@ include( cmake/Config.cmake )
 
 
 add_subdirectory( src )
-message( "PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}" )
 add_subdirectory( tpl/camp )
 target_compile_options( camp PRIVATE "-Wno-shadow") 
 
