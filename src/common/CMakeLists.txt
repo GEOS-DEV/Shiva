@@ -38,6 +38,11 @@ target_include_directories( common
                             $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
                             $<INSTALL_INTERFACE:include> )
 
+target_include_directories( common 
+                            SYSTEM INTERFACE
+                            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tpl/camp/include>
+                            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/tpl/camp/include> )
+
 install( FILES ${common_headers} 
          DESTINATION include/common )
 
