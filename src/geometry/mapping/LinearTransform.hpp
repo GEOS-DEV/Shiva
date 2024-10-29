@@ -108,15 +108,22 @@ public:
    * @brief Sets the coordinates of the vertices of the cell
    * @param[in] coords The coordinates of the vertices of the cell
    */
-  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setData( DataType const & coords )
+  template< typename T >
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE void setData( T const & coords )
   {
-    for ( int a = 0; a < numVertices; ++a )
+
+    SupportIndexType index;
+    forRange( index = {0, 0, 0}, [&] ( auto const & aa )
     {
+      int const a = aa.data[0];
+      int const b = aa.data[1];
+      int const c = aa.data[2];
+
       for ( int i = 0; i < numDims; ++i )
       {
-        m_vertexCoords[a][i] = coords[a][i];
+        m_vertexCoords(a,b,c,i) = coords[a + 2 * b + 4 * c][i];
       }
-    }
+    });
   }
 
 private:
