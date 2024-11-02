@@ -185,10 +185,10 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
 
 
 
-template< typename REAL_TYPE,
-          typename INTERPOLATED_SHAPE,
-          typename QUADRATURE,
-          int ... QA >
+template< typename QUADRATURE,
+          int ... QA,
+          typename REAL_TYPE,
+          typename INTERPOLATED_SHAPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
           typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & J )
@@ -203,17 +203,18 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
     constexpr double qcoords[3] = { ( QUADRATURE::template coordinate<QA>() )... };
     constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
     // dimensional loop from domain to codomain
-    // forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
-    // {
-    //   constexpr int i = decltype(ici)::value;
-    //   constexpr int j = decltype(icj)::value;
-    //   J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
-    // } );
-    for( int j = 0; j < DIMS; ++j )
-    for( int i = 0; i < DIMS; ++i )
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
     {
+      constexpr int i = decltype(ici)::value;
+      constexpr int j = decltype(icj)::value;
       J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
-    }
+    } );
+
+    // for( int j = 0; j < DIMS; ++j )
+    // for( int i = 0; i < DIMS; ++i )
+    // {
+    //   J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
+    // }
 
   } );
 }
