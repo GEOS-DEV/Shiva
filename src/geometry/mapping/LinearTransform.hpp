@@ -141,10 +141,10 @@ namespace utilities
  * called in the same way as the other geometry objects with constant Jacobian.
  * @tparam REAL_TYPE The floating point type.
  */
-template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const &,//cell,
-                                                             typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )
-{}
+// template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
+// SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const &,//cell,
+//                                                              typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )
+// {}
 
 /**
  * @brief Calculates the Jacobian transformation of a cuboid from a parent cuboid
@@ -181,6 +181,45 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
 
   } );
 }
+
+
+
+
+template< typename REAL_TYPE,
+          typename INTERPOLATED_SHAPE,
+          typename QUADRATURE,
+          int ... QA >
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
+jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
+          typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & J )
+{
+  using Transform = std::remove_reference_t< decltype(transform) >;
+  using InterpolatedShape = typename Transform::InterpolatedShape;
+  constexpr int DIMS = Transform::numDims;
+
+  auto const & nodeCoords = transform.getData();
+  InterpolatedShape::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
+  {
+    constexpr double qcoords[3] = { ( QUADRATURE::template coordinate<QA>() )... };
+    constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
+    // dimensional loop from domain to codomain
+    // forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
+    // {
+    //   constexpr int i = decltype(ici)::value;
+    //   constexpr int j = decltype(icj)::value;
+    //   J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
+    // } );
+    for( int j = 0; j < DIMS; ++j )
+    for( int i = 0; i < DIMS; ++i )
+    {
+      J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
+    }
+
+  } );
+}
+
+
+
 
 /**
  * @brief Calculates the inverse Jacobian transformation of a cuboid from a
