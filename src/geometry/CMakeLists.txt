@@ -33,10 +33,13 @@ endforeach()
 #          DESTINATION include/geometry )
 
 install( TARGETS geometry
-         EXPORT shiva-targets
+         EXPORT shiva
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
 
-add_subdirectory( mapping/unitTests )
-add_subdirectory( shapes/unitTests )
+
+if( SHIVA_ENABLE_UNIT_TESTS )
+     add_subdirectory( mapping/unitTests )
+     add_subdirectory( shapes/unitTests )
+endif()

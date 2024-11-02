@@ -57,7 +57,7 @@ if( NOT is_submodule )
     #include( cmake/SetupTPL.cmake )
 else()
     if( NOT BLT_LOADED )
-        message( FATAL_ERROR "When using LvArray as a submodule you must have already loaded BLT." )
+        message( FATAL_ERROR "When using Shiva as a submodule you must have already loaded BLT." )
     endif()
     include( cmake/CMakeBasics.cmake )
 endif()
@@ -70,8 +70,12 @@ add_subdirectory( src )
 add_subdirectory( tpl/camp )
 target_compile_options( camp PRIVATE "-Wno-shadow") 
 
-# if( SHIVA_ENABLE_DOCS )
-     add_subdirectory( docs )
-# endif()
+configure_file(tpl/camp/include/camp/config.in.hpp
+  ${PROJECT_BINARY_DIR}/include/camp/config.hpp)
+
+
+if( SHIVA_ENABLE_DOCS )
+    add_subdirectory( docs )
+endif()
 
 
