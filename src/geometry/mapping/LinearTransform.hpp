@@ -198,9 +198,10 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
   constexpr int DIMS = Transform::numDims;
 
   auto const & nodeCoords = transform.getData();
+  constexpr double qcoords[3] = { ( QUADRATURE::template coordinate<QA>() )... };
+
   InterpolatedShape::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
   {
-    constexpr double qcoords[3] = { ( QUADRATURE::template coordinate<QA>() )... };
     constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
     // dimensional loop from domain to codomain
     forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
