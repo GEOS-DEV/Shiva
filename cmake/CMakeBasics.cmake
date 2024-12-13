@@ -6,6 +6,9 @@ else()
 
 endif()
 
+
+option( SHIVA_USE_CAMP "Enable CAMP" OFF )
+
 set( SHIVA_BUILD_OBJ_LIBS OFF CACHE BOOL "" )
 
 

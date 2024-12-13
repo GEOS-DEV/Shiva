@@ -20,9 +20,8 @@
 #include "common/ShivaMacros.hpp"
 
 /// @brief Macro to define whether or not to use camp.
-#define SHIVA_USE_CAMP
 #if defined(SHIVA_USE_CAMP)
-#include <camp/camp.hpp>
+#include <camp/tuple.hpp>
 #else
 
 #if defined(SHIVA_USE_CUDA)
