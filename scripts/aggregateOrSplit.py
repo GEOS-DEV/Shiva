@@ -10,80 +10,103 @@ class HeaderFileManager:
         self.included_list = []
         self.config_file = "ShivaConfig.hpp"
 
-    def create_dependency_graph(self, header):
+    def create_dependency_graph(self, header, include_paths=None):
+        """
+        Creates a dependency graph for the given header file, resolving dependencies from:
+        1. The same directory as the file being parsed.
+        2. A relative path specified in the #include directive.
+        3. A list of include paths (e.g., provided in the compile line).
+        """
+        if include_paths is None:
+            include_paths = []
+
+        if header in self.dependencies:
+            return  # Already processed
+
         self.dependencies[header] = set()
-        path = os.path.dirname(header)
-        with open(header, 'r') as file:
-            for line in file:
-                include_match = re.match(r'#include\s+"([^"]+)"', line)
-                if include_match:
-                    included_file = include_match.group(1)
+        base_path = os.path.dirname(os.path.abspath(header))  # Base directory of the current header
 
-                    if( included_file != self.config_file):
+        try:
+            with open(header, 'r') as file:
+                for line in file:
+                    include_match = re.match(r'#include\s+"([^"]+)"', line)
+                    if include_match:
+                        included_file = include_match.group(1)
 
-                        if( not os.path.dirname(included_file) ):
-                            included_file = os.path.join(path, included_file)
+                        if included_file != self.config_file:
+                            resolved_path = self.resolve_path(
+                                included_file, base_path, include_paths)
 
-                        self.dependencies[header].add(included_file)
+                            if resolved_path:
+                                self.dependencies[header].add(resolved_path)
 
-                        if os.path.exists(included_file):
-                            self.create_dependency_graph(included_file)
+                                if os.path.exists(resolved_path):
+                                    # Recursively process the resolved file
+                                    self.create_dependency_graph(resolved_path, include_paths)
+                                else:
+                                    raise FileNotFoundError(f"Dependency not found: {resolved_path}")
+                            else:
+                                raise FileNotFoundError(
+                                    f"Unable to resolve dependency: {included_file}")
+        except Exception as e:
+            print(f"Error processing {header}: {e}")
 
-            for dependency in self.dependencies[header]:
-                if dependency not in self.dependents:
-                    self.dependents[dependency] = set()
-                self.dependents[dependency].add(header)
-    
+        # Update dependents
+        for dependency in self.dependencies[header]:
+            if dependency not in self.dependents:
+                self.dependents[dependency] = set()
+            self.dependents[dependency].add(header)
+
+    def resolve_path(self, included_file, base_path, include_paths):
+        """
+        Resolves the path of an included file using the following order:
+        1. Check if the file exists in the same directory as the current file.
+        2. Check if the file exists using a relative path.
+        3. Check if the file exists in any of the provided include paths.
+        """
+        # 1. Check in the same directory
+        same_dir_path = os.path.join(base_path, included_file)
+        if os.path.exists(same_dir_path):
+            return os.path.normpath(same_dir_path)
+
+        # 2. Check using the relative path
+        relative_path = os.path.normpath(os.path.join(base_path, included_file))
+        if os.path.exists(relative_path):
+            return relative_path
+
+        # 3. Check in the include paths
+        for include_path in include_paths:
+            candidate_path = os.path.normpath(os.path.join(include_path, included_file))
+            if os.path.exists(candidate_path):
+                return candidate_path
+
+        return None  # Return None if no resolution was possible
+
     def generate_header_list(self):
+        remaining_dependencies = self.dependencies.copy()
+        size_of_remaining_dependencies = len(remaining_dependencies)
 
-        remainingDependencies = self.dependencies.copy()
+        while size_of_remaining_dependencies > 0:
+            local_included = []
 
-        sizeOfRemainingDependencies = len(remainingDependencies)
-        # print( "sizeOfRemainingDependencies: " + str(sizeOfRemainingDependencies) )
-
-        while sizeOfRemainingDependencies > 0:
-            localIncluded = []
-
-            # print( "\nRemaining Dependencies: "  )
-            # max_key_length = max(len(key) for key in remainingDependencies)
-            # for key, value in remainingDependencies.items():
-            #     print(f"{key.ljust(max_key_length)}: {value}")
-
-            for key in remainingDependencies:
-                if len( remainingDependencies[key] )==0:
+            for key in remaining_dependencies:
+                if len(remaining_dependencies[key]) == 0:
                     self.included_list.append(key)
-                    localIncluded.append(key)
+                    local_included.append(key)
 
-            for includedKey in localIncluded:
-                
-                del remainingDependencies[includedKey]
+            for included_key in local_included:
+                del remaining_dependencies[included_key]
 
-                for key in remainingDependencies:
-                    if includedKey in remainingDependencies[key]:
-                        remainingDependencies[key].remove(includedKey)
+                for key in remaining_dependencies:
+                    if included_key in remaining_dependencies[key]:
+                        remaining_dependencies[key].remove(included_key)
 
+            size_of_remaining_dependencies = len(remaining_dependencies)
 
-
-            # print( "\nlocalIncluded: " )
-            # print( localIncluded )
-            # print( self.included_list )
-
-            sizeOfRemainingDependencies = len(remainingDependencies)
-            # print( "\nsizeOfRemainingDependencies: " + str(sizeOfRemainingDependencies) )
-
-        # print( "Included List: ")
-        # for header in self.included_list:
-        #     print( header)
-
-
-
-
-    def aggregate_headers(self, headers, output_file):
-
+    def aggregate_headers(self, headers, output_file, include_paths=None):
         """
         Aggregates header files into a single file, resolving dependencies.
         """
-
         def process_header(header_path, output):
             """
             Processes a single header file, commenting out includes and pragmas.
@@ -108,70 +131,47 @@ class HeaderFileManager:
                         output.write(line)
                 output.write(f"// ===== End of {header_path} =====\n")
 
-
-
-
-
-
-
-
-
         with open(output_file, 'w') as output:
             for header in headers:
-                self.create_dependency_graph(header)
-                print( "Dependencies: ")
-                for key in self.dependencies:
-                    print( f"{key}: {self.dependencies[key]}")
+                self.create_dependency_graph(header, include_paths)
+            
+            for header in self.dependencies:
+                print( f"Header: {header} -> {self.dependencies[header]}\n")
+            print( "\n\n")
 
             self.generate_header_list()
-
-                # print( "Dependents: ")
-                # print(self.dependents)
+            print( f"Header List: {self.included_list}\n")
 
             for header in self.included_list:
                 process_header(header, output)
 
+    def split_aggregated_file(self, aggregated_file, output_dir):
+        """
+        Splits an aggregated file back into individual header files.
+        """
+        os.makedirs(output_dir, exist_ok=True)
+        current_file = None
+        output = None
 
+        with open(aggregated_file, 'r') as agg_file:
+            for line in agg_file:
+                start_match = re.match(r'// ===== Start of (.+) =====', line)
+                end_match = re.match(r'// ===== End of (.+) =====', line)
 
+                if start_match:
+                    if output:
+                        output.close()
+                    current_file = start_match.group(1)
+                    output = open(os.path.join(output_dir, current_file), 'w')
+                elif end_match:
+                    if output:
+                        output.close()
+                        output = None
+                elif output:
+                    output.write(line)
 
-
-
-def split_aggregated_file(self, aggregated_file, output_dir):
-    """
-    Splits an aggregated file back into individual header files.
-    Removes comment markers added during aggregation.
-    """
-    os.makedirs(output_dir, exist_ok=True)
-    current_file = None
-    output = None
-
-    with open(aggregated_file, 'r') as agg_file:
-        for line in agg_file:
-            start_match = re.match(r'// ===== Start of (.+) =====', line)
-            end_match = re.match(r'// ===== End of (.+) =====', line)
-
-            if start_match:
-                # Start a new header file
-                if output:
-                    output.close()
-                current_file = start_match.group(1)
-                output_path = os.path.join(output_dir, current_file)
-                os.makedirs(os.path.dirname(output_path), exist_ok=True)  # Ensure directories exist
-                output = open(output_path, 'w')
-            elif end_match:
-                # End the current header file
-                if output:
-                    output.close()
-                    output = None
-            elif output:
-                # Write the line to the current header file
-                # Remove comment markers from #include and #pragma once lines
-                uncommented_line = re.sub(r'^//\s*', '', line)  # Remove leading "// "
-                output.write(uncommented_line)
-
-    if output:
-        output.close()
-
+        if output:
+            output.close()
 
 # Command-line interface
 def main():
@@ -182,6 +182,7 @@ def main():
     aggregate_parser = subparsers.add_parser("aggregate", help="Aggregate header files into a single file.")
     aggregate_parser.add_argument("headers", nargs='+', help="List of header files to aggregate.")
     aggregate_parser.add_argument("output", help="Output file for the aggregated headers.")
+    aggregate_parser.add_argument("--include-paths", nargs='*', default=[os.getcwd()], help="List of include paths to resolve dependencies. Defaults to the current directory.")
 
     # Split command
     split_parser = subparsers.add_parser("split", help="Split an aggregated file into individual header files.")
@@ -192,7 +193,7 @@ def main():
     manager = HeaderFileManager()
 
     if args.command == "aggregate":
-        manager.aggregate_headers(args.headers, args.output)
+        manager.aggregate_headers(args.headers, args.output, args.include_paths)
     elif args.command == "split":
         manager.split_aggregated_file(args.aggregated_file, args.output_dir)
 
