@@ -98,29 +98,29 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: RHEL8.9-clang17-dbg (ubi8.9, clang-17.0.6, Debug)
-            DOCKER_REPOSITORY: geosx/ubi:8.9
+          - name: RHEL8.10-clang17-dbg (ubi8.10, clang-17.0.6, Debug)
+            DOCKER_REPOSITORY: geosx/ubi:8.10
             RUNS_ON: ubuntu-22.04
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Debug
 
-          - name: RHEL8.9-clang17-rel (ubi8.9, clang-17.0.6, Release)
-            DOCKER_REPOSITORY: geosx/ubi:8.9
+          - name: RHEL8.10-clang17-rel (ubi8.10, clang-17.0.6, Release)
+            DOCKER_REPOSITORY: geosx/ubi:8.10
             RUNS_ON: ubuntu-22.04
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
             CMAKE_BUILD_TYPE: Release
 
-          - name: RHEL8.9-gcc13-dbg (ubi8.9, gcc 13.2.1, Debug)
-            DOCKER_REPOSITORY: geosx/ubi:8.9
+          - name: RHEL8.10-gcc13-dbg (ubi8.10, gcc 13.2.1, Debug)
+            DOCKER_REPOSITORY: geosx/ubi:8.10
             RUNS_ON: ubuntu-22.04
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-13/root/bin/g++
             CMAKE_C_COMPILER: /opt/rh/gcc-toolset-13/root/bin/gcc
             CMAKE_BUILD_TYPE: Debug
 
-          - name: RHEL8.9-gcc13-rel (ubi8.9, gcc 13.2.1, Release)
-            DOCKER_REPOSITORY: geosx/ubi:8.9
+          - name: RHEL8.10-gcc13-rel (ubi8.10, gcc 13.2.1, Release)
+            DOCKER_REPOSITORY: geosx/ubi:8.10
             RUNS_ON: ubuntu-22.04
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-13/root/bin/g++
             CMAKE_C_COMPILER: /opt/rh/gcc-toolset-13/root/bin/gcc
@@ -198,8 +198,8 @@ jobs:
             NPROC: 4
             DOCKER_RUN_ARGS: "--cpus=4 --memory=64g --runtime=nvidia --gpus all"
 
-          - name: RHEL8.9-clang17-cuda12-rel (ubi8.9, clang-17.0.6, cuda-12.4.1, Release)
-            DOCKER_REPOSITORY: geosx/ubi:8.9-cuda12.4
+          - name: RHEL8.10-clang17-cuda12-rel (ubi8.10, clang-17.0.6, cuda-12.4.1, Release)
+            DOCKER_REPOSITORY: geosx/ubi:8.10-cuda12.8
             RUNS_ON: streak2
             CMAKE_CXX_COMPILER: clang++
             CMAKE_C_COMPILER: clang
@@ -209,8 +209,8 @@ jobs:
             NPROC: 4
             DOCKER_RUN_ARGS: "--cpus=4 --memory=64g --runtime=nvidia --gpus all"
 
-          - name: RHEL8.9-gcc13-cuda12-rel (ubi8.8, gcc 13.2.1, cuda-12.4.1, Release)
-            DOCKER_REPOSITORY: geosx/ubi:8.9-cuda12.4
+          - name: RHEL8.10-gcc13-cuda12-rel (ubi8.10, gcc 13.2.1, cuda-12.4.1, Release)
+            DOCKER_REPOSITORY: geosx/ubi:8.10-cuda12.8
             RUNS_ON: streak2
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-13/root/bin/g++
             CMAKE_C_COMPILER: /opt/rh/gcc-toolset-13/root/bin/gcc
