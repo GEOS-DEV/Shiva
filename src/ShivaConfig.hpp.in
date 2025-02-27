@@ -8,8 +8,8 @@
 
 #define SHIVA_VERSION_PATCHLEVEL @SHIVA_VERSION_PATCHLEVEL@
 
+#cmakedefine SHIVA_USE_CUDA
 
+#cmakedefine SHIVA_USE_HIP
 
 #cmakedefine SHIVA_USE_CALIPER
-
-#cmakedefine SHIVA_USE_CAMP

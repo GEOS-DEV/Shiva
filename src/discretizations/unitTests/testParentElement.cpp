@@ -12,7 +12,7 @@
  */
 
 
-#include "discretizations/finiteElementMethod/parentElements/ParentElement.hpp"
+#include "../finiteElementMethod/parentElements/ParentElement.hpp"
 #include "functions/bases/LagrangeBasis.hpp"
 #include "functions/spacing/Spacing.hpp"
 #include "geometry/shapes/NCube.hpp"

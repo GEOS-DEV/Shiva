@@ -20,13 +20,6 @@
 
 #include "ShivaConfig.hpp"
 
-#if defined(__CUDA_ARCH__)
-#define SHIVA_USE_CUDA
-#elif defined(__HIP_ARCH__)
-#define SHIVA_USE_HIP
-#endif
-
-
 #if defined( SHIVA_USE_HIP )
 #include <hip/hip_runtime.h>
 #endif
