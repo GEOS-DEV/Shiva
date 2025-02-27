@@ -13,6 +13,10 @@
 
 #pragma once
 
+#include "LinearTransform.hpp"
+#include "Scaling.hpp"
+#include "UniformScaling.hpp"
+
 namespace shiva
 {
 namespace geometry

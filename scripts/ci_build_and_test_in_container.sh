@@ -72,7 +72,7 @@ fi
 
 
 if [[ "$*" == *--build-exe* ]]; then
-  or_die make -j ${NPROC}
+  or_die make -j ${NPROC} VERBOSE=1
 
   if [[ "$*" != *--disable-unit-tests* ]]; then
     or_die ctest --output-on-failure -E "testUncrustifyCheck|testDoxygenCheck|testCppCheck|testClangTidy"
