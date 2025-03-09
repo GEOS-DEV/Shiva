@@ -109,28 +109,30 @@ SHIVA_HOST_DEVICE auto makeLinearTransform( REAL_TYPE const (&X)[8][3] )
                                       LagrangeBasis< double, 1, EqualSpacing >,
                                       LagrangeBasis< double, 1, EqualSpacing > > > cell;
 
-  typename decltype(cell)::SupportIndexType index;
+//  typename decltype(cell)::SupportIndexType index;
 
-  auto & transformData = cell.getData();
+//  auto & transformData = cell.getData();
 
-  forRange( index = {0, 0, 0}, [&transformData, &X] ( auto const & i )
-  {
-    int const a = i.data[0];
-    int const b = i.data[1];
-    int const c = i.data[2];
+  cell.setData( X );
 
-    for ( int j = 0; j < 3; ++j )
-    {
-      transformData( a, b, c, j ) = X[ a + 2 * b + 4 * c ][j];
-    }
-  } );
+  // forRange( index = {0, 0, 0}, [&transformData, &X] ( auto const & i )
+  // {
+  //   int const a = i.data[0];
+  //   int const b = i.data[1];
+  //   int const c = i.data[2];
+
+  //   for ( int j = 0; j < 3; ++j )
+  //   {
+  //     transformData( a, b, c, j ) = X[ a + 2 * b + 4 * c ][j];
+  //   }
+  // } );
 
   return cell;
 }
 
 void testConstructionAndSettersHelper()
 {
-  double * data = nullptr;
+  double * data = new double[8 * 3];
   pmpl::genericKernelWrapper( 8 * 3, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto const cell = makeLinearTransform( Xref );
@@ -166,7 +168,7 @@ void testConstructionAndSettersHelper()
       }
     }
   }
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 TEST( testLinearTransform, testConstructionAndSetters )
 {
@@ -176,7 +178,7 @@ TEST( testLinearTransform, testConstructionAndSetters )
 
 void testJacobianFunctionModifyLvalueRefArgHelper()
 {
-  double * data = nullptr;
+  double * data = new double[9 * 8];
   pmpl::genericKernelWrapper( 9 * 8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeLinearTransform( Xref );
@@ -205,7 +207,7 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
       }
     }
   }
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 
 TEST( testLinearTransform, testJacobianFunctionModifyLvalueRefArg )
@@ -216,7 +218,7 @@ TEST( testLinearTransform, testJacobianFunctionModifyLvalueRefArg )
 
 void testJacobianFunctionReturnByValueHelper()
 {
-  double * data = nullptr;
+  double * data = new double[9 * 8];
   pmpl::genericKernelWrapper( 9 * 8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeLinearTransform( Xref );
@@ -243,7 +245,7 @@ void testJacobianFunctionReturnByValueHelper()
       }
     }
   }
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 
 TEST( testLinearTransform, testJacobianFunctionReturnByValue )
@@ -254,7 +256,7 @@ TEST( testLinearTransform, testJacobianFunctionReturnByValue )
 
 void testInvJacobianFunctionModifyLvalueRefArgHelper()
 {
-  double * data = nullptr;
+  double * data = new double[10 * 8];
   pmpl::genericKernelWrapper( 10 * 8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeLinearTransform( Xref );
@@ -287,7 +289,7 @@ void testInvJacobianFunctionModifyLvalueRefArgHelper()
       }
     }
   }
-  pmpl::deallocateData( data );
+  delete[] data;
 
 }
 
@@ -299,7 +301,7 @@ TEST( testLinearTransform, testInvJacobianFunctionModifyLvalueRefArg )
 
 void testInvJacobianFunctionReturnByValueHelper()
 {
-  double * data = nullptr;
+  double * data = new double[10 * 8];
   pmpl::genericKernelWrapper( 10 * 8, data, [] SHIVA_DEVICE ( double * const kernelData )
   {
     auto cell = makeLinearTransform( Xref );
@@ -329,7 +331,7 @@ void testInvJacobianFunctionReturnByValueHelper()
       }
     }
   }
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 
 TEST( testLinearTransform, testInvJacobianFunctionReturnByValue )

@@ -23,17 +23,20 @@
 
 
 #include "ShivaMacros.hpp"
-
 namespace shiva
 {
 #if defined(SHIVA_USE_DEVICE)
   #if defined(SHIVA_USE_CUDA)
+    #define deviceMalloc( PTR, BYTES ) cudaMalloc( PTR, BYTES );
     #define deviceMallocManaged( PTR, BYTES ) cudaMallocManaged( PTR, BYTES );
     #define deviceDeviceSynchronize() cudaDeviceSynchronize();
+    #define deviceMemCpy( DST, SRC, BYTES, KIND ) cudaMemcpy( DST, SRC, BYTES, KIND );
     #define deviceFree( PTR ) cudaFree( PTR );
   #elif defined(SHIVA_USE_HIP)
+    #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
     #define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
     #define deviceDeviceSynchronize() hipDeviceSynchronize();
+    #define deviceMemCpy( DST, SRC, BYTES, KIND ) hipMemcpy( DST, SRC, BYTES, KIND );
     #define deviceFree( PTR ) hipFree( PTR );
   #endif
 #endif
@@ -93,6 +96,7 @@ void genericKernelWrapper( LAMBDA && func )
 }
 
 
+
 /**
  * @brief This function provides a generic kernel execution mechanism that can
  * be called on either host or device.
@@ -114,7 +118,7 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func, DATA_TYPE * const data )
  * @tparam DATA_TYPE The type of the data pointer.
  * @tparam LAMBDA The type of the lambda function to execute.
  * @param N The size of the data array.
- * @param data The data pointer to pass to the lambda function.
+ * @param hostData The data pointer to pass to the lambda function.
  * @param func The lambda function to execute.
  *
  * This function will allocate the data pointer on the device, execute the
@@ -122,16 +126,19 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func, DATA_TYPE * const data )
  * device.
  */
 template< typename DATA_TYPE, typename LAMBDA >
-void genericKernelWrapper( int const N, DATA_TYPE * & data, LAMBDA && func )
+void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && func )
 {
 
 #if defined(SHIVA_USE_DEVICE)
-  deviceMallocManaged( &data, N * sizeof(DATA_TYPE) );
-  genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ), data );
+  DATA_TYPE * deviceData;
+  deviceMalloc( &deviceData, N * sizeof(DATA_TYPE) );
+  genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ), deviceData );
   deviceDeviceSynchronize();
+  deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
+  deviceFree( deviceData );
 #else
-  data = new DATA_TYPE[N];
-  genericKernel( std::forward< LAMBDA >( func ), data );
+  SHIVA_UNUSED_VAR( N );
+  genericKernel( std::forward< LAMBDA >( func ), hostData );
 #endif
 }
 

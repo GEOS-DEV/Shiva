@@ -22,6 +22,9 @@
 
 using namespace shiva;
 
+  template struct shiva::EqualSpacing<float, 6>;
+
+
 
 
 template< typename ... T >
@@ -171,7 +174,7 @@ void testSpacingValuesAtCompileTime( INDEX_SEQUENCE iSeq )
 
 TEST( testSpacing, testEqualSpacingRT )
 {
-  testSpacingValuesAtRuntime< EqualSpacing, double, 2 >( );
+  testSpacingValuesAtRuntime< EqualSpacing, float, 2 >( );
   testSpacingValuesAtRuntime< EqualSpacing, double, 3 >( );
   testSpacingValuesAtRuntime< EqualSpacing, double, 4 >( );
   testSpacingValuesAtRuntime< EqualSpacing, double, 5 >( );
@@ -220,6 +223,9 @@ TEST( testSpacing, testGaussLobattoSpacingCT )
 
 int main( int argc, char * * argv )
 {
+  shiva::EqualSpacing<float, 6> junk;
+  std::cout<<junk.coordinate<0>()<<std::endl;
+
   ::testing::InitGoogleTest( &argc, argv );
   int const result = RUN_ALL_TESTS();
   return result;

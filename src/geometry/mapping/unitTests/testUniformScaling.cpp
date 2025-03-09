@@ -37,14 +37,14 @@ SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto makeUniformScaling( REAL_TYPE const 
 void testConstructionAndSettersHelper()
 {
   constexpr double h = 3.14;
-  double * data = nullptr;
+  double * data = new double[1];
   pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeUniformScaling( h );
     kdata[0] = cell.getData();
   } );
   EXPECT_EQ( data[0], h );
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 
 TEST( testUniformScaling, testConstructionAndSetters )
@@ -56,7 +56,7 @@ TEST( testUniformScaling, testConstructionAndSetters )
 void testJacobianFunctionModifyLvalueRefArgHelper()
 {
   constexpr double h = 3.14;
-  double * data = nullptr;
+  double * data = new double[1];
   pmpl::genericKernelWrapper( 1, data, [] SHIVA_HOST_DEVICE ( double * const kdata )
   {
     auto cell = makeUniformScaling( h );
@@ -65,7 +65,7 @@ void testJacobianFunctionModifyLvalueRefArgHelper()
     kdata[0] = J( 0 );
   } );
   EXPECT_EQ( data[0], ( h / 2 ) );
-  pmpl::deallocateData( data );
+  delete[] data;
 }
 TEST( testUniformScaling, testJacobianFunctionModifyLvalueRefArg )
 {

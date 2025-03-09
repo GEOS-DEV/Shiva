@@ -17,7 +17,7 @@ set( common_sources
      )
 
 if( ENABLE_HIP )
-    list( APPEND common_dependencies blt::hip )
+    list( APPEND common_dependencies blt::hip camp )
 endif()
 
 if( ENABLE_CUDA )
@@ -30,24 +30,28 @@ blt_add_library( NAME             common
                  DEPENDS_ON       ${common_dependencies}
                  )
 
+
+
 target_include_directories( common 
                             INTERFACE 
                             $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
-                            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src> )
+                            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
+                            $<INSTALL_INTERFACE:include> )
 
 target_include_directories( common 
                             SYSTEM INTERFACE
                             $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tpl/camp/include>
                             $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/tpl/camp/include> )
 
-
 install( FILES ${common_headers} 
          DESTINATION include/common )
 
 install( TARGETS common
-         EXPORT shiva-targets
+         EXPORT shiva
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
 
-add_subdirectory( unitTests )
+if( SHIVA_ENABLE_UNIT_TESTS )
+    add_subdirectory( unitTests )
+endif()

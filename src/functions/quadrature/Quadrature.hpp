@@ -21,6 +21,10 @@
 
 #include "../spacing/Spacing.hpp"
 
+#include <cassert>
+#include <limits>
+
+
 namespace shiva
 {
 
@@ -42,43 +46,23 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
   weight( int const index )
   {
+    static_assert( N >= 2 && N <= 4, "Unsupported number of points" );
     if constexpr ( N == 2 )
     {
       return 1.0;
     }
     else if constexpr ( N == 3 )
     {
-      if ( index == 0 ) return 0.5555555555555555555555555555555556; // 5.0 /
-                                                                     // 9.0;
-      if ( index == 1 ) return 0.8888888888888888888888888888888889; // 8.0 /
-                                                                     // 9.0;
-      if ( index == 2 ) return 0.5555555555555555555555555555555556; // 5.0 /
-                                                                     // 9.0;
+      assert( index >= 0 && index < 3 );
+      return 0.5555555555555555555555555555555556 +
+             0.3333333333333333333333333333333333 * ( index & 1 );
     }
     else if constexpr ( N == 4 )
     {
-      if ( index == 0 ) return 0.5 - 0.15214515486254614262693605077800059277; // (18.0
-                                                                               // -
-                                                                               // sqrt(30.0))
-                                                                               // /
-                                                                               // 36.0;
-      if ( index == 1 ) return 0.5 + 0.15214515486254614262693605077800059277; // (18.0
-                                                                               // +
-                                                                               // sqrt(30.0))
-                                                                               // /
-                                                                               // 36.0;
-      if ( index == 2 ) return 0.5 + 0.15214515486254614262693605077800059277; // (18.0
-                                                                               // +
-                                                                               // sqrt(30.0))
-                                                                               // /
-                                                                               // 36.0;
-      if ( index == 3 ) return 0.5 - 0.15214515486254614262693605077800059277; // (18.0
-                                                                               // -
-                                                                               // sqrt(30.0))
-                                                                               // /
-                                                                               // 36.0;
+      assert( index >= 0 && index < 4 );
+      return 0.5 + ( -1 + ( ( ( index + 1 ) & 2 ) ) ) * 0.15214515486254614262693605077800059277;
     }
-    return 0;
+    return std::numeric_limits<REAL_TYPE>::max();
   }
 
   /**
@@ -91,6 +75,7 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
   weight()
   {
+    static_assert( N >= 2 && N <= 4, "Unsupported number of points" );
     if constexpr ( N == 2 )
     {
       return 1.0;
@@ -130,7 +115,7 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
                                                                                          // /
                                                                                          // 36.0;
     }
-    return 0;
+    return std::numeric_limits<REAL_TYPE>::max();
   }
 };
 
@@ -153,30 +138,27 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
   weight( int const index )
   {
+    static_assert( N >= 2 && N <= 5, "Unsupported number of points" );
     if constexpr ( N == 2 )
     {
       return 1.0;
     }
     else if constexpr ( N == 3 )
     {
+      assert( index >= 0 && index < 3 );
       return 0.3333333333333333333333333333333333 + ( index & 1 );
     }
     else if constexpr ( N == 4 )
     {
-      if ( index == 0 ) return 0.1666666666666666666666666666666667;
-      if ( index == 1 ) return 0.8333333333333333333333333333333333;
-      if ( index == 2 ) return 0.8333333333333333333333333333333333;
-      if ( index == 3 ) return 0.1666666666666666666666666666666667;
+      assert( index >= 0 && index < 4 );
+      return 0.1666666666666666666666666666666667 + ( ((index + 1) & 2) >> 1 ) * 0.6666666666666666666666666666666667;
     }
     else if constexpr ( N == 5 )
     {
-      if ( index == 0 ) return 0.1;
-      if ( index == 1 ) return 0.5444444444444444444444444444444444;
-      if ( index == 2 ) return 0.7111111111111111111111111111111111;
-      if ( index == 3 ) return 0.5444444444444444444444444444444444;
-      if ( index == 4 ) return 0.1;
+      assert( index >= 0 && index < 5 );
+      return 0.1 + (index & 1) * 0.4444444444444444444444444444444444 + !( index - 2 ) * 0.6111111111111111111111111111111111;
     }
-    return 0;
+    return std::numeric_limits<REAL_TYPE>::max();
   }
 
   /**
@@ -190,6 +172,7 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
   weight()
   {
+    static_assert( N >= 2 && N <= 9, "Unsupported number of points" );
     if constexpr ( N == 2 )
     {
       return 1.0;
@@ -255,7 +238,7 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
       if constexpr ( INDEX == 7 ) return 0.16549536156081;
       if constexpr ( INDEX == 8 ) return 0.02777777777778;
     }
-    return 0;
+    return std::numeric_limits<REAL_TYPE>::max();
   }
 };
 

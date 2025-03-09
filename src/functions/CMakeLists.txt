@@ -1,5 +1,6 @@
 
 set( functions_headers
+     bases/BasisProduct.hpp
      bases/LagrangeBasis.hpp
      quadrature/Quadrature.hpp
      spacing/Spacing.hpp
@@ -18,14 +19,19 @@ blt_add_library( NAME             functions
                  DEPENDS_ON       ${functions_dependencies}
                  )
 
-install( FILES ${functions_headers} 
-         DESTINATION include/functions )
+foreach( _header ${functions_headers} )
+     get_filename_component( _header_dir ${_header} DIRECTORY )
+     install( FILES ${_header} 
+              DESTINATION include/functions/${_header_dir} )
+endforeach()
 
 install( TARGETS functions
-         EXPORT shiva-targets
+         EXPORT shiva
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
 
 
-add_subdirectory( unitTests )
+if( SHIVA_ENABLE_UNIT_TESTS )
+     add_subdirectory( unitTests )
+endif()

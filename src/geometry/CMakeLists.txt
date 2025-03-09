@@ -23,14 +23,23 @@ blt_add_library( NAME             geometry
                  DEPENDS_ON       ${geometry_dependencies}
                  )
 
-install( FILES ${geometry_headers} 
-         DESTINATION include/geometry )
+foreach( _header ${geometry_headers} )
+     get_filename_component( _header_dir ${_header} DIRECTORY )
+     install( FILES ${_header} 
+              DESTINATION include/geometry/${_header_dir} )
+endforeach()
+            
+# install( FILES ${geometry_headers} 
+#          DESTINATION include/geometry )
 
 install( TARGETS geometry
-         EXPORT shiva-targets
+         EXPORT shiva
          ARCHIVE DESTINATION lib
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib ) 
 
-add_subdirectory( mapping/unitTests )
-add_subdirectory( shapes/unitTests )
+
+if( SHIVA_ENABLE_UNIT_TESTS )
+     add_subdirectory( mapping/unitTests )
+     add_subdirectory( shapes/unitTests )
+endif()
