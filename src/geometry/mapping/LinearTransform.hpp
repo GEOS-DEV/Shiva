@@ -141,10 +141,10 @@ namespace utilities
  * called in the same way as the other geometry objects with constant Jacobian.
  * @tparam REAL_TYPE The floating point type.
  */
-template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
-SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const &,//cell,
-                                                             typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )
-{}
+// template< typename REAL_TYPE, typename INTERPOLATED_SHAPE >
+// SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const &,//cell,
+//                                                              typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType::type & )
+// {}
 
 /**
  * @brief Calculates the Jacobian transformation of a cuboid from a parent cuboid
@@ -181,6 +181,66 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
 
   } );
 }
+
+
+
+/**
+ * @brief Calculates the Jacobian transformation of a LinearTransform
+ * @tparam QUADRATURE The quadrature type that contains the quadrature strategy
+ * @tparam QA The quadrature indices
+ * @tparam REAL_TYPE The floating point type.
+ * @tparam INTERPOLATED_SHAPE The interpolated shape type. (i.e. the geometry and basis functions)
+ * @param[in] transform The LinearTransform object
+ * @param[out] J The Jacobian transformation.
+ * 
+ * This function calculates the Jacobian transformation of a LinearTransform object
+ * using the quadrature strategy and indices provided. The Jacobian transformation
+ * is calculated by looping over the support points of the interpolated shape and
+ * calculating the gradient of the basis functions at the quadrature points. The
+ * Jacobian transformation is then calculated by multiplying the gradient of the
+ * basis functions by the node coordinates of the LinearTransform object.
+ */
+template< typename QUADRATURE,
+          int ... QA,
+          typename REAL_TYPE,
+          typename INTERPOLATED_SHAPE >
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
+jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
+          typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & J )
+{
+  using Transform = std::remove_reference_t< decltype(transform) >;
+  using InterpolatedShape = typename Transform::InterpolatedShape;
+  constexpr int DIMS = Transform::numDims;
+
+  auto const & nodeCoords = transform.getData();
+  constexpr double qcoords[3] = { ( QUADRATURE::template coordinate<QA>() )... };
+
+  InterpolatedShape::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
+  {
+    constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
+
+    // dimensional loop from domain to codomain
+    #if 0
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
+    {
+      constexpr int i = decltype(ici)::value;
+      constexpr int j = decltype(icj)::value;
+      J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
+    } );
+    #else
+    for( int j = 0; j < DIMS; ++j )
+    {
+      for( int i = 0; i < DIMS; ++i )
+      {
+        J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
+      }
+    }
+    #endif
+  } );
+}
+
+
+
 
 /**
  * @brief Calculates the inverse Jacobian transformation of a cuboid from a
