@@ -32,6 +32,7 @@ class HeaderFileManager:
                     include_match = re.match(r'#include\s+"([^"]+)"', line)
                     if include_match:
                         included_file = include_match.group(1)
+                        print( f"Processing include: {included_file}\n")
 
                         if included_file != self.config_file:
                             resolved_path = self.resolve_path(
@@ -85,13 +86,17 @@ class HeaderFileManager:
     def generate_header_list(self):
         remaining_dependencies = self.dependencies.copy()
         size_of_remaining_dependencies = len(remaining_dependencies)
+        unique_files = set()  # To track unique files based on absolute paths
 
         while size_of_remaining_dependencies > 0:
             local_included = []
 
             for key in remaining_dependencies:
                 if len(remaining_dependencies[key]) == 0:
-                    self.included_list.append(key)
+                    abs_path = os.path.abspath(key)
+                    if abs_path not in unique_files:
+                        self.included_list.append(key)
+                        unique_files.add(abs_path)
                     local_included.append(key)
 
             for included_key in local_included:
