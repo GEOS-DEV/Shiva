@@ -184,7 +184,22 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
 
 
 
-
+/**
+ * @brief Calculates the Jacobian transformation of a LinearTransform
+ * @tparam QUADRATURE The quadrature type that contains the quadrature strategy
+ * @tparam QA The quadrature indices
+ * @tparam REAL_TYPE The floating point type.
+ * @tparam INTERPOLATED_SHAPE The interpolated shape type. (i.e. the geometry and basis functions)
+ * @param[in] transform The LinearTransform object
+ * @param[out] J The Jacobian transformation.
+ * 
+ * This function calculates the Jacobian transformation of a LinearTransform object
+ * using the quadrature strategy and indices provided. The Jacobian transformation
+ * is calculated by looping over the support points of the interpolated shape and
+ * calculating the gradient of the basis functions at the quadrature points. The
+ * Jacobian transformation is then calculated by multiplying the gradient of the
+ * basis functions by the node coordinates of the LinearTransform object.
+ */
 template< typename QUADRATURE,
           int ... QA,
           typename REAL_TYPE,
@@ -203,20 +218,24 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
   InterpolatedShape::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
   {
     constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
+
     // dimensional loop from domain to codomain
+    #if 0
     forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
     {
       constexpr int i = decltype(ici)::value;
       constexpr int j = decltype(icj)::value;
       J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
     } );
-
-    // for( int j = 0; j < DIMS; ++j )
-    // for( int i = 0; i < DIMS; ++i )
-    // {
-    //   J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
-    // }
-
+    #else
+    for( int j = 0; j < DIMS; ++j )
+    {
+      for( int i = 0; i < DIMS; ++i )
+      {
+        J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
+      }
+    }
+    #endif
   } );
 }
 
