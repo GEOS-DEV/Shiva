@@ -65,13 +65,15 @@ endif()
 include( cmake/Macros.cmake )
 include( cmake/Config.cmake )
 
-
 add_subdirectory( src )
-add_subdirectory( tpl/camp )
-target_compile_options( camp PRIVATE "-Wno-shadow") 
 
-configure_file(tpl/camp/include/camp/config.in.hpp
-  ${PROJECT_BINARY_DIR}/include/camp/config.hpp)
+if( SHIVA_ENABLE_CAMP )
+    add_subdirectory( tpl/camp )
+    target_compile_options( camp PRIVATE "-Wno-shadow") 
+
+    configure_file(tpl/camp/include/camp/config.in.hpp
+      ${PROJECT_BINARY_DIR}/include/camp/config.hpp)
+endif()
 
 
 if( SHIVA_ENABLE_DOCS )
