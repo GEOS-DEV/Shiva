@@ -13,3 +13,5 @@
 /* #undef SHIVA_USE_HIP */
 
 /* #undef SHIVA_USE_CALIPER */
+
+/* #undef SHIVA_USE_CAMP */

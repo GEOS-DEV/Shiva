@@ -13,3 +13,5 @@
 #cmakedefine SHIVA_USE_HIP
 
 #cmakedefine SHIVA_USE_CALIPER
+
+#cmakedefine SHIVA_USE_CAMP

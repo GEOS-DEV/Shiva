@@ -34,14 +34,14 @@ blt_add_library( NAME             common
 
 target_include_directories( common 
                             INTERFACE 
-                            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
-                            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src>
+                            $<BUILD_INTERFACE:${SHIVA_BINARY_DIR}/include>
+                            $<BUILD_INTERFACE:${SHIVA_SOURCE_DIR}/src>
                             $<INSTALL_INTERFACE:include> )
 
 target_include_directories( common 
                             SYSTEM INTERFACE
-                            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tpl/camp/include>
-                            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/tpl/camp/include> )
+                            $<BUILD_INTERFACE:${SHIVA_SOURCE_DIR}/tpl/camp/include>
+                            $<BUILD_INTERFACE:${SHIVA_BINARY_DIR}/tpl/camp/include> )
 
 install( FILES ${common_headers} 
          DESTINATION include/common )
