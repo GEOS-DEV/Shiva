@@ -132,6 +132,7 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
 #if defined(SHIVA_USE_DEVICE)
   DATA_TYPE * deviceData;
   deviceMalloc( &deviceData, N * sizeof(DATA_TYPE) );
+  deviceMemCpy( deviceData, hostData, N * sizeof(DATA_TYPE), cudaMemcpyHostToDevice );
   genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ), deviceData );
   deviceDeviceSynchronize();
   deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
