@@ -100,12 +100,9 @@ SHIVA_HOST_DEVICE __noinline__
 void shivaAssertionFailed( const char * file, int line )
 {
   printf( "Assertion failed [%s:%d]: \n", file, line );
-  __trap();
+  __builtin_trap();
 }
 
-#if 1 
-SHIVA_ASSERT_MSG( cond, ... )        
-#else
 #define SHIVA_ASSERT_MSG( cond, ... )                                         \
 do {                                                                          \
  if ( !(cond)) {                                                              \
@@ -116,7 +113,7 @@ do {                                                                          \
    else {}                                                                    \
  }                                                                            \
 } while ( 0 )
-#endif
+
 #else // Host code (CPU code)
 
 #include <cstdio>
