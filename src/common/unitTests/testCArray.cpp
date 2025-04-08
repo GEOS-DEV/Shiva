@@ -270,20 +270,26 @@ TEST( testCArray, testParenthesesOperator )
 }
 
 
-TEST( testCArray, testBoundsCheckParenthesesOperator1d )
+template< int DIM >
+void testBoundsCheckParenthesesOperator1dHelper( int const ilower, int const iupper )
 {
-  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
+  pmpl::genericKernelWrapper( [ilower,iupper] SHIVA_DEVICE ()
   {
-    CArrayNd< double, 2 > array{ 0.0 };
-    array( 0 ) = 1.0;
-    array( 1 ) = 2.0;
-    EXPECT_DEATH( {array( 2 );}, "Index out of bounds:" );
-    EXPECT_DEATH( {array( -1 );}, "Index out of bounds:" );
+    CArrayNd< double, DIM > array{ 0.0 };
+    for( int i=ilower; i<iupper; ++i )
+    {
+      array( i ) = i;
+    }
   } );
 }
+TEST( testCArray, testBoundsCheckParenthesesOperator1d )
+{
+  testBoundsCheckParenthesesOperator1dHelper<2>( 0, 1 );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper<2>(-1,0);}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper<2>(1,2);}, "Index out of bounds:" );
+}
 
-
-TEST( testCArray, testBoundsCheckParenthesesOperator2d )
+void testBoundsCheckParenthesesOperator2dHelper()
 {
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
   {
@@ -315,8 +321,13 @@ TEST( testCArray, testBoundsCheckParenthesesOperator2d )
 
   } );
 }
+TEST( testCArray, testBoundsCheckParenthesesOperator2d )
+{
+  testBoundsCheckParenthesesOperator2dHelper();
+}
 
-TEST( testCArray, testBoundsCheckParenthesesOperator3d )
+
+void testBoundsCheckParenthesesOperator3dHelper()
 {
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
   {
@@ -367,8 +378,12 @@ TEST( testCArray, testBoundsCheckParenthesesOperator3d )
 
   } );
 }
+TEST( testCArray, testBoundsCheckParenthesesOperator3d )
+{
+  testBoundsCheckParenthesesOperator3dHelper();
+}
 
-TEST( testCArray, testSquareBracketOperator1D )
+void testSquareBracketOperator1DHelper()
 {
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
   {
@@ -382,9 +397,13 @@ TEST( testCArray, testSquareBracketOperator1D )
     EXPECT_EQ( array( 1 ), 2.0 );
   } );
 }
+TEST( testCArray, testSquareBracketOperator1D )
+{
+  testSquareBracketOperator1DHelper();
+}
 
 
-TEST( testCArray, testSquareBracketOperator2D )
+void testSquareBracketOperator2DHelper()
 {
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
   {
@@ -441,8 +460,11 @@ TEST( testCArray, testSquareBracketOperator2D )
       EXPECT_DEATH( {cslice1[dims[1]];}, "Index out of bounds:" );
 
     }
-
   } );
+}
+TEST( testCArray, testSquareBracketOperator2D )
+{
+  testSquareBracketOperator2DHelper();
 }
 
 int main( int argc, char * * argv )

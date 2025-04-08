@@ -185,13 +185,13 @@ struct CArray
   {
     static_assert( sizeof...(DIMS) >= 1, "operator[] is only valid for sizeof...(DIMS) > 1" );
 
-#if defined( SHIVA_USE_BOUNDS_CHECK )
-    constexpr int DIM = CArrayHelper::IntPeeler< DIMS... >::first;
-    SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
-                      "Index out of bounds: 0 < index(%jd) < dim(%jd)",
-                      static_cast< intmax_t >( index ),
-                      static_cast< intmax_t >( DIM ) );
-#endif
+// #if defined( SHIVA_USE_BOUNDS_CHECK )
+//     constexpr int DIM = CArrayHelper::IntPeeler< DIMS... >::first;
+//     SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
+//                       "Index out of bounds: 0 < index(%jd) < dim(%jd)",
+//                       static_cast< intmax_t >( index ),
+//                       static_cast< intmax_t >( DIM ) );
+// #endif
 
     if constexpr ( sizeof...(DIMS) > 1 )
     {
@@ -215,13 +215,13 @@ struct CArray
   {
     static_assert( sizeof...(DIMS) >= 1, "operator[] is only valid for sizeof...(DIMS) > 1" );
 
-#if defined( SHIVA_USE_BOUNDS_CHECK )
-    constexpr int DIM = CArrayHelper::IntPeeler< DIMS... >::first;
-    SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
-                      "Index out of bounds: 0 < index(%jd) < dim(%jd)",
-                      static_cast< intmax_t >( index ),
-                      static_cast< intmax_t >( DIM ) );
-#endif
+// #if defined( SHIVA_USE_BOUNDS_CHECK )
+//     constexpr int DIM = CArrayHelper::IntPeeler< DIMS... >::first;
+//     SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
+//                       "Index out of bounds: 0 < index(%jd) < dim(%jd)",
+//                       static_cast< intmax_t >( index ),
+//                       static_cast< intmax_t >( DIM ) );
+// #endif
 
 
     if constexpr ( sizeof...(DIMS) > 1 )
