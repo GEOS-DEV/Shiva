@@ -27,4 +27,5 @@ blt_append_custom_compiler_flag( FLAGS_VAR CMAKE_CXX_FLAGS_DEBUG
                                  CLANG "-fstandalone-debug"
                                 )
 
+
 set( CAMP_ENABLE_TESTS OFF CACHE BOOL "")

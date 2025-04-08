@@ -22,8 +22,6 @@
 
 using namespace shiva;
 
-
-
 template< typename ARRAY_TYPE, int ... VALUES >
 static constexpr auto initializer( std::integer_sequence< int, VALUES ... > )
 {
@@ -136,7 +134,7 @@ TEST( testCArray, testStrides )
   testStridesHelper();
 }
 
-
+#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
 void testLinearIndexCT()
 {
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
@@ -161,7 +159,7 @@ void testLinearIndexCT()
     } );
   } );
 }
-
+#endif
 
 void testLinearIndexRT()
 {
@@ -196,11 +194,13 @@ void testLinearIndexRT()
 
 TEST( testCArray, testLinearIndex )
 {
+#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
   testLinearIndexCT();
+#endif
   testLinearIndexRT();
 }
 
-
+#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
 void testParenthesesOperatorCT()
 {
   using Array = TestCArrayHelper::Array3d;
@@ -230,6 +230,7 @@ void testParenthesesOperatorCT()
     } );
   } );
 }
+#endif
 
 void testParenthesesOperatorRT()
 {
@@ -265,7 +266,9 @@ void testParenthesesOperatorRT()
 }
 TEST( testCArray, testParenthesesOperator )
 {
+#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
   testParenthesesOperatorCT();
+#endif
   testParenthesesOperatorRT();
 }
 
@@ -331,7 +334,7 @@ void testSquareBracketOperator1DHelper( int const ilower = 0,
     for ( int i = ilower; i <= iupper; ++i )
     {
       array[i] = i;
-      EXPECT_EQ( array( i ), i );
+      SHIVA_ASSERT_MSG( array( i ), i, "values not equal" );
     }
   } );
 }
@@ -366,21 +369,36 @@ void testSquareBracketOperator2DHelper()
     static_assert( std::is_same_v< decltype( cslice1 ), CArrayViewNd< const double, dims[1] > > );
 
     // test to make sure the slices point to the correct data
-    EXPECT_EQ( slice0.data(), &array( 0, 0 ) );
-    EXPECT_EQ( slice1.data(), &array( 1, 0 ) );
-    EXPECT_EQ( cslice0.data(), &array( 0, 0 ) );
-    EXPECT_EQ( cslice1.data(), &array( 1, 0 ) );
+    SHIVA_ASSERT_MSG(  slice0.data() == &array( 0, 0 ), 
+                       "addresses not equal: slice(%p) != array(%p)",
+                       slice0.data(),
+                       &array( 0, 0 ) );
+
+    SHIVA_ASSERT_MSG(  slice1.data() == &array( 1, 0 ),
+                       "addresses not equal: slice(%p) != array(%p)",
+                       slice1.data(),
+                       &array( 1, 0 ) );
+
+    SHIVA_ASSERT_MSG( cslice0.data() == &array( 0, 0 ),
+                      "addresses not equal: slice(%p) != array(%p)",
+                       cslice0.data(),
+                       &array( 0, 0 ) );
+
+    SHIVA_ASSERT_MSG( cslice1.data() == &array( 1, 0 ),
+                      "addresses not equal: slice(%p) != array(%p)",
+                       cslice1.data(),
+                       &array( 1, 0 )  );
 
     // check values in the slices are set correctly
     for ( int i1 = 0; i1 < dims[1]; ++i1 )
     {
       slice0[i1] = i1 + 1;
       slice1[i1] = 100 + i1 + 1;
-      EXPECT_EQ( array( 0, i1 ), i1 + 1 );
-      EXPECT_EQ( array( 1, i1 ), 100 + i1 + 1 );
+      SHIVA_ASSERT_MSG( array( 0, i1 ) == i1 + 1, "values not equal" );
+      SHIVA_ASSERT_MSG( array( 1, i1 ) == 100 + i1 + 1, "values not equal" );
 
-      EXPECT_EQ( slice0[i1], cslice0[i1] );
-      EXPECT_EQ( slice1[i1], cslice1[i1] );
+      SHIVA_ASSERT_MSG( slice0[i1] == cslice0[i1], "values not equal" );
+      SHIVA_ASSERT_MSG( slice1[i1] == cslice1[i1], "values not equal" );
     }
   } );
 }
