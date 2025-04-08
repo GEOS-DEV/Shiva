@@ -100,32 +100,36 @@ SHIVA_HOST_DEVICE __noinline__
 void shivaAssertionFailed( const char * file, int line )
 {
   printf( "Assertion failed [%s:%d]: \n", file, line );
-  asm ("trap;");
+  __trap();
 }
-    #define SHIVA_ASSERT_MSG( cond, ... ) //\
-                                          //do { \
-                                          // if ( !(cond)) { \
-                                          //   if ( !__builtin_is_constant_evaluated() ) \
-                                          //   {                                                  \
-                                          //     shivaAssertionFailed( __FILE__, __LINE__ ); \
-                                          //   } \
-                                          //   else {}\
-                                          // } \
-                                          //} while ( 0 )
 
+#if 1 
+SHIVA_ASSERT_MSG( cond, ... )        
+#else
+#define SHIVA_ASSERT_MSG( cond, ... )                                         \
+do {                                                                          \
+ if ( !(cond)) {                                                              \
+   if ( !__builtin_is_constant_evaluated() )                                  \
+   {                                                                          \
+     shivaAssertionFailed( __FILE__, __LINE__ );                              \
+   }                                                                          \
+   else {}                                                                    \
+ }                                                                            \
+} while ( 0 )
+#endif
 #else // Host code (CPU code)
 
-  #include <cstdio>
-  #include <cstdlib>
+#include <cstdio>
+#include <cstdlib>
 
-    #define SHIVA_ASSERT_MSG( cond, ... ) \
-            do { \
-              if ( !(cond)) { \
-                fprintf( stderr, "Assertion failed [%s:%d]: ", __FILE__, __LINE__ ); \
-                fprintf( stderr, __VA_ARGS__ );                                 \
-                fprintf( stderr, "\n" );                                        \
-                std::abort(); \
-              } \
-            } while ( 0 )
+#define SHIVA_ASSERT_MSG( cond, ... ) \
+do { \
+  if ( !(cond)) { \
+    fprintf( stderr, "Assertion failed [%s:%d]: ", __FILE__, __LINE__ ); \
+    fprintf( stderr, __VA_ARGS__ );                                 \
+    fprintf( stderr, "\n" );                                        \
+    std::abort(); \
+  } \
+} while ( 0 )
 
 #endif
