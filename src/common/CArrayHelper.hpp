@@ -21,8 +21,8 @@
 
 #include "common/ShivaMacros.hpp"
 #include <utility>
-
-
+#include <cstdint>
+#include <cinttypes>
 
 namespace shiva
 {
