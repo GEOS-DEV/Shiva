@@ -271,12 +271,13 @@ TEST( testCArray, testParenthesesOperator )
 
 
 template< int DIM >
-void testBoundsCheckParenthesesOperator1dHelper( int const ilower, int const iupper )
+void testBoundsCheckParenthesesOperator1dHelper( int const ilower = 0, 
+                                                 int const iupper = DIM - 1 )
 {
   pmpl::genericKernelWrapper( [ilower,iupper] SHIVA_DEVICE ()
   {
     CArrayNd< double, DIM > array{ 0.0 };
-    for( int i=ilower; i<iupper; ++i )
+    for( int i=ilower; i<=iupper; ++i )
     {
       array( i ) = i;
     }
@@ -284,122 +285,61 @@ void testBoundsCheckParenthesesOperator1dHelper( int const ilower, int const iup
 }
 TEST( testCArray, testBoundsCheckParenthesesOperator1d )
 {
-  testBoundsCheckParenthesesOperator1dHelper<2>( 0, 1 );
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper<2>(-1,0);}, "Index out of bounds:" );
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper<2>(1,2);}, "Index out of bounds:" );
+  testBoundsCheckParenthesesOperator1dHelper<2>();
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper<2>(-1,-1);}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper<2>(2,2);}, "Index out of bounds:" );
 }
 
-void testBoundsCheckParenthesesOperator2dHelper()
+template< int DIM0 = 2, int DIM1 = 4 >
+void testBoundsCheckParenthesesOperator2dHelper( int const ilower = 0, 
+                                                 int const iupper = DIM0 - 1, 
+                                                 int const jlower = 0, 
+                                                 int const jupper = DIM1 - 1 )
 {
-  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
+  pmpl::genericKernelWrapper( [ilower,iupper,jlower,jupper] SHIVA_DEVICE ()
   {
-    constexpr int dims[2] = { 2, 4 };
-    CArrayNd< double, dims[0], dims[1] > array{ 0.0 };
-
-    for ( int i0 = 0; i0 < dims[0]; ++i0 )
+    CArrayNd< double, DIM0, DIM1 > array{ 0.0 };
+    for ( int i = ilower; i <= iupper; ++i )
     {
-      for ( int i1 = 0; i1 < dims[1]; ++i1 )
+      for ( int j = jlower; j <= jupper; ++j )
       {
-        array( i0, i1 ) = 0.0;
+        array( i, j ) = i * DIM1 + j;
       }
     }
-
-    for ( int i0 = 0; i0 < dims[0]; ++i0 )
-    {
-      EXPECT_DEATH( {array( i0, -1 );}, "Index out of bounds:" );
-      EXPECT_DEATH( {array( i0, dims[1] );}, "Index out of bounds:" );
-    }
-
-    for ( int i1 = 0; i1 < dims[1]; ++i1 )
-    {
-      EXPECT_DEATH( {array( -1, i1 );}, "Index out of bounds:" );
-      EXPECT_DEATH( {array( dims[0], i1 );}, "Index out of bounds:" );
-    }
-
-    EXPECT_DEATH( {array( -1, -1 );}, "Index out of bounds:" );
-    EXPECT_DEATH( {array( dims[0], dims[1] );}, "Index out of bounds:" );
-
   } );
 }
 TEST( testCArray, testBoundsCheckParenthesesOperator2d )
 {
   testBoundsCheckParenthesesOperator2dHelper();
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper(-1,-1,0,3);}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper(2,2,0,3);}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper(0,1,-1,-1);}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper(0,1,4,4);}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper(-1,-1,-1,-1);}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper(-1,-1,4,4);}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper(2,2,-1,-1);}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper(2,2,4,4);}, "Index out of bounds:" );
 }
 
-
-void testBoundsCheckParenthesesOperator3dHelper()
+template< int DIM = 3 >
+void testSquareBracketOperator1DHelper( int const ilower = 0, 
+                                        int const iupper = DIM - 1 )
 {
-  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
+  pmpl::genericKernelWrapper( [ilower, iupper] SHIVA_DEVICE ()
   {
-    constexpr int dims[3] = { 2, 4, 3 };
-    CArrayNd< double, dims[0], dims[1], dims[2] > array{ 0.0 };
-
-    for ( int i0 = 0; i0 < dims[0]; ++i0 )
+    CArrayNd< double, DIM > array{ 0.0 };
+    for ( int i = ilower; i <= iupper; ++i )
     {
-      for ( int i1 = 0; i1 < dims[1]; ++i1 )
-      {
-        for ( int i2 = 0; i2 < dims[2]; ++i2 )
-        {
-          array( i0, i1, i2 ) = 0.0;
-        }
-      }
+      array[i] = i;
+      EXPECT_EQ( array( i ), i );
     }
-
-    for ( int i1 = 0; i1 < dims[1]; ++i1 )
-    {
-      for ( int i2 = 0; i2 < dims[2]; ++i2 )
-      {
-        EXPECT_DEATH( {array( -1, i1, i2 );}, "Index out of bounds:" );
-        EXPECT_DEATH( {array( dims[0], i1, i2 );}, "Index out of bounds:" );
-      }
-    }
-
-    for ( int i0 = 0; i0 < dims[0]; ++i0 )
-    {
-      for ( int i2 = 0; i2 < dims[2]; ++i2 )
-      {
-        EXPECT_DEATH( {array( i0, -1, i2 );}, "Index out of bounds:" );
-        EXPECT_DEATH( {array( i0, dims[1], i2 );}, "Index out of bounds:" );
-      }
-    }
-
-    for ( int i0 = 0; i0 < dims[0]; ++i0 )
-    {
-      for ( int i1 = 0; i1 < dims[1]; ++i1 )
-      {
-        EXPECT_DEATH( {array( i0, i1, -1 );}, "Index out of bounds:" );
-        EXPECT_DEATH( {array( i0, i1, dims[2] );}, "Index out of bounds:" );
-      }
-    }
-
-
-    EXPECT_DEATH( {array( -1, -1, -1 );}, "Index out of bounds:" );
-    EXPECT_DEATH( {array( dims[0], dims[1], dims[2] );}, "Index out of bounds:" );
-
-  } );
-}
-TEST( testCArray, testBoundsCheckParenthesesOperator3d )
-{
-  testBoundsCheckParenthesesOperator3dHelper();
-}
-
-void testSquareBracketOperator1DHelper()
-{
-  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
-  {
-    CArrayNd< double, 2 > array{ 0.0 };
-    array[0] = 1.0;
-    array[1] = 2.0;
-    EXPECT_DEATH( {array[2];}, "Index out of bounds:" );
-    EXPECT_DEATH( {array[-1];}, "Index out of bounds:" );
-
-    EXPECT_EQ( array( 0 ), 1.0 );
-    EXPECT_EQ( array( 1 ), 2.0 );
   } );
 }
 TEST( testCArray, testSquareBracketOperator1D )
 {
   testSquareBracketOperator1DHelper();
+  EXPECT_DEATH( {testSquareBracketOperator1DHelper<2>(-1,-1);}, "Index out of bounds:" );
+  EXPECT_DEATH( {testSquareBracketOperator1DHelper<2>(3,3);}, "Index out of bounds:" );
 }
 
 
@@ -431,9 +371,6 @@ void testSquareBracketOperator2DHelper()
     EXPECT_EQ( cslice0.data(), &array( 0, 0 ) );
     EXPECT_EQ( cslice1.data(), &array( 1, 0 ) );
 
-    EXPECT_DEATH( {array[-1];}, "Index out of bounds:" );
-    EXPECT_DEATH( {array[dims[0]];}, "Index out of bounds:" );
-
     // check values in the slices are set correctly
     for ( int i1 = 0; i1 < dims[1]; ++i1 )
     {
@@ -444,21 +381,6 @@ void testSquareBracketOperator2DHelper()
 
       EXPECT_EQ( slice0[i1], cslice0[i1] );
       EXPECT_EQ( slice1[i1], cslice1[i1] );
-    }
-
-    // check bounds checking for slices works correctly
-    for ( int i1 = 0; i1 < dims[1]; ++i1 )
-    {
-      EXPECT_DEATH( {slice0[-1];}, "Index out of bounds:" );
-      EXPECT_DEATH( {slice0[dims[1]];}, "Index out of bounds:" );
-      EXPECT_DEATH( {slice1[-1];}, "Index out of bounds:" );
-      EXPECT_DEATH( {slice1[dims[1]];}, "Index out of bounds:" );
-
-      EXPECT_DEATH( {cslice0[-1];}, "Index out of bounds:" );
-      EXPECT_DEATH( {cslice0[dims[1]];}, "Index out of bounds:" );
-      EXPECT_DEATH( {cslice1[-1];}, "Index out of bounds:" );
-      EXPECT_DEATH( {cslice1[dims[1]];}, "Index out of bounds:" );
-
     }
   } );
 }
