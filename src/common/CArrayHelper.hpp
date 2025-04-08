@@ -20,6 +20,7 @@
 
 
 #include "common/ShivaMacros.hpp"
+#include "common/types.hpp"
 #include <utility>
 #include <cstdint>
 #include <cinttypes>
@@ -198,6 +199,25 @@ struct Peeler
 {
   /// The type of the first value in the pack.
   using type = T;
+  using types = tuple< Ts ... >;
+};
+
+template< int INT, int ... INTS >
+struct IntPeeler
+{
+  /// The type of the first value in the pack.
+  static constexpr int first = INT;
+  using rest = std::integer_sequence< int, INTS... >;
+};
+
+
+template< typename Seq, template< int... > class Target >
+struct ApplyDims;
+
+template< int... Ints, template< int... > class Target >
+struct ApplyDims< std::integer_sequence< int, Ints... >, Target >
+{
+  using type = Target< Ints... >;
 };
 
 } // namespace CArrayHelper

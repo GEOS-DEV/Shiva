@@ -320,7 +320,7 @@ TEST( testCArray, testBoundsCheckParenthesesOperator3d )
 {
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
   {
-    constexpr int dims[3] = { 5, 4, 3 };
+    constexpr int dims[3] = { 2, 4, 3 };
     CArrayNd< double, dims[0], dims[1], dims[2] > array{ 0.0 };
 
     for ( int i0 = 0; i0 < dims[0]; ++i0 )
@@ -364,6 +364,83 @@ TEST( testCArray, testBoundsCheckParenthesesOperator3d )
 
     EXPECT_DEATH( {array( -1, -1, -1 );}, "Index out of bounds:" );
     EXPECT_DEATH( {array( dims[0], dims[1], dims[2] );}, "Index out of bounds:" );
+
+  } );
+}
+
+TEST( testCArray, testSquareBracketOperator1D )
+{
+  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
+  {
+    CArrayNd< double, 2 > array{ 0.0 };
+    array[0] = 1.0;
+    array[1] = 2.0;
+    EXPECT_DEATH( {array[2];}, "Index out of bounds:" );
+    EXPECT_DEATH( {array[-1];}, "Index out of bounds:" );
+
+    EXPECT_EQ( array( 0 ), 1.0 );
+    EXPECT_EQ( array( 1 ), 2.0 );
+  } );
+}
+
+
+TEST( testCArray, testSquareBracketOperator2D )
+{
+  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
+  {
+    constexpr int dims[2] = { 2, 4 };
+    CArrayNd< double, dims[0], dims[1] > array{ 0.0 };
+
+    // create slices
+    auto slice0 = array[0];
+    auto slice1 = array[1];
+    // test to make sure the types of the slices are correct
+    static_assert( std::is_same_v< decltype( slice0 ), CArrayViewNd< double, dims[1] > > );
+    static_assert( std::is_same_v< decltype( slice1 ), CArrayViewNd< double, dims[1] > > );
+
+    // create const slices
+    CArrayNd< double, dims[0], dims[1] > const & constarray = array;
+    auto cslice0 = constarray[0];
+    auto cslice1 = constarray[1];
+    // test to make sure the types of the slices are correct
+    static_assert( std::is_same_v< decltype( cslice0 ), CArrayViewNd< const double, dims[1] > > );
+    static_assert( std::is_same_v< decltype( cslice1 ), CArrayViewNd< const double, dims[1] > > );
+
+    // test to make sure the slices point to the correct data
+    EXPECT_EQ( slice0.data(), &array( 0, 0 ) );
+    EXPECT_EQ( slice1.data(), &array( 1, 0 ) );
+    EXPECT_EQ( cslice0.data(), &array( 0, 0 ) );
+    EXPECT_EQ( cslice1.data(), &array( 1, 0 ) );
+
+    EXPECT_DEATH( {array[-1];}, "Index out of bounds:" );
+    EXPECT_DEATH( {array[dims[0]];}, "Index out of bounds:" );
+
+    // check values in the slices are set correctly
+    for ( int i1 = 0; i1 < dims[1]; ++i1 )
+    {
+      slice0[i1] = i1 + 1;
+      slice1[i1] = 100 + i1 + 1;
+      EXPECT_EQ( array( 0, i1 ), i1 + 1 );
+      EXPECT_EQ( array( 1, i1 ), 100 + i1 + 1 );
+
+      EXPECT_EQ( slice0[i1], cslice0[i1] );
+      EXPECT_EQ( slice1[i1], cslice1[i1] );
+    }
+
+    // check bounds checking for slices works correctly
+    for ( int i1 = 0; i1 < dims[1]; ++i1 )
+    {
+      EXPECT_DEATH( {slice0[-1];}, "Index out of bounds:" );
+      EXPECT_DEATH( {slice0[dims[1]];}, "Index out of bounds:" );
+      EXPECT_DEATH( {slice1[-1];}, "Index out of bounds:" );
+      EXPECT_DEATH( {slice1[dims[1]];}, "Index out of bounds:" );
+
+      EXPECT_DEATH( {cslice0[-1];}, "Index out of bounds:" );
+      EXPECT_DEATH( {cslice0[dims[1]];}, "Index out of bounds:" );
+      EXPECT_DEATH( {cslice1[-1];}, "Index out of bounds:" );
+      EXPECT_DEATH( {cslice1[dims[1]];}, "Index out of bounds:" );
+
+    }
 
   } );
 }
