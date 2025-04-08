@@ -270,6 +270,104 @@ TEST( testCArray, testParenthesesOperator )
 }
 
 
+TEST( testCArray, testBoundsCheckParenthesesOperator1d )
+{
+  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
+  {
+    CArrayNd< double, 2 > array{ 0.0 };
+    array( 0 ) = 1.0;
+    array( 1 ) = 2.0;
+    EXPECT_DEATH( {array( 2 );}, "Index out of bounds:" );
+    EXPECT_DEATH( {array( -1 );}, "Index out of bounds:" );
+  } );
+}
+
+
+TEST( testCArray, testBoundsCheckParenthesesOperator2d )
+{
+  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
+  {
+    constexpr int dims[2] = { 2, 4 };
+    CArrayNd< double, dims[0], dims[1] > array{ 0.0 };
+
+    for ( int i0 = 0; i0 < dims[0]; ++i0 )
+    {
+      for ( int i1 = 0; i1 < dims[1]; ++i1 )
+      {
+        array( i0, i1 ) = 0.0;
+      }
+    }
+
+    for ( int i0 = 0; i0 < dims[0]; ++i0 )
+    {
+      EXPECT_DEATH( {array( i0, -1 );}, "Index out of bounds:" );
+      EXPECT_DEATH( {array( i0, dims[1] );}, "Index out of bounds:" );
+    }
+
+    for ( int i1 = 0; i1 < dims[1]; ++i1 )
+    {
+      EXPECT_DEATH( {array( -1, i1 );}, "Index out of bounds:" );
+      EXPECT_DEATH( {array( dims[0], i1 );}, "Index out of bounds:" );
+    }
+
+    EXPECT_DEATH( {array( -1, -1 );}, "Index out of bounds:" );
+    EXPECT_DEATH( {array( dims[0], dims[1] );}, "Index out of bounds:" );
+
+  } );
+}
+
+TEST( testCArray, testBoundsCheckParenthesesOperator3d )
+{
+  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
+  {
+    constexpr int dims[3] = { 5, 4, 3 };
+    CArrayNd< double, dims[0], dims[1], dims[2] > array{ 0.0 };
+
+    for ( int i0 = 0; i0 < dims[0]; ++i0 )
+    {
+      for ( int i1 = 0; i1 < dims[1]; ++i1 )
+      {
+        for ( int i2 = 0; i2 < dims[2]; ++i2 )
+        {
+          array( i0, i1, i2 ) = 0.0;
+        }
+      }
+    }
+
+    for ( int i1 = 0; i1 < dims[1]; ++i1 )
+    {
+      for ( int i2 = 0; i2 < dims[2]; ++i2 )
+      {
+        EXPECT_DEATH( {array( -1, i1, i2 );}, "Index out of bounds:" );
+        EXPECT_DEATH( {array( dims[0], i1, i2 );}, "Index out of bounds:" );
+      }
+    }
+
+    for ( int i0 = 0; i0 < dims[0]; ++i0 )
+    {
+      for ( int i2 = 0; i2 < dims[2]; ++i2 )
+      {
+        EXPECT_DEATH( {array( i0, -1, i2 );}, "Index out of bounds:" );
+        EXPECT_DEATH( {array( i0, dims[1], i2 );}, "Index out of bounds:" );
+      }
+    }
+
+    for ( int i0 = 0; i0 < dims[0]; ++i0 )
+    {
+      for ( int i1 = 0; i1 < dims[1]; ++i1 )
+      {
+        EXPECT_DEATH( {array( i0, i1, -1 );}, "Index out of bounds:" );
+        EXPECT_DEATH( {array( i0, i1, dims[2] );}, "Index out of bounds:" );
+      }
+    }
+
+
+    EXPECT_DEATH( {array( -1, -1, -1 );}, "Index out of bounds:" );
+    EXPECT_DEATH( {array( dims[0], dims[1], dims[2] );}, "Index out of bounds:" );
+
+  } );
+}
+
 int main( int argc, char * * argv )
 {
   ::testing::InitGoogleTest( &argc, argv );

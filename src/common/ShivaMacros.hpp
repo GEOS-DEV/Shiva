@@ -91,3 +91,34 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
 /// This macro is used to ignore warnings that that a variable is
 /// unused.
 #define SHIVA_UNUSED_VAR( ... ) i_g_n_o_r_e( __VA_ARGS__ )
+
+
+#ifdef SHIVA_USE_DEVICE  // Device code
+  #include <cstdio>
+
+    #define SHIVA_ASSERT_MSG( cond, ... ) \
+            do { \
+              if ( !(cond)) { \
+                printf( "Assertion failed [%s:%d]: ", __FILE__, __LINE__ );     \
+                printf( __VA_ARGS__ );                                          \
+                printf( "\n" );                                                 \
+                asm ("trap;"); \
+              } \
+            } while ( 0 )
+
+#else // Host code (CPU code)
+
+  #include <cstdio>
+  #include <cstdlib>
+
+    #define SHIVA_ASSERT_MSG( cond, ... ) \
+            do { \
+              if ( !(cond)) { \
+                fprintf( stderr, "Assertion failed [%s:%d]: ", __FILE__, __LINE__ ); \
+                fprintf( stderr, __VA_ARGS__ );                                 \
+                fprintf( stderr, "\n" );                                        \
+                std::abort(); \
+              } \
+            } while ( 0 )
+
+#endif

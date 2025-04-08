@@ -93,6 +93,7 @@ struct linearIndexHelper
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int
   level()
   {
+    static_assert( INDEX >= 0 && INDEX < DIM );
     constexpr int thisStride = strideHelper< DIMS ..., 1 >();
     if constexpr ( sizeof ... ( DIMS ) == 0 )
     {
@@ -111,6 +112,12 @@ struct linearIndexHelper
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int
   level( INDEX_TYPE const index, INDICES_TYPE const ... indices )
   {
+#if defined( SHIVA_USE_BOUNDS_CHECK )
+    SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
+                      "Index out of bounds: 0 < index(%jd) < dim(%jd)",
+                      static_cast< intmax_t >( index ),
+                      static_cast< intmax_t >( DIM ) );
+#endif
     constexpr int thisStride = strideHelper< DIMS ..., 1 >();
     if constexpr ( sizeof ... ( DIMS ) == 0 )
     {

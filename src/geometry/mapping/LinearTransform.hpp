@@ -121,9 +121,9 @@ public:
 
       for ( int i = 0; i < numDims; ++i )
       {
-        m_vertexCoords(a,b,c,i) = coords[a + 2 * b + 4 * c][i];
+        m_vertexCoords( a, b, c, i ) = coords[a + 2 * b + 4 * c][i];
       }
-    });
+    } );
   }
 
 private:
@@ -169,17 +169,17 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
 
   auto const & nodeCoords = transform.getData();
   InterpolatedShape::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
-  {
-    CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( pointCoordsParent );
-    // dimensional loop from domain to codomain
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
-    {
-      constexpr int i = decltype(ici)::value;
-      constexpr int j = decltype(icj)::value;
-      J( i, j ) = J( i, j ) + dNadXi( j ) * nodeCoords( decltype(ic_spIndices)::value ..., i );
-    } );
+        {
+          CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( pointCoordsParent );
+          // dimensional loop from domain to codomain
+          forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
+          {
+            constexpr int i = decltype(ici)::value;
+            constexpr int j = decltype(icj)::value;
+            J( i, j ) = J( i, j ) + dNadXi( j ) * nodeCoords( decltype(ic_spIndices)::value ..., i );
+          } );
 
-  } );
+        } );
 }
 
 
@@ -192,7 +192,7 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
  * @tparam INTERPOLATED_SHAPE The interpolated shape type. (i.e. the geometry and basis functions)
  * @param[in] transform The LinearTransform object
  * @param[out] J The Jacobian transformation.
- * 
+ *
  * This function calculates the Jacobian transformation of a LinearTransform object
  * using the quadrature strategy and indices provided. The Jacobian transformation
  * is calculated by looping over the support points of the interpolated shape and
@@ -213,32 +213,31 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
   constexpr int DIMS = Transform::numDims;
 
   auto const & nodeCoords = transform.getData();
-  constexpr double qcoords[3] = { ( QUADRATURE::template coordinate<QA>() )... };
+  constexpr double qcoords[3] = { ( QUADRATURE::template coordinate< QA >() )... };
 
   InterpolatedShape::template supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
-  {
-    constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
+        {
+          constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
 
-    // dimensional loop from domain to codomain
+          // dimensional loop from domain to codomain
     #if 0
-    forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
-    {
-      constexpr int i = decltype(ici)::value;
-      constexpr int j = decltype(icj)::value;
-      J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
-    } );
+          forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
+          {
+            constexpr int i = decltype(ici)::value;
+            constexpr int j = decltype(icj)::value;
+            J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
+          } );
     #else
-    for( int j = 0; j < DIMS; ++j )
-    {
-      for( int i = 0; i < DIMS; ++i )
-      {
-        J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
-      }
-    }
+          for ( int j = 0; j < DIMS; ++j )
+          {
+            for ( int i = 0; i < DIMS; ++i )
+            {
+              J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
+            }
+          }
     #endif
-  } );
+        } );
 }
-
 
 
 

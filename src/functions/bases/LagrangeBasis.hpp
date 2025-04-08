@@ -82,17 +82,17 @@ public:
   value( REAL_TYPE const & coord )
   {
 #if __cplusplus >= 202002L
-    return executeSequence< numSupportPoints >( [&]< int ... a > () constexpr
-    {
-      // return fold expression that is the product of all the polynomial
-      // factor terms.
-      return ( valueProductTerm< BF_INDEX, a >( coord ) * ... );
-    } );
+    return executeSequence< numSupportPoints >( [&] < int ... a > () constexpr
+        {
+          // return fold expression that is the product of all the polynomial
+          // factor terms.
+          return ( valueProductTerm< BF_INDEX, a >( coord ) * ... );
+        } );
 #else
     return executeSequence< numSupportPoints >( [&] ( auto const ... a ) constexpr
-    {
-      return ( valueProductTerm< BF_INDEX, decltype(a)::value >( coord ) * ... );
-    } );
+        {
+          return ( valueProductTerm< BF_INDEX, decltype(a)::value >( coord ) * ... );
+        } );
 #endif
   }
 
@@ -117,28 +117,28 @@ public:
   {
 
 #if __cplusplus >= 202002L
-    return executeSequence< numSupportPoints >( [&coord]< int ... a > () constexpr
-    {
-      auto func = [&coord]< int ... b > ( auto aa ) constexpr
-      {
-        constexpr int aVal = decltype(aa)::value;
-        return gradientOfValueTerm< BF_INDEX, aVal >() * ( valueProductFactor< BF_INDEX, b, aVal >( coord ) * ... );
-      };
+    return executeSequence< numSupportPoints >( [&coord] < int ... a > () constexpr
+        {
+          auto func = [&coord] < int ... b > ( auto aa ) constexpr
+          {
+            constexpr int aVal = decltype(aa)::value;
+            return gradientOfValueTerm< BF_INDEX, aVal >() * ( valueProductFactor< BF_INDEX, b, aVal >( coord ) * ... );
+          };
 
-      return ( executeSequence< numSupportPoints >( func, std::integral_constant< int, a >{} ) + ... );
-    } );
+          return ( executeSequence< numSupportPoints >( func, std::integral_constant< int, a >{} ) + ... );
+        } );
 #else
     return executeSequence< numSupportPoints >( [&coord] ( auto const ... a ) constexpr
-    {
-      REAL_TYPE const values[ numSupportPoints ] = { valueProductTerm< BF_INDEX, decltype(a)::value >( coord )... };
-      auto func = [&values] ( auto aa, auto ... b ) constexpr
-      {
-        constexpr int aVal = decltype(aa)::value;
-        return gradientOfValueTerm< BF_INDEX, aVal >() * ( valueProductFactor< decltype(b)::value, aVal >( values ) * ... );
-      };
+        {
+          REAL_TYPE const values[ numSupportPoints ] = { valueProductTerm< BF_INDEX, decltype(a)::value >( coord )... };
+          auto func = [&values] ( auto aa, auto ... b ) constexpr
+          {
+            constexpr int aVal = decltype(aa)::value;
+            return gradientOfValueTerm< BF_INDEX, aVal >() * ( valueProductFactor< decltype(b)::value, aVal >( values ) * ... );
+          };
 
-      return ( executeSequence< numSupportPoints >( func, a ) + ... );
-    } );
+          return ( executeSequence< numSupportPoints >( func, a ) + ... );
+        } );
 #endif
   }
 

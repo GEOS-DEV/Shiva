@@ -92,18 +92,18 @@ struct BasisProduct
     return
 #if __cplusplus >= 202002L
       // expand pack over number of dimensions
-      executeSequence< numDims >( [&]< int ... PRODUCT_TERM_INDEX > () constexpr
-    {
-      return ( BASIS_TYPE::template value< BASIS_FUNCTION_INDICES >( parentCoord[PRODUCT_TERM_INDEX] ) * ... );
-    } );
+      executeSequence< numDims >( [&] < int ... PRODUCT_TERM_INDEX > () constexpr
+        {
+          return ( BASIS_TYPE::template value< BASIS_FUNCTION_INDICES >( parentCoord[PRODUCT_TERM_INDEX] ) * ... );
+        } );
 #else
       executeSequence< numDims >( [&] ( auto ... PRODUCT_TERM_INDEX ) constexpr
-    {
-      // fold expression to multiply the value of each BASIS_TYPE in each
-      // dimension. In other words the fold expands on BASIS_TYPE...,
-      // BASIS_FUNCTION_INDICES..., and PRODUCT_TERM_INDEX... together.
-      return ( BASIS_TYPES::template value< BASIS_FUNCTION_INDICES >( parentCoord[decltype(PRODUCT_TERM_INDEX)::value] ) * ... );
-    } );
+        {
+          // fold expression to multiply the value of each BASIS_TYPE in each
+          // dimension. In other words the fold expands on BASIS_TYPE...,
+          // BASIS_FUNCTION_INDICES..., and PRODUCT_TERM_INDEX... together.
+          return ( BASIS_TYPES::template value< BASIS_FUNCTION_INDICES >( parentCoord[decltype(PRODUCT_TERM_INDEX)::value] ) * ... );
+        } );
 
 #endif
   }
@@ -133,40 +133,40 @@ struct BasisProduct
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
 
 #if __cplusplus >= 202002L
-    return executeSequence< numDims >( [&]< int ... i >() constexpr -> CArrayNd< RealType, numDims >
-    {
-      auto gradientComponent = [&] ( auto const iGrad,
-                                     auto const  ... PRODUCT_TERM_INDICES ) constexpr
-      {
-        // Ca
-        return ( gradientComponentHelper< BASIS_TYPES,
-                                          decltype(iGrad)::value,
-                                          BASIS_FUNCTION_INDICES,
-                                          PRODUCT_TERM_INDICES >( parentCoord ) * ... );
-      };
+    return executeSequence< numDims >( [&] < int ... i > () constexpr->CArrayNd< RealType, numDims >
+        {
+          auto gradientComponent = [&] ( auto const iGrad,
+                                         auto const  ... PRODUCT_TERM_INDICES ) constexpr
+          {
+            // Ca
+            return ( gradientComponentHelper< BASIS_TYPES,
+                                              decltype(iGrad)::value,
+                                              BASIS_FUNCTION_INDICES,
+                                              PRODUCT_TERM_INDICES >( parentCoord ) * ... );
+          };
 
-      return { (executeSequence< numDims >( gradientComponent, std::integral_constant< int, i >{} ) )...  };
-    } );
+          return { (executeSequence< numDims >( gradientComponent, std::integral_constant< int, i >{} ) )...  };
+        } );
 #else
     // Expand over the dimensions.
-    return executeSequence< numDims >( [&] ( auto ... a ) constexpr -> CArrayNd< RealType, numDims >
-    {
-      // define a lambda that calculates the gradient of the basis function in
-      // a single dimension/direction.
-      auto gradientComponent = [&] ( auto GRADIENT_COMPONENT, auto ... PRODUCT_TERM_INDICES ) constexpr
-      {
-        // fold expression calling gradientComponentHelper using expanding on
-        // BASIS_TYPE, BASIS_FUNCTION_INDICES, and PRODUCT_TERM_INDICES.
-        return ( gradientComponentHelper< BASIS_TYPES,
-                                          decltype(GRADIENT_COMPONENT)::value,
-                                          BASIS_FUNCTION_INDICES,
-                                          decltype(PRODUCT_TERM_INDICES)::value >( parentCoord ) * ... );
-      };
+    return executeSequence< numDims >( [&] ( auto ... a ) constexpr->CArrayNd< RealType, numDims >
+        {
+          // define a lambda that calculates the gradient of the basis function in
+          // a single dimension/direction.
+          auto gradientComponent = [&] ( auto GRADIENT_COMPONENT, auto ... PRODUCT_TERM_INDICES ) constexpr
+          {
+            // fold expression calling gradientComponentHelper using expanding on
+            // BASIS_TYPE, BASIS_FUNCTION_INDICES, and PRODUCT_TERM_INDICES.
+            return ( gradientComponentHelper< BASIS_TYPES,
+                                              decltype(GRADIENT_COMPONENT)::value,
+                                              BASIS_FUNCTION_INDICES,
+                                              decltype(PRODUCT_TERM_INDICES)::value >( parentCoord ) * ... );
+          };
 
-      // execute the gradientComponent lambda on each direction, expand the
-      // pack on "i" corresponding to each direction of the gradient.
-      return { (executeSequence< numDims >( gradientComponent, a ) )...  };
-    } );
+          // execute the gradientComponent lambda on each direction, expand the
+          // pack on "i" corresponding to each direction of the gradient.
+          return { (executeSequence< numDims >( gradientComponent, a ) )...  };
+        } );
 #endif
   }
 
