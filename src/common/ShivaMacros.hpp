@@ -100,7 +100,7 @@ SHIVA_HOST_DEVICE __noinline__
 void shivaAssertionFailed( const char * file, int line )
 {
   printf( "Assertion failed [%s:%d]: \n", file, line );
-  __builtin_trap();
+  __trap();
 }
 
 #define SHIVA_ASSERT_MSG( cond, ... )                                         \
