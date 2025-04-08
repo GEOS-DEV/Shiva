@@ -8,7 +8,7 @@
 
 #define SHIVA_VERSION_PATCHLEVEL 0
 
-#define SHIVA_USE_CUDA
+/* #undef SHIVA_USE_CUDA */
 
 /* #undef SHIVA_USE_HIP */
 

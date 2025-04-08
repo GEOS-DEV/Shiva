@@ -96,22 +96,22 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
 #ifdef SHIVA_USE_DEVICE  // Device code
 #include <cstdio>
 
-  SHIVA_HOST_DEVICE __noinline__ 
-  void shivaAssertionFailed(const char* file, int line) 
-  {
-    printf("Assertion failed [%s:%d]: \n", file, line );
-    asm("trap;");
-  }
+SHIVA_HOST_DEVICE __noinline__
+void shivaAssertionFailed( const char * file, int line )
+{
+  printf( "Assertion failed [%s:%d]: \n", file, line );
+  asm ("trap;");
+}
     #define SHIVA_ASSERT_MSG( cond, ... ) //\
-            //do { \
-              // if ( !(cond)) { \
-              //   if ( !__builtin_is_constant_evaluated() ) \
-              //   {                                                  \
-              //     shivaAssertionFailed( __FILE__, __LINE__ ); \
-              //   } \
-              //   else {}\
-              // } \
-            //} while ( 0 )
+                                          //do { \
+                                          // if ( !(cond)) { \
+                                          //   if ( !__builtin_is_constant_evaluated() ) \
+                                          //   {                                                  \
+                                          //     shivaAssertionFailed( __FILE__, __LINE__ ); \
+                                          //   } \
+                                          //   else {}\
+                                          // } \
+                                          //} while ( 0 )
 
 #else // Host code (CPU code)
 
