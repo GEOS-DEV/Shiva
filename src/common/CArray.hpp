@@ -24,7 +24,7 @@
 #include "CArrayHelper.hpp"
 
 #include <utility>
-
+#include <cmath>
 
 
 namespace shiva
