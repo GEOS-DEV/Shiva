@@ -15,12 +15,12 @@ set( SHIVA_VERSION_PATCHLEVEL 0 )
 # check if Shiva is build as a submodule or a separate project
 get_directory_property( parent_dir PARENT_DIRECTORY )
 if(parent_dir)
-    set( is_submodule ON )
+    set( SHIVA_IS_SUBMODULE ON )
 else()
-    set( is_submodule OFF )
+    set( SHIVA_IS_SUBMODULE OFF )
 endif()
 
-if( NOT is_submodule )
+if( NOT SHIVA_IS_SUBMODULE )
     message( "not a submodule")
     project( Shiva LANGUAGES CXX C )
 
@@ -64,6 +64,14 @@ endif()
 
 include( cmake/Macros.cmake )
 include( cmake/Config.cmake )
+
+
+set(SHIVA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
+set(SHIVA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} )
+
+message( STATUS "SHIVA_BINARY_DIR: ${SHIVA_BINARY_DIR}" )
+message( STATUS "SHIVA_SOURCE_DIR: ${SHIVA_SOURCE_DIR}" )
+
 
 add_subdirectory( src )
 
