@@ -32,13 +32,19 @@ namespace shiva
     #define deviceDeviceSynchronize() cudaDeviceSynchronize();
     #define deviceMemCpy( DST, SRC, BYTES, KIND ) cudaMemcpy( DST, SRC, BYTES, KIND );
     #define deviceFree( PTR ) cudaFree( PTR );
+    #define deviceError_t cudaError_t
+    #define deviceSuccess = cudaSuccess;
   #elif defined(SHIVA_USE_HIP)
     #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
     #define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
     #define deviceDeviceSynchronize() hipDeviceSynchronize();
     #define deviceMemCpy( DST, SRC, BYTES, KIND ) hipMemcpy( DST, SRC, BYTES, KIND );
     #define deviceFree( PTR ) hipFree( PTR );
+    #define deviceError_t hipError_t
+    #define deviceSuccess = hipSuccess;
   #endif
+#else
+  #define deviceError_t int
 #endif
 
 /**
@@ -86,13 +92,16 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func )
  * genericKernel.
  */
 template< typename LAMBDA >
-void genericKernelWrapper( LAMBDA && func )
+deviceError_t genericKernelWrapper( LAMBDA && func )
 {
 #if defined(SHIVA_USE_DEVICE)
   genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ) );
+  deviceError_t err = deviceDeviceSynchronize();
 #else
   genericKernel( std::forward< LAMBDA >( func ) );
+  deviceError_t err = 0;
 #endif
+return err;
 }
 
 
@@ -126,20 +135,22 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func, DATA_TYPE * const data )
  * device.
  */
 template< typename DATA_TYPE, typename LAMBDA >
-void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && func )
+deviceError_t genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && func )
 {
 
 #if defined(SHIVA_USE_DEVICE)
   DATA_TYPE * deviceData;
   deviceMalloc( &deviceData, N * sizeof(DATA_TYPE) );
   genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ), deviceData );
-  deviceDeviceSynchronize();
+  deviceError_t err = deviceDeviceSynchronize();
   deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
   deviceFree( deviceData );
 #else
   SHIVA_UNUSED_VAR( N );
   genericKernel( std::forward< LAMBDA >( func ), hostData );
+  deviceError_t err = 0;
 #endif
+return err;
 }
 
 /**

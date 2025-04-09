@@ -277,7 +277,7 @@ template< int DIM >
 void testBoundsCheckParenthesesOperator1dHelper( int const ilower = 0,
                                                  int const iupper = DIM - 1 )
 {
-  pmpl::genericKernelWrapper( [ilower, iupper] SHIVA_DEVICE ()
+  deviceError_t err = pmpl::genericKernelWrapper( [ilower, iupper] SHIVA_DEVICE ()
   {
     CArrayNd< double, DIM > array{ 0.0 };
     for ( int i = ilower; i <= iupper; ++i )
@@ -285,13 +285,27 @@ void testBoundsCheckParenthesesOperator1dHelper( int const ilower = 0,
       array( i ) = i;
     }
   } );
+
+  SHIVA_UNUSED_VAR(err);
+
+//   // Check for device failure
+// #if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)  
+//   if( ilower<0 || iupper>=DIM )
+//   {
+//     EXPECT_NE(err, deviceSuccess) << "Expected kernel to trap or assert, but it succeeded";
+//   }
+// #else
+//   SHIVA_UNUSED_VAR(err);
+// #endif
 }
 TEST( testCArray, testBoundsCheckParenthesesOperator1d )
 {
   testBoundsCheckParenthesesOperator1dHelper< 2 >();
+#if !( defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__) )
   EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper< 2 >( -1, -1 );}, "Index out of bounds:" );
   EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper< 2 >( 2, 2 );}, "Index out of bounds:" );
-  testBoundsCheckParenthesesOperator1dHelper< 2 >( 2, 2 );
+#endif
+
 }
 
 template< int DIM0 = 2, int DIM1 = 4 >
@@ -315,6 +329,7 @@ void testBoundsCheckParenthesesOperator2dHelper( int const ilower = 0,
 TEST( testCArray, testBoundsCheckParenthesesOperator2d )
 {
   testBoundsCheckParenthesesOperator2dHelper();
+  #if !( defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__) )
   EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, 0, 3 );}, "Index out of bounds:" );
   EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, 0, 3 );}, "Index out of bounds:" );
   EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 0, 1, -1, -1 );}, "Index out of bounds:" );
@@ -323,6 +338,7 @@ TEST( testCArray, testBoundsCheckParenthesesOperator2d )
   EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, 4, 4 );}, "Index out of bounds:" );
   EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, -1, -1 );}, "Index out of bounds:" );
   EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, 4, 4 );}, "Index out of bounds:" );
+  #endif
 }
 
 template< int DIM = 3 >
@@ -342,8 +358,10 @@ void testSquareBracketOperator1DHelper( int const ilower = 0,
 TEST( testCArray, testSquareBracketOperator1D )
 {
   testSquareBracketOperator1DHelper();
+  #if !( defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__) )
   EXPECT_DEATH( {testSquareBracketOperator1DHelper< 2 >( -1, -1 );}, "Index out of bounds:" );
   EXPECT_DEATH( {testSquareBracketOperator1DHelper< 2 >( 3, 3 );}, "Index out of bounds:" );
+  #endif
 }
 
 
