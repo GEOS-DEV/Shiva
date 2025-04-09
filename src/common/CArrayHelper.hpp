@@ -126,7 +126,7 @@ struct linearIndexHelper
     }
     else
     {
-      return index * thisStride + linearIndexHelper< DIMS ... >::template level<INDICES_TYPE...>( std::forward< INDICES_TYPE const >( indices )... );
+      return index * thisStride + linearIndexHelper< DIMS ... >::template level< INDICES_TYPE ... >( std::forward< INDICES_TYPE const >( indices )... );
     }
   }
 

@@ -117,7 +117,7 @@ SHIVA_GLOBAL void compileTimeKernel()
                                 TEST_PARENT_ELEMENT_HELPER::testCoords[1],
                                 TEST_PARENT_ELEMENT_HELPER::testCoords[2] };
 
-  constexpr double value = ParentElementType:: value( coord, TEST_PARENT_ELEMENT_HELPER::fieldValues );
+  constexpr double value = ParentElementType::value( coord, TEST_PARENT_ELEMENT_HELPER::fieldValues );
 
 
   constexpr CArrayNd< double, 3 > gradient = ParentElementType::gradient( coord, TEST_PARENT_ELEMENT_HELPER::fieldValues );

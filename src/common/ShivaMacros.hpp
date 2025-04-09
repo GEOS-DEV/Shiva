@@ -111,25 +111,25 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
  * @param line The line number where the assertion failed.
  * @param fmt The format string for the message to print.
  */
-SHIVA_HOST_DEVICE 
-void shivaAssertionFailed(const char* file, int line, const char* fmt, ...) 
+SHIVA_HOST_DEVICE
+void shivaAssertionFailed( const char * file, int line, const char * fmt, ... )
 {
-#if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)  
-  printf("Assertion failed [%s:%d]: ", file, line);
-  printf(fmt);
-  printf("\n");
+#if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)
+  printf( "Assertion failed [%s:%d]: ", file, line );
+  printf( fmt );
+  printf( "\n" );
 #if defined(__CUDA_ARCH__)
   __trap();
 #elif defined(__HIP_DEVICE_COMPILE__)
   __builtin_trap();
 #endif
 #else // Host
-  fprintf(stderr, "Assertion failed [%s:%d]: ", file, line);
+  fprintf( stderr, "Assertion failed [%s:%d]: ", file, line );
   va_list args;
-  va_start(args, fmt);
-  vfprintf(stderr, fmt, args);
-  va_end(args);
-  fprintf(stderr, "\n");
+  va_start( args, fmt );
+  vfprintf( stderr, fmt, args );
+  va_end( args );
+  fprintf( stderr, "\n" );
   std::abort();
 #endif
 }
@@ -139,11 +139,11 @@ void shivaAssertionFailed(const char* file, int line, const char* fmt, ...)
  * @param cond The condition to assert is true.
  * @param ... The message to print if the assertion fails.
  */
-#define SHIVA_ASSERT_MSG(cond, ...) \
-  do { \
-    if (!(cond)) { \
-      if (!__builtin_is_constant_evaluated()) { \
-        shivaAssertionFailed(__FILE__, __LINE__, __VA_ARGS__); \
-      } \
-    } \
-  } while (0)
+#define SHIVA_ASSERT_MSG( cond, ... ) \
+        do { \
+          if ( !(cond)) { \
+            if ( !__builtin_is_constant_evaluated()) { \
+              shivaAssertionFailed( __FILE__, __LINE__, __VA_ARGS__ ); \
+            } \
+          } \
+        } while ( 0 )

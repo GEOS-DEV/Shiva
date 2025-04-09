@@ -97,9 +97,9 @@ void genericKernelWrapper( LAMBDA && func )
 #if defined(SHIVA_USE_DEVICE)
   genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ) );
   deviceError_t err = deviceDeviceSynchronize();
-  if (err != cudaSuccess)
+  if ( err != cudaSuccess )
   {
-    printf("Kernel failed: %s\n", deviceGetErrorString(err));
+    printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
     std::abort();
   }
 #else
@@ -148,9 +148,9 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
   deviceError_t err = deviceDeviceSynchronize();
   deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
   deviceFree( deviceData );
-  if (err != cudaSuccess)
+  if ( err != cudaSuccess )
   {
-    printf("Kernel failed: %s\n", deviceGetErrorString(err));
+    printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
     std::abort();
   }
 #else
