@@ -33,7 +33,7 @@ namespace shiva
     #define deviceMemCpy( DST, SRC, BYTES, KIND ) cudaMemcpy( DST, SRC, BYTES, KIND );
     #define deviceFree( PTR ) cudaFree( PTR );
     #define deviceError_t cudaError_t
-    #define deviceSuccess = cudaSuccess;
+    #define deviceSuccess cudaSuccess
     #define deviceGetErrorString    cudaGetErrorString
     #elif defined(SHIVA_USE_HIP)
     #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
