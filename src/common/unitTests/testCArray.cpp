@@ -291,6 +291,7 @@ TEST( testCArray, testBoundsCheckParenthesesOperator1d )
   testBoundsCheckParenthesesOperator1dHelper< 2 >();
   EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper< 2 >( -1, -1 );}, "Index out of bounds:" );
   EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper< 2 >( 2, 2 );}, "Index out of bounds:" );
+  testBoundsCheckParenthesesOperator1dHelper< 2 >( 2, 2 );
 }
 
 template< int DIM0 = 2, int DIM1 = 4 >
