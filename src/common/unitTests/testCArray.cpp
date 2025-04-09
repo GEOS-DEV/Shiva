@@ -17,12 +17,9 @@
 #include "../SequenceUtilities.hpp"
 #include "common/pmpl.hpp"
 
-
 #include <gtest/gtest.h>
 
 using namespace shiva;
-
-
 
 template< typename ARRAY_TYPE, int ... VALUES >
 static constexpr auto initializer( std::integer_sequence< int, VALUES ... > )
@@ -136,7 +133,7 @@ TEST( testCArray, testStrides )
   testStridesHelper();
 }
 
-
+#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
 void testLinearIndexCT()
 {
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
@@ -161,7 +158,7 @@ void testLinearIndexCT()
     } );
   } );
 }
-
+#endif
 
 void testLinearIndexRT()
 {
@@ -196,11 +193,13 @@ void testLinearIndexRT()
 
 TEST( testCArray, testLinearIndex )
 {
+#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
   testLinearIndexCT();
+#endif
   testLinearIndexRT();
 }
 
-
+#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
 void testParenthesesOperatorCT()
 {
   using Array = TestCArrayHelper::Array3d;
@@ -230,6 +229,7 @@ void testParenthesesOperatorCT()
     } );
   } );
 }
+#endif
 
 void testParenthesesOperatorRT()
 {
@@ -265,10 +265,157 @@ void testParenthesesOperatorRT()
 }
 TEST( testCArray, testParenthesesOperator )
 {
+#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
   testParenthesesOperatorCT();
+#endif
   testParenthesesOperatorRT();
 }
 
+
+template< int DIM >
+void testBoundsCheckParenthesesOperator1dHelper( int const ilower = 0,
+                                                 int const iupper = DIM - 1 )
+{
+  pmpl::genericKernelWrapper( [ilower, iupper] SHIVA_DEVICE ()
+  {
+    CArrayNd< double, DIM > array{ 0.0 };
+    for ( int i = ilower; i <= iupper; ++i )
+    {
+      array( i ) = i;
+    }
+  } );
+}
+TEST( testCArray, testBoundsCheckParenthesesOperator1d )
+{
+  testBoundsCheckParenthesesOperator1dHelper< 2 >();
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper< 2 >( -1, -1 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper< 2 >( 2, 2 );}, "" );
+}
+
+template< int DIM0 = 2, int DIM1 = 4 >
+void testBoundsCheckParenthesesOperator2dHelper( int const ilower = 0,
+                                                 int const iupper = DIM0 - 1,
+                                                 int const jlower = 0,
+                                                 int const jupper = DIM1 - 1 )
+{
+  pmpl::genericKernelWrapper( [ilower, iupper, jlower, jupper] SHIVA_DEVICE ()
+  {
+    CArrayNd< double, DIM0, DIM1 > array{ 0.0 };
+    for ( int i = ilower; i <= iupper; ++i )
+    {
+      for ( int j = jlower; j <= jupper; ++j )
+      {
+        array( i, j ) = i * DIM1 + j;
+      }
+    }
+  } );
+}
+TEST( testCArray, testBoundsCheckParenthesesOperator2d )
+{
+  testBoundsCheckParenthesesOperator2dHelper();
+
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, 0, 3 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, 0, 3 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 0, 1, -1, -1 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 0, 1, 4, 4 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, -1, -1 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, 4, 4 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, -1, -1 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, 4, 4 );}, "" );
+
+}
+
+template< int DIM = 3 >
+void testSquareBracketOperator1DHelper( int const ilower = 0,
+                                        int const iupper = DIM - 1 )
+{
+  pmpl::genericKernelWrapper( [ilower, iupper] SHIVA_DEVICE ()
+  {
+    CArrayNd< double, DIM > array{ 0.0 };
+    CArrayNd< double, DIM > const & constarray = array;
+
+    static_assert( std::is_same_v< decltype( array[0] ), double & > );
+    static_assert( std::is_same_v< decltype( constarray[0] ), double const & > );
+
+    for ( int i = ilower; i <= iupper; ++i )
+    {
+      array[i] = i;
+      SHIVA_ASSERT_MSG( fabs( array( i ) - static_cast< double >(i) ) < 1e-10, "values not equal" );
+      SHIVA_ASSERT_MSG( fabs( constarray[ i ] - static_cast< double >(i) ) < 1e-10, "values not equal" );
+
+    }
+  } );
+}
+TEST( testCArray, testSquareBracketOperator1D )
+{
+  testSquareBracketOperator1DHelper();
+
+  EXPECT_DEATH( {testSquareBracketOperator1DHelper< 2 >( -1, -1 );}, "" );
+  EXPECT_DEATH( {testSquareBracketOperator1DHelper< 2 >( 3, 3 );}, "" );
+
+}
+
+
+void testSquareBracketOperator2DHelper()
+{
+  pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
+  {
+    constexpr int dims[2] = { 2, 4 };
+    CArrayNd< double, dims[0], dims[1] > array{ 0.0 };
+
+    // create slices
+    auto slice0 = array[0];
+    auto slice1 = array[1];
+    // test to make sure the types of the slices are correct
+    static_assert( std::is_same_v< decltype( slice0 ), CArrayViewNd< double, dims[1] > > );
+    static_assert( std::is_same_v< decltype( slice1 ), CArrayViewNd< double, dims[1] > > );
+
+    // create const slices
+    CArrayNd< double, dims[0], dims[1] > const & constarray = array;
+    auto cslice0 = constarray[0];
+    auto cslice1 = constarray[1];
+    // test to make sure the types of the slices are correct
+    static_assert( std::is_same_v< decltype( cslice0 ), CArrayViewNd< const double, dims[1] > > );
+    static_assert( std::is_same_v< decltype( cslice1 ), CArrayViewNd< const double, dims[1] > > );
+
+    // test to make sure the slices point to the correct data
+    SHIVA_ASSERT_MSG( slice0.data() == &array( 0, 0 ),
+                      "addresses not equal: slice(%p) != array(%p)",
+                      static_cast< void * >( slice0.data() ),
+                      static_cast< void * >( &array( 0, 0 ) ) );
+
+    SHIVA_ASSERT_MSG( slice1.data() == &array( 1, 0 ),
+                      "addresses not equal: slice(%p) != array(%p)",
+                      static_cast< void * >( slice1.data() ),
+                      static_cast< void * >( &array( 1, 0 ) ) );
+
+    SHIVA_ASSERT_MSG( cslice0.data() == &array( 0, 0 ),
+                      "addresses not equal: slice(%p) != array(%p)",
+                      static_cast< void const * >( cslice0.data() ),
+                      static_cast< void * >( &array( 0, 0 ) ) );
+
+    SHIVA_ASSERT_MSG( cslice1.data() == &array( 1, 0 ),
+                      "addresses not equal: slice(%p) != array(%p)",
+                      static_cast< void const * >( cslice1.data() ),
+                      static_cast< void * >( &array( 1, 0 )  ) );
+
+    // check values in the slices are set correctly
+    for ( int i1 = 0; i1 < dims[1]; ++i1 )
+    {
+      slice0[i1] = i1 + 1;
+      slice1[i1] = 100 + i1 + 1;
+      SHIVA_ASSERT_MSG( fabs( array( 0, i1 ) - ( i1 + 1 ) ) < 1e-10, "values not equal" );
+      SHIVA_ASSERT_MSG( fabs( array( 1, i1 ) - ( 100 + i1 + 1 ) ) < 1e-10, "values not equal" );
+
+      SHIVA_ASSERT_MSG( fabs( slice0[i1] - ( cslice0[i1] ) ) < 1e-10, "values not equal" );
+      SHIVA_ASSERT_MSG( fabs( slice1[i1] - ( cslice1[i1] ) ) < 1e-10, "values not equal" );
+    }
+  } );
+}
+TEST( testCArray, testSquareBracketOperator2D )
+{
+  testSquareBracketOperator2DHelper();
+}
 
 int main( int argc, char * * argv )
 {

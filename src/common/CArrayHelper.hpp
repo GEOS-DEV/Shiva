@@ -19,10 +19,11 @@
 #pragma once
 
 
-#include "common/ShivaMacros.hpp"
+#include "common/ShivaErrorHandling.hpp"
+#include "common/types.hpp"
 #include <utility>
-
-
+#include <cstdint>
+#include <cinttypes>
 
 namespace shiva
 {
@@ -93,6 +94,7 @@ struct linearIndexHelper
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int
   level()
   {
+    static_assert( INDEX >= 0 && INDEX < DIM );
     constexpr int thisStride = strideHelper< DIMS ..., 1 >();
     if constexpr ( sizeof ... ( DIMS ) == 0 )
     {
@@ -108,9 +110,15 @@ struct linearIndexHelper
    * @copydoc level()
    */
   template< typename INDEX_TYPE, typename ... INDICES_TYPE >
-  SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE int
+  static constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE int
   level( INDEX_TYPE const index, INDICES_TYPE const ... indices )
   {
+#if defined( SHIVA_USE_BOUNDS_CHECK )
+    SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
+                      "Index out of bounds: 0 < index(%jd) < dim(%jd)",
+                      static_cast< intmax_t >( index ),
+                      static_cast< intmax_t >( DIM ) );
+#endif
     constexpr int thisStride = strideHelper< DIMS ..., 1 >();
     if constexpr ( sizeof ... ( DIMS ) == 0 )
     {
@@ -118,7 +126,7 @@ struct linearIndexHelper
     }
     else
     {
-      return index * thisStride + linearIndexHelper< DIMS ... >::template level( std::forward< INDICES_TYPE const >( indices )... );
+      return index * thisStride + linearIndexHelper< DIMS ... >::template level< INDICES_TYPE ... >( std::forward< INDICES_TYPE const >( indices )... );
     }
   }
 
@@ -191,6 +199,44 @@ struct Peeler
 {
   /// The type of the first value in the pack.
   using type = T;
+
+  /// The type of the remaining values in the pack.
+  using types = tuple< Ts ... >;
+};
+
+/**
+ * @brief function to peel an integer from a parameter pack.
+ * @tparam INT The first value in the pack.
+ * @tparam INTS The remaining values in the pack.
+ */
+template< int INT, int ... INTS >
+struct IntPeeler
+{
+  /// The type of the first value in the pack.
+  static constexpr int first = INT;
+
+  /// The type of the remaining values in the pack.
+  using rest = std::integer_sequence< int, INTS... >;
+};
+
+/**
+ * @brief function to apply a parameter pack to a templated type.
+ * @tparam Ints The integer sequence to apply.
+ * @tparam Target The target type to apply the integer sequence to.
+ */
+template< typename Seq, template< int... > class Target >
+struct ApplyDims;
+
+/**
+ * @brief function to apply a parameter pack to a templated type.
+ * @tparam Ints The integer sequence to apply.
+ * @tparam Target The target type to apply the integer sequence to.
+ */
+template< int... Ints, template< int... > class Target >
+struct ApplyDims< std::integer_sequence< int, Ints... >, Target >
+{
+  /// The type of the target that has the pack applied its varaidic pack.
+  using type = Target< Ints... >;
 };
 
 } // namespace CArrayHelper

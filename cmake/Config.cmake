@@ -2,6 +2,7 @@
 set( PREPROCESSOR_DEFINES CUDA
                           HIP
                           CAMP
+                          BOUNDS_CHECK
                         )
 
 set( USE_CONFIGFILE ON CACHE BOOL "" )

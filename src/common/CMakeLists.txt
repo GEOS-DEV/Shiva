@@ -9,6 +9,7 @@ set( common_headers
      pmpl.hpp
      SequenceUtilities.hpp
      NestedSequenceUtilities.hpp
+     ShivaErrorHandling.hpp
      ShivaMacros.hpp
      types.hpp
      )
