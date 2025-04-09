@@ -1,11 +1,12 @@
 #
 set( PREPROCESSOR_DEFINES CUDA
                           HIP
+                          BOUNDS_CHECK
                         )
 
 set( USE_CONFIGFILE ON CACHE BOOL "" )
 foreach( DEP in ${PREPROCESSOR_DEFINES})
-    if( ${DEP}_FOUND OR ENABLE_${DEP} )
+    if( ${DEP}_FOUND OR ENABLE_${DEP} OR SHIVA_ENABLE_${DEP} )
         set( SHIVA_USE_${DEP} TRUE )
     endif()
 endforeach()

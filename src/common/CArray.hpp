@@ -24,7 +24,7 @@
 #include "CArrayHelper.hpp"
 
 #include <utility>
-
+#include <cmath>
 
 
 namespace shiva
@@ -94,12 +94,14 @@ struct CArray
    * @brief accessor for m_data
    * @return reference to m_data
    */
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
   DATA_BUFFER & data() { return m_data; }
 
   /**
    * @brief const accessor for m_data
    * @return reference to const m_data
    */
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
   DATA_BUFFER const & data() const { return m_data; }
 
   /**
@@ -157,9 +159,96 @@ struct CArray
   }
 
 private:
+  /**
+   * @struct SubArrayHelper
+   * @brief This struct is used to help with the creation of subarrays.
+   */
+  struct SubArrayHelper
+  {
+    /// This alias is used to create a const subarray type.
+
+    template< int ... SUB_DIMS >
+    using const_type = CArray< T const, T const * const, SUB_DIMS... >;
+
+    /// This alias is used to create a subarray type.
+    template< int ... SUB_DIMS >
+    using type = CArray< T, T * const, SUB_DIMS... >;
+  };
+
+  /**
+   * @brief Helper function to enable operator[].
+   * @tparam CARRAY_TYPE The type of the array to create. Either const_type or type.
+   * @param index The index to access.
+   * @return A reference to the data at the specified index or the subarray.
+   */
+  template< template< int ... > typename CARRAY_TYPE >
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+  decltype(auto) squareBracketOperatorHelper( index_type index ) const;
+
+public:
+  /**
+   * @brief operator[] to access the data in the array or to slice a multidimensional array.
+   * @param index The index to access.
+   * @return A reference to the data at the specified index or the subarray.
+   */
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+  decltype(auto) operator[]( index_type index ) const
+  {
+    return squareBracketOperatorHelper< SubArrayHelper::template const_type >( index );
+  }
+
+  /**
+   * @brief operator[] to access the data in the array or to slice a mutlidimensional array.
+   * @param index The index to access.
+   * @return A reference to the data at the specified index or the subarray.
+   */
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+  decltype(auto) operator[]( index_type index )
+  {
+    if constexpr ( std::is_reference_v< decltype(squareBracketOperatorHelper< SubArrayHelper::template type >( index )) > )
+    {
+      return const_cast< T & >(squareBracketOperatorHelper< SubArrayHelper::template type >( index ));
+    }
+    else
+    {
+      return squareBracketOperatorHelper< SubArrayHelper::template type >( index );
+    }
+  }
+
+
+private:
   /// The data in the array.
   DATA_BUFFER m_data;
 };
+
+/// @copydoc CArray::squareBracketOperatorHelper
+template< typename T, typename DATA_BUFFER, int ... DIMS >
+template< template< int ... > typename CARRAY_TYPE >
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+decltype(auto)
+CArray< T, DATA_BUFFER, DIMS ... >::squareBracketOperatorHelper( index_type index ) const
+{
+  static_assert( sizeof...(DIMS) >= 1, "operator[] is only valid for sizeof...(DIMS) >= 1" );
+
+#if defined( SHIVA_USE_BOUNDS_CHECK )
+  constexpr int DIM = CArrayHelper::IntPeeler< DIMS... >::first;
+  SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
+                    "Index out of bounds: 0 < index(%jd) < dim(%jd)",
+                    static_cast< intmax_t >( index ),
+                    static_cast< intmax_t >( DIM ) );
+#endif
+
+  if constexpr ( sizeof...(DIMS) > 1 )
+  {
+    using SubArrayDims = typename CArrayHelper::IntPeeler< DIMS... >::rest;
+    using SubArrayType = typename CArrayHelper::ApplyDims< SubArrayDims, CARRAY_TYPE >::type;
+    return SubArrayType( const_cast< T * >( &m_data[ index * CArrayHelper::stride< DIMS..., 1 >() ] ) );
+  }
+  else
+  {
+    return operator()( index );
+  }
+}
 
 /**
  * @brief Alias for a scalar.

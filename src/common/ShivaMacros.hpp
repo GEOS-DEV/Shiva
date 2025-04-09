@@ -20,6 +20,12 @@
 
 #include "ShivaConfig.hpp"
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+#include <cinttypes>
+#include <cstdarg>
+
 #if defined( SHIVA_USE_HIP )
 #include <hip/hip_runtime.h>
 #endif
@@ -28,6 +34,11 @@
 /// This macro is used to indicate that the code is being compiled for device.
 #define SHIVA_USE_DEVICE
 #endif
+
+#if defined( __CUDA_ARCH__ ) || defined( __HIP_DEVICE_COMPILE__ )
+#define SHIVA_DEVICE_CONTEXT
+#endif
+
 
 #if defined(SHIVA_USE_DEVICE)
 /// This macro is used to indicate that the code is being compiled for host
@@ -91,3 +102,19 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
 /// This macro is used to ignore warnings that that a variable is
 /// unused.
 #define SHIVA_UNUSED_VAR( ... ) i_g_n_o_r_e( __VA_ARGS__ )
+
+
+
+/**
+ * @brief This macro is used to implement an assertion.
+ * @param cond The condition to assert is true.
+ * @param ... The message to print if the assertion fails.
+ */
+#define SHIVA_ASSERT_MSG( cond, ... ) \
+        do { \
+          if ( !(cond)) { \
+            if ( !__builtin_is_constant_evaluated()) { \
+              shivaAssertionFailed( __FILE__, __LINE__, true, __VA_ARGS__ ); \
+            } \
+          } \
+        } while ( 0 )

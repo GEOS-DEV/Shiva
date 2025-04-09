@@ -23,6 +23,8 @@
 
 
 #include "ShivaMacros.hpp"
+
+#include <utility>
 namespace shiva
 {
 #if defined(SHIVA_USE_DEVICE)
@@ -32,13 +34,19 @@ namespace shiva
     #define deviceDeviceSynchronize() cudaDeviceSynchronize();
     #define deviceMemCpy( DST, SRC, BYTES, KIND ) cudaMemcpy( DST, SRC, BYTES, KIND );
     #define deviceFree( PTR ) cudaFree( PTR );
-  #elif defined(SHIVA_USE_HIP)
+    #define deviceError_t cudaError_t
+    #define deviceSuccess cudaSuccess
+    #define deviceGetErrorString    cudaGetErrorString
+    #elif defined(SHIVA_USE_HIP)
     #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
     #define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
     #define deviceDeviceSynchronize() hipDeviceSynchronize();
     #define deviceMemCpy( DST, SRC, BYTES, KIND ) hipMemcpy( DST, SRC, BYTES, KIND );
     #define deviceFree( PTR ) hipFree( PTR );
-  #endif
+    #define deviceError_t hipError_t
+    #define deviceSuccess = hipSuccess;
+    #define deviceGetErrorString    hipGetErrorString
+    #endif
 #endif
 
 /**
@@ -81,17 +89,31 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func )
  * @brief This function provides a wrapper to the genericKernel function.
  * @tparam LAMBDA The type of the lambda function to execute.
  * @param func The lambda function to execute.
+ * @param abortOnError If true, the program will abort if the kernel fails.
  *
  * This function will execute the lambda through a kernel launch of
  * genericKernel.
  */
 template< typename LAMBDA >
-void genericKernelWrapper( LAMBDA && func )
+void genericKernelWrapper( LAMBDA && func, bool const abortOnError = true )
 {
 #if defined(SHIVA_USE_DEVICE)
   genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ) );
+  deviceError_t err = deviceDeviceSynchronize();
+  if ( err != cudaSuccess )
+  {
+    printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
+    if ( abortOnError )
+    {
+      // LCOV_EXCL_START
+      printf( "Aborting...\n" );
+      std::abort();
+      // LCOV_EXCL_STOP
+    }
+  }
 #else
   genericKernel( std::forward< LAMBDA >( func ) );
+  SHIVA_UNUSED_VAR( abortOnError );
 #endif
 }
 
@@ -120,25 +142,38 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func, DATA_TYPE * const data )
  * @param N The size of the data array.
  * @param hostData The data pointer to pass to the lambda function.
  * @param func The lambda function to execute.
+ * @param abortOnError If true, the program will abort if the kernel fails.
  *
  * This function will allocate the data pointer on the device, execute the
  * lambda through a kernel launch of genericKernel, and then synchronize the
  * device.
  */
 template< typename DATA_TYPE, typename LAMBDA >
-void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && func )
+void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && func, bool const abortOnError = true )
 {
 
 #if defined(SHIVA_USE_DEVICE)
   DATA_TYPE * deviceData;
   deviceMalloc( &deviceData, N * sizeof(DATA_TYPE) );
-  genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ), deviceData );
-  deviceDeviceSynchronize();
+  genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ), deviceData );
+  deviceError_t err = deviceDeviceSynchronize();
   deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
   deviceFree( deviceData );
+  if ( err != cudaSuccess )
+  {
+    printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
+    if ( abortOnError )
+    {
+      // LCOV_EXCL_START
+      printf( "Aborting...\n" );
+      std::abort();
+      // LCOV_EXCL_STOP
+    }
+  }
 #else
-  SHIVA_UNUSED_VAR( N );
+  SHIVA_UNUSED_VAR( N, abortOnError );
   genericKernel( std::forward< LAMBDA >( func ), hostData );
+
 #endif
 }
 

@@ -6,6 +6,7 @@ set( unit_tests_sources
      testCArray.cpp
      testIndexTypes.cpp
      testSequenceUtilities.cpp
+     testShivaErrorHandling.cpp
      testNestedSequenceUtilities.cpp
      )
 

@@ -11,8 +11,9 @@
  * ------------------------------------------------------------------------------------------------------------
  */
 
-#error Documentation only
-
+ #ifndef __CPPCHECK__
+ #error Documentation only
+ #endif
 
 /**
  * @namespace shiva
