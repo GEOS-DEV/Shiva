@@ -289,8 +289,8 @@ void testBoundsCheckParenthesesOperator1dHelper( int const ilower = 0,
 TEST( testCArray, testBoundsCheckParenthesesOperator1d )
 {
   testBoundsCheckParenthesesOperator1dHelper< 2 >();
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper< 2 >( -1, -1 );}, "Index out of bounds:" );
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper< 2 >( 2, 2 );}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper< 2 >( -1, -1 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator1dHelper< 2 >( 2, 2 );}, "" );
 }
 
 template< int DIM0 = 2, int DIM1 = 4 >
@@ -315,14 +315,14 @@ TEST( testCArray, testBoundsCheckParenthesesOperator2d )
 {
   testBoundsCheckParenthesesOperator2dHelper();
 
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, 0, 3 );}, "Index out of bounds:" );
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, 0, 3 );}, "Index out of bounds:" );
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 0, 1, -1, -1 );}, "Index out of bounds:" );
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 0, 1, 4, 4 );}, "Index out of bounds:" );
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, -1, -1 );}, "Index out of bounds:" );
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, 4, 4 );}, "Index out of bounds:" );
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, -1, -1 );}, "Index out of bounds:" );
-  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, 4, 4 );}, "Index out of bounds:" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, 0, 3 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, 0, 3 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 0, 1, -1, -1 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 0, 1, 4, 4 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, -1, -1 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( -1, -1, 4, 4 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, -1, -1 );}, "" );
+  EXPECT_DEATH( {testBoundsCheckParenthesesOperator2dHelper( 2, 2, 4, 4 );}, "" );
 
 }
 
@@ -344,8 +344,8 @@ TEST( testCArray, testSquareBracketOperator1D )
 {
   testSquareBracketOperator1DHelper();
 
-  EXPECT_DEATH( {testSquareBracketOperator1DHelper< 2 >( -1, -1 );}, "Index out of bounds:" );
-  EXPECT_DEATH( {testSquareBracketOperator1DHelper< 2 >( 3, 3 );}, "Index out of bounds:" );
+  EXPECT_DEATH( {testSquareBracketOperator1DHelper< 2 >( -1, -1 );}, "" );
+  EXPECT_DEATH( {testSquareBracketOperator1DHelper< 2 >( 3, 3 );}, "" );
 
 }
 

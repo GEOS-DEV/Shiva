@@ -111,11 +111,11 @@ void shivaAssertionFailed(const char* file, int line, const char* fmt, ...)
   printf("Assertion failed [%s:%d]: ", file, line);
   printf(fmt);
   printf("\n");
-// #if defined(__CUDA_ARCH__)
-//   __trap();
-// #elif defined(__HIP_DEVICE_COMPILE__)
-//   __builtin_trap();
-// #endif
+#if defined(__CUDA_ARCH__)
+  __trap();
+#elif defined(__HIP_DEVICE_COMPILE__)
+  __builtin_trap();
+#endif
 #else // Host
   fprintf(stderr, "Assertion failed [%s:%d]: ", file, line);
   va_list args;
