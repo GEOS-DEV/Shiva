@@ -105,7 +105,6 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
 
 
 
-
 /**
  * @brief This macro is used to implement an assertion.
  * @param cond The condition to assert is true.

@@ -332,10 +332,17 @@ void testSquareBracketOperator1DHelper( int const ilower = 0,
   pmpl::genericKernelWrapper( [ilower, iupper] SHIVA_DEVICE ()
   {
     CArrayNd< double, DIM > array{ 0.0 };
+    CArrayNd< double, DIM > const & constarray = array;
+
+    static_assert( std::is_same_v< decltype( array[0] ), double & > );
+    static_assert( std::is_same_v< decltype( constarray[0] ), double const & > );
+
     for ( int i = ilower; i <= iupper; ++i )
     {
       array[i] = i;
       SHIVA_ASSERT_MSG( fabs( array( i ) - static_cast< double >(i) ) < 1e-10, "values not equal" );
+      SHIVA_ASSERT_MSG( fabs( constarray[ i ] - static_cast< double >(i) ) < 1e-10, "values not equal" );
+
     }
   } );
 }

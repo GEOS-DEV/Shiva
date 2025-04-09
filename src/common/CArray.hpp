@@ -175,6 +175,12 @@ private:
     using type = CArray< T, T * const, SUB_DIMS... >;
   };
 
+  /**
+   * @brief Helper function to enable operator[].
+   * @tparam CARRAY_TYPE The type of the array to create. Either const_type or type.
+   * @param index The index to access.
+   * @return A reference to the data at the specified index or the subarray.
+   */
   template< template< int ... > typename CARRAY_TYPE >
   SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
   decltype(auto) squareBracketOperatorHelper( index_type index ) const;
@@ -215,6 +221,7 @@ private:
   DATA_BUFFER m_data;
 };
 
+/// @copydoc CArray::squareBracketOperatorHelper
 template< typename T, typename DATA_BUFFER, int ... DIMS >
 template< template< int ... > typename CARRAY_TYPE >
 SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
