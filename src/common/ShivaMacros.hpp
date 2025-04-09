@@ -104,35 +104,7 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
 #define SHIVA_UNUSED_VAR( ... ) i_g_n_o_r_e( __VA_ARGS__ )
 
 
-/**
- * @brief This function is used to print an assertion failure message and
- * terminate the program.
- * @param file The name of the file where the assertion failed.
- * @param line The line number where the assertion failed.
- * @param fmt The format string for the message to print.
- */
-SHIVA_HOST_DEVICE
-void shivaAssertionFailed( const char * file, int line, const char * fmt, ... )
-{
-#if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)
-  printf( "Assertion failed [%s:%d]: ", file, line );
-  printf( fmt );
-  printf( "\n" );
-#if defined(__CUDA_ARCH__)
-  __trap();
-#elif defined(__HIP_DEVICE_COMPILE__)
-  __builtin_trap();
-#endif
-#else // Host
-  fprintf( stderr, "Assertion failed [%s:%d]: ", file, line );
-  va_list args;
-  va_start( args, fmt );
-  vfprintf( stderr, fmt, args );
-  va_end( args );
-  fprintf( stderr, "\n" );
-  std::abort();
-#endif
-}
+
 
 /**
  * @brief This macro is used to implement an assertion.
@@ -143,7 +115,7 @@ void shivaAssertionFailed( const char * file, int line, const char * fmt, ... )
         do { \
           if ( !(cond)) { \
             if ( !__builtin_is_constant_evaluated()) { \
-              shivaAssertionFailed( __FILE__, __LINE__, __VA_ARGS__ ); \
+              shivaAssertionFailed( __FILE__, __LINE__, true, __VA_ARGS__ ); \
             } \
           } \
         } while ( 0 )

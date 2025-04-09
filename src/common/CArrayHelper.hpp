@@ -19,7 +19,7 @@
 #pragma once
 
 
-#include "common/ShivaMacros.hpp"
+#include "common/ShivaErrorHandling.hpp"
 #include "common/types.hpp"
 #include <utility>
 #include <cstdint>

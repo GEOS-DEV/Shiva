@@ -89,12 +89,13 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func )
  * @brief This function provides a wrapper to the genericKernel function.
  * @tparam LAMBDA The type of the lambda function to execute.
  * @param func The lambda function to execute.
+ * @param abortOnError If true, the program will abort if the kernel fails.
  *
  * This function will execute the lambda through a kernel launch of
  * genericKernel.
  */
 template< typename LAMBDA >
-void genericKernelWrapper( LAMBDA && func )
+void genericKernelWrapper( LAMBDA && func, bool const abortOnError = true )
 {
 #if defined(SHIVA_USE_DEVICE)
   genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ) );
@@ -102,10 +103,15 @@ void genericKernelWrapper( LAMBDA && func )
   if ( err != cudaSuccess )
   {
     printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
-    std::abort();
+    if ( abortOnError )
+    {
+      printf( "Aborting...\n" );
+      std::abort();
+    }
   }
 #else
   genericKernel( std::forward< LAMBDA >( func ) );
+  SHIVA_UNUSED_VAR( abortOnError );
 #endif
 }
 
@@ -134,13 +140,14 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func, DATA_TYPE * const data )
  * @param N The size of the data array.
  * @param hostData The data pointer to pass to the lambda function.
  * @param func The lambda function to execute.
+ * @param abortOnError If true, the program will abort if the kernel fails.
  *
  * This function will allocate the data pointer on the device, execute the
  * lambda through a kernel launch of genericKernel, and then synchronize the
  * device.
  */
 template< typename DATA_TYPE, typename LAMBDA >
-void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && func )
+void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && func, bool const abortOnError = true )
 {
 
 #if defined(SHIVA_USE_DEVICE)
@@ -153,11 +160,16 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
   if ( err != cudaSuccess )
   {
     printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
-    std::abort();
+    if ( abortOnError )
+    {
+      printf( "Aborting...\n" );
+      std::abort();
+    }
   }
 #else
-  SHIVA_UNUSED_VAR( N );
+  SHIVA_UNUSED_VAR( N, abortOnError );
   genericKernel( std::forward< LAMBDA >( func ), hostData );
+
 #endif
 }
 
