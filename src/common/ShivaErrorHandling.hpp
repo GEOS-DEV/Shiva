@@ -49,8 +49,10 @@ void shivaAssertionFailed( const char * file, int line, bool const callAbort, co
   fprintf( stderr, "\n" );
   if( callAbort )
   {
+    // LCOV_EXCL_START
     fprintf( stderr, "Aborting...\n" );
     std::abort();
+    // LCOV_EXCL_STOP
   }
 #endif
 }

@@ -105,8 +105,10 @@ void genericKernelWrapper( LAMBDA && func, bool const abortOnError = true )
     printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
     if ( abortOnError )
     {
+      // LCOV_EXCL_START
       printf( "Aborting...\n" );
       std::abort();
+      // LCOV_EXCL_STOP
     }
   }
 #else
@@ -162,8 +164,10 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
     printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
     if ( abortOnError )
     {
+      // LCOV_EXCL_START
       printf( "Aborting...\n" );
       std::abort();
+      // LCOV_EXCL_STOP
     }
   }
 #else
