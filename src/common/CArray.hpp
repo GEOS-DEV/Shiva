@@ -158,25 +158,28 @@ struct CArray
     return m_data[ CArrayHelper::linearIndexHelper< DIMS... >::eval( indices ... ) ];
   }
 
+private:
   /**
    * @struct SubArrayHelper
    * @brief This struct is used to help with the creation of subarrays.
    */
   struct SubArrayHelper
   {
-    /**
-     * This alias is used to create a const subarray type.
-     */
+    /// This alias is used to create a const subarray type.
+
     template< int ... SUB_DIMS >
     using const_type = CArray< T const, T const * const, SUB_DIMS... >;
 
-    /**
-     * This alias is used to create a subarray type.
-     */
+    /// This alias is used to create a subarray type.
     template< int ... SUB_DIMS >
     using type = CArray< T, T * const, SUB_DIMS... >;
   };
 
+  template< template< int ... > typename CARRAY_TYPE >
+  SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+  decltype(auto) squareBracketOperatorHelper( index_type index ) const;
+
+public:
   /**
    * @brief operator[] to access the data in the array or to slice a multidimensional array.
    * @param index The index to access.
@@ -185,26 +188,7 @@ struct CArray
   SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
   decltype(auto) operator[]( index_type index ) const
   {
-    static_assert( sizeof...(DIMS) >= 1, "operator[] is only valid for sizeof...(DIMS) > 1" );
-
-#if defined( SHIVA_USE_BOUNDS_CHECK )
-    constexpr int DIM = CArrayHelper::IntPeeler< DIMS... >::first;
-    SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
-                      "Index out of bounds: 0 < index(%jd) < dim(%jd)",
-                      static_cast< intmax_t >( index ),
-                      static_cast< intmax_t >( DIM ) );
-#endif
-
-    if constexpr ( sizeof...(DIMS) > 1 )
-    {
-      using SubArrayDims = typename CArrayHelper::IntPeeler< DIMS... >::rest;
-      using SubArrayType = typename CArrayHelper::ApplyDims< SubArrayDims, SubArrayHelper::template const_type >::type;
-      return SubArrayType( &m_data[ index * CArrayHelper::stride< DIMS..., 1 >() ] );
-    }
-    else
-    {
-      return operator()( index );
-    }
+    return squareBracketOperatorHelper< SubArrayHelper::template const_type >( index );
   }
 
   /**
@@ -215,33 +199,49 @@ struct CArray
   SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
   decltype(auto) operator[]( index_type index )
   {
-    static_assert( sizeof...(DIMS) >= 1, "operator[] is only valid for sizeof...(DIMS) > 1" );
-
-#if defined( SHIVA_USE_BOUNDS_CHECK )
-    constexpr int DIM = CArrayHelper::IntPeeler< DIMS... >::first;
-    SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
-                      "Index out of bounds: 0 < index(%jd) < dim(%jd)",
-                      static_cast< intmax_t >( index ),
-                      static_cast< intmax_t >( DIM ) );
-#endif
-
-
-    if constexpr ( sizeof...(DIMS) > 1 )
+    if constexpr ( std::is_reference_v< decltype(squareBracketOperatorHelper< SubArrayHelper::template type >( index )) > )
     {
-      using SubArrayDims = typename CArrayHelper::IntPeeler< DIMS... >::rest;
-      using SubArrayType = typename CArrayHelper::ApplyDims< SubArrayDims, SubArrayHelper::template type >::type;
-      return SubArrayType( &m_data[ index * CArrayHelper::stride< DIMS..., 1 >() ] );
+      return const_cast< T & >(squareBracketOperatorHelper< SubArrayHelper::template type >( index ));
     }
     else
     {
-      return operator()( index );
+      return squareBracketOperatorHelper< SubArrayHelper::template type >( index );
     }
   }
+
 
 private:
   /// The data in the array.
   DATA_BUFFER m_data;
 };
+
+template< typename T, typename DATA_BUFFER, int ... DIMS >
+template< template< int ... > typename CARRAY_TYPE >
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+decltype(auto)
+CArray< T, DATA_BUFFER, DIMS ... >::squareBracketOperatorHelper( index_type index ) const
+{
+  static_assert( sizeof...(DIMS) >= 1, "operator[] is only valid for sizeof...(DIMS) >= 1" );
+
+#if defined( SHIVA_USE_BOUNDS_CHECK )
+  constexpr int DIM = CArrayHelper::IntPeeler< DIMS... >::first;
+  SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
+                    "Index out of bounds: 0 < index(%jd) < dim(%jd)",
+                    static_cast< intmax_t >( index ),
+                    static_cast< intmax_t >( DIM ) );
+#endif
+
+  if constexpr ( sizeof...(DIMS) > 1 )
+  {
+    using SubArrayDims = typename CArrayHelper::IntPeeler< DIMS... >::rest;
+    using SubArrayType = typename CArrayHelper::ApplyDims< SubArrayDims, CARRAY_TYPE >::type;
+    return SubArrayType( const_cast< T * >( &m_data[ index * CArrayHelper::stride< DIMS..., 1 >() ] ) );
+  }
+  else
+  {
+    return operator()( index );
+  }
+}
 
 /**
  * @brief Alias for a scalar.

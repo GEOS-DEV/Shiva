@@ -19,7 +19,7 @@
 
 using namespace shiva;
 
-void test_shivaAssertionFailed( bool const callAbort)
+void test_shivaAssertionFailed( bool const callAbort )
 {
   shivaAssertionFailed( __FILE__, __LINE__, callAbort, "host assertion failed" );
   pmpl::genericKernelWrapper( [callAbort] SHIVA_DEVICE ()
@@ -30,12 +30,12 @@ void test_shivaAssertionFailed( bool const callAbort)
 
 TEST( testShivaErrorHandling, test_shivaAssertionFailed )
 {
-  EXPECT_DEATH( {test_shivaAssertionFailed(true);}, "" );
+  EXPECT_DEATH( {test_shivaAssertionFailed( true );}, "" );
 }
 
 TEST( testShivaErrorHandling, test_shivaAssertionFailed_NoDeath )
 {
-  test_shivaAssertionFailed(false);
+  test_shivaAssertionFailed( false );
 }
 
 int main( int argc, char * * argv )
