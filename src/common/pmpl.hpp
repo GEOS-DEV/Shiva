@@ -34,7 +34,8 @@ namespace shiva
     #define deviceFree( PTR ) cudaFree( PTR );
     #define deviceError_t cudaError_t
     #define deviceSuccess = cudaSuccess;
-  #elif defined(SHIVA_USE_HIP)
+    #define deviceGetErrorString    cudaGetErrorString
+    #elif defined(SHIVA_USE_HIP)
     #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
     #define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
     #define deviceDeviceSynchronize() hipDeviceSynchronize();
@@ -42,7 +43,8 @@ namespace shiva
     #define deviceFree( PTR ) hipFree( PTR );
     #define deviceError_t hipError_t
     #define deviceSuccess = hipSuccess;
-  #endif
+    #define deviceGetErrorString    hipGetErrorString
+    #endif
 #else
   #define deviceError_t int
 #endif
@@ -99,7 +101,7 @@ void genericKernelWrapper( LAMBDA && func )
   deviceError_t err = deviceDeviceSynchronize();
   if (err != cudaSuccess)
   {
-    printf("Kernel failed: %s\n", cudaGetErrorString(err));
+    printf("Kernel failed: %s\n", deviceGetErrorString(err));
     std::abort();
   }
 #else
@@ -150,7 +152,7 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
   deviceFree( deviceData );
   if (err != cudaSuccess)
   {
-    printf("Kernel failed: %s\n", cudaGetErrorString(err));
+    printf("Kernel failed: %s\n", deviceGetErrorString(err));
     std::abort();
   }
 #else
