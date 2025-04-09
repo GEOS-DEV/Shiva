@@ -20,6 +20,12 @@
 
 #include "ShivaConfig.hpp"
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+#include <cinttypes>
+#include <cstdarg>
+
 #if defined( SHIVA_USE_HIP )
 #include <hip/hip_runtime.h>
 #endif
@@ -28,6 +34,11 @@
 /// This macro is used to indicate that the code is being compiled for device.
 #define SHIVA_USE_DEVICE
 #endif
+
+#if defined( __CUDA_ARCH__ ) || defined( __HIP_DEVICE_COMPILE__ )
+#define SHIVA_DEVICE_CONTEXT
+#endif
+
 
 #if defined(SHIVA_USE_DEVICE)
 /// This macro is used to indicate that the code is being compiled for host
@@ -93,40 +104,34 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
 #define SHIVA_UNUSED_VAR( ... ) i_g_n_o_r_e( __VA_ARGS__ )
 
 
-#ifdef SHIVA_USE_DEVICE  // Device code
-#include <cstdio>
-
-SHIVA_DEVICE __noinline__
-void shivaAssertionFailed( const char * file, int line )
+SHIVA_HOST_DEVICE 
+void shivaAssertionFailed(const char* file, int line, const char* fmt, ...) 
 {
-  printf( "Assertion failed [%s:%d]: \n", file, line );
+#if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__)  
+  printf("Assertion failed [%s:%d]: ", file, line);
+  printf(fmt);
+  printf("\n");
+#if defined(__CUDA_ARCH__)
   __trap();
+#elif defined(__HIP_DEVICE_COMPILE__)
+  __builtin_trap();
+#endif
+#else // Host
+  fprintf(stderr, "Assertion failed [%s:%d]: ", file, line);
+  va_list args;
+  va_start(args, fmt);
+  vfprintf(stderr, fmt, args);
+  va_end(args);
+  fprintf(stderr, "\n");
+  std::abort();
+#endif
 }
 
-#define SHIVA_ASSERT_MSG( cond, ... )                                         \
-do {                                                                          \
- if ( !(cond)) {                                                              \
-   if ( !__builtin_is_constant_evaluated() )                                  \
-   {                                                                          \
-     shivaAssertionFailed( __FILE__, __LINE__ );                              \
-   }                                                                          \
-   else {}                                                                    \
- }                                                                            \
-} while ( 0 )
-
-#else // Host code (CPU code)
-
-#include <cstdio>
-#include <cstdlib>
-
-#define SHIVA_ASSERT_MSG( cond, ... ) \
-do { \
-  if ( !(cond)) { \
-    fprintf( stderr, "Assertion failed [%s:%d]: ", __FILE__, __LINE__ ); \
-    fprintf( stderr, __VA_ARGS__ );                                 \
-    fprintf( stderr, "\n" );                                        \
-    std::abort(); \
-  } \
-} while ( 0 )
-
-#endif
+#define SHIVA_ASSERT_MSG(cond, ...) \
+  do { \
+    if (!(cond)) { \
+      if (!__builtin_is_constant_evaluated()) { \
+        shivaAssertionFailed(__FILE__, __LINE__, __VA_ARGS__); \
+      } \
+    } \
+  } while (0)
