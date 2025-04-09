@@ -34,6 +34,7 @@ macro(shiva_add_code_checks)
 
     set( CPPCHECK_FLAGS --std=c++17 
                         --enable=all 
+                        --quiet
                         --suppress=missingIncludeSystem
                         --suppress=unmatchedSuppression
                         --suppress=missingInclude 
@@ -41,7 +42,8 @@ macro(shiva_add_code_checks)
                         --suppress=noExplicitConstructor
                         --suppress=unusedFunction 
                         --suppress=constStatement 
-                        --suppress=unusedStructMember )
+                        --suppress=unusedStructMember
+                        --suppress=unknownMacro )
                         
     blt_add_code_checks( PREFIX    ${arg_PREFIX}
                          SOURCES   ${_sources}

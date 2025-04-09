@@ -104,6 +104,13 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
 #define SHIVA_UNUSED_VAR( ... ) i_g_n_o_r_e( __VA_ARGS__ )
 
 
+/**
+ * @brief This function is used to print an assertion failure message and
+ * terminate the program.
+ * @param file The name of the file where the assertion failed.
+ * @param line The line number where the assertion failed.
+ * @param fmt The format string for the message to print.
+ */
 SHIVA_HOST_DEVICE 
 void shivaAssertionFailed(const char* file, int line, const char* fmt, ...) 
 {
@@ -127,6 +134,11 @@ void shivaAssertionFailed(const char* file, int line, const char* fmt, ...)
 #endif
 }
 
+/**
+ * @brief This macro is used to implement an assertion.
+ * @param cond The condition to assert is true.
+ * @param ... The message to print if the assertion fails.
+ */
 #define SHIVA_ASSERT_MSG(cond, ...) \
   do { \
     if (!(cond)) { \

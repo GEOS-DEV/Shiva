@@ -179,7 +179,7 @@ struct CArray
 
   /**
    * @brief operator[] to access the data in the array or to slice a mutlidimensional array.
-   * @param i The index to access.
+   * @param index The index to access.
    * @return A reference to the data at the specified index or the subarray.
    */
   SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
@@ -209,7 +209,7 @@ struct CArray
 
   /**
    * @brief operator[] to access the data in the array or to slice a mutlidimensional array.
-   * @param i The index to access.
+   * @param index The index to access.
    * @return A reference to the data at the specified index or the subarray.
    */
   SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE

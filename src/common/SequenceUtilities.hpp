@@ -202,8 +202,8 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto executeSequence( FUNC && func
 {
   return
     sequenceUtilitiesImpl::SequenceExpansion< std::make_integer_sequence< int, END > >::
-    template execute( std::forward< FUNC >( func ),
-                      std::forward< ARGS >( args )... );
+    template execute<FUNC,ARGS...>( std::forward< FUNC >( func ),
+                                    std::forward< ARGS >( args )... );
 }
 
 /**
@@ -222,7 +222,7 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto forSequence( FUNC && func )
 {
   return
     sequenceUtilitiesImpl::SequenceExpansion< std::make_integer_sequence< int, END > >::
-    template staticFor( std::forward< FUNC >( func ) );
+    template staticFor<FUNC>( std::forward< FUNC >( func ) );
 }
 
 

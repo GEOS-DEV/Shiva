@@ -45,8 +45,6 @@ namespace shiva
     #define deviceSuccess = hipSuccess;
     #define deviceGetErrorString    hipGetErrorString
     #endif
-#else
-  #define deviceError_t int
 #endif
 
 /**

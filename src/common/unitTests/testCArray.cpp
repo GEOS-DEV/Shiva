@@ -17,7 +17,6 @@
 #include "../SequenceUtilities.hpp"
 #include "common/pmpl.hpp"
 
-
 #include <gtest/gtest.h>
 
 using namespace shiva;
