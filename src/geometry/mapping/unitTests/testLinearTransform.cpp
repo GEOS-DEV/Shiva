@@ -30,8 +30,7 @@ using namespace shiva::geometry::utilities;
 using namespace shiva::functions;
 
 
-constexpr SHIVA_DEVICE double
-  Xref[8][3] =
+constexpr SHIVA_DEVICE double Xref[8][3] =
 { { -1.31, -1.15, -1.23 },
   {  1.38, -1.22, -1.17 },
   { -1.31, 1.12, -1.31 },
@@ -43,8 +42,7 @@ constexpr SHIVA_DEVICE double
 
 double Xreference( int const a, int const i )
 {
-  static constexpr double
-    X[8][3] =
+  static constexpr double X[8][3] =
   { { -1.31, -1.15, -1.23 },
     {  1.38, -1.22, -1.17 },
     { -1.31, 1.12, -1.31 },

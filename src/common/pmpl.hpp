@@ -98,7 +98,9 @@ template< typename LAMBDA >
 void genericKernelWrapper( LAMBDA && func, bool const abortOnError = true )
 {
 #if defined(SHIVA_USE_DEVICE)
-  genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ) );
+  // UNCRUSTIFY-OFF
+  genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ) );
+  //UNCRUSTIFY-ON
   deviceError_t err = deviceDeviceSynchronize();
   if ( err != cudaSuccess )
   {
@@ -155,7 +157,9 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
 #if defined(SHIVA_USE_DEVICE)
   DATA_TYPE * deviceData;
   deviceMalloc( &deviceData, N * sizeof(DATA_TYPE) );
-  genericKernel << < 1, 1 >> > ( std::forward< LAMBDA >( func ), deviceData );
+  // UNCRUSTIFY-OFF
+  genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ), deviceData );
+  // UNCRUSTIFY-ON
   deviceError_t err = deviceDeviceSynchronize();
   deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
   deviceFree( deviceData );
