@@ -98,7 +98,7 @@ template< typename LAMBDA >
 void genericKernelWrapper( LAMBDA && func, bool const abortOnError = true )
 {
 #if defined(SHIVA_USE_DEVICE)
-  //UNCRUSTIFY-OFF
+  // UNCRUSTIFY-OFF
   genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ) );
   //UNCRUSTIFY-ON
   deviceError_t err = deviceDeviceSynchronize();
