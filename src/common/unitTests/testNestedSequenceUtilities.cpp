@@ -46,7 +46,7 @@ void kernelLaunch( FUNC && func )
 
 void testForNestedSequenceLambdaHelper()
 {
-  kernelLaunch([] SHIVA_HOST_DEVICE ()
+  kernelLaunch( [] SHIVA_HOST_DEVICE ()
   {
     constexpr auto helper = [] ( auto const & h ) constexpr
     {
@@ -63,7 +63,7 @@ void testForNestedSequenceLambdaHelper()
   } );
 
 
-  kernelLaunch([] SHIVA_HOST_DEVICE ()
+  kernelLaunch( [] SHIVA_HOST_DEVICE ()
   {
     constexpr auto helper = [] ( auto const & h ) constexpr
     {
@@ -79,7 +79,7 @@ void testForNestedSequenceLambdaHelper()
     static_assert( staticSum0 == NestedData::double_nested_to_8_sum );
   } );
 
-  kernelLaunch([] SHIVA_HOST_DEVICE ()
+  kernelLaunch( [] SHIVA_HOST_DEVICE ()
   {
     constexpr auto helper = [] ( auto const & h ) constexpr
     {

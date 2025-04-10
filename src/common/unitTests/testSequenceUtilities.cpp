@@ -44,7 +44,7 @@ void kernelLaunch( FUNC && func )
 
 void testSequenceExpansionLambdaHelper()
 {
-  kernelLaunch([] SHIVA_HOST_DEVICE ()
+  kernelLaunch( [] SHIVA_HOST_DEVICE ()
   {
     constexpr int staticSum0 =
       executeSequence< 10 >( [&] ( auto const && ... a ) constexpr
@@ -64,17 +64,17 @@ TEST( testSequenceUtilities, testSequenceExpansionLambda )
 
 void testNestedSequenceExpansionLambdaHelper()
 {
-  kernelLaunch([] SHIVA_HOST_DEVICE ()
+  kernelLaunch( [] SHIVA_HOST_DEVICE ()
   {
     constexpr int staticSum0 =
       executeSequence< 10 >( [&] ( auto const ... a ) constexpr
     {
       return
-      ( executeSequence< 10 >
-          ( [ h = Data::h, aa = std::integral_constant< int, a >{} ] ( auto const ... b ) constexpr
-          { return ( (h[aa] * h[b]) + ...); }
-          ) + ...
-      );
+        ( executeSequence< 10 >
+            ( [ h = Data::h, aa = std::integral_constant< int, a >{} ] ( auto const ... b ) constexpr
+            { return ( (h[aa] * h[b]) + ...); }
+            ) + ...
+        );
     } );
     static_assert( staticSum0 == Data::nested_sum_of_h );
   } );
@@ -88,7 +88,7 @@ TEST( testSequenceUtilities, testNestedSequenceExpansionLambda )
 
 void testForSequenceLambdaHelper()
 {
-  kernelLaunch([] SHIVA_HOST_DEVICE ()
+  kernelLaunch( [] SHIVA_HOST_DEVICE ()
   {
     constexpr auto helper = [] ( auto const & h ) constexpr
     {
@@ -116,7 +116,7 @@ TEST( testSequenceUtilities, testForSequenceLambda )
 
 void testSequenceExpansionTemplateLambdaHelper()
 {
-  kernelLaunch([] SHIVA_HOST_DEVICE ()
+  kernelLaunch( [] SHIVA_HOST_DEVICE ()
   {
     constexpr int staticSum0 =
       executeSequence< 10 >( [&] < int ... a > () constexpr
@@ -137,17 +137,17 @@ TEST( testSequenceUtilities, testSequenceExpansionTemplateLambda )
 
 void testSequenceExpansionTemplateLambdaHelper()
 {
-  kernelLaunch([] SHIVA_HOST_DEVICE ()
+  kernelLaunch( [] SHIVA_HOST_DEVICE ()
   {
     constexpr int staticSum0 = executeSequence< 10 >( [&] < int ... a > () constexpr
     {
       return
-      ( executeSequence< 10 >
-        (
-          [ h = Data::h, aa = std::integral_constant< int, a >{} ] < int ... b > () constexpr
-          { return ( (h[aa] * h[b]) + ...); }
-        ) + ...
-      );
+        ( executeSequence< 10 >
+          (
+            [ h = Data::h, aa = std::integral_constant< int, a >{} ] < int ... b > () constexpr
+            { return ( (h[aa] * h[b]) + ...); }
+          ) + ...
+        );
     } );
     static_assert( staticSum0 == Data::nested_sum_of_h );
   } );
@@ -161,7 +161,7 @@ TEST( testSequenceUtilities, testNestedSequenceExpansionTemplateLambda )
 
 void testForSequenceTemplateLambdaHelper()
 {
-  kernelLaunch([] SHIVA_HOST_DEVICE ()
+  kernelLaunch( [] SHIVA_HOST_DEVICE ()
   {
     constexpr auto helper = [] ( auto const & h ) constexpr
     {
