@@ -4,6 +4,12 @@ install-*
 .vscode
 
 
+#vscode
+.vscode
+
+#mac directories
+.DS_Store
+
 # Prerequisites
 *.d
 
