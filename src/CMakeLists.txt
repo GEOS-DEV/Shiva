@@ -23,7 +23,8 @@ blt_add_library( NAME             shiva
 
 target_include_directories( shiva
                             INTERFACE
-                            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+                            $<BUILD_INTERFACE:${SHIVA_BINARY_DIR}/include>
+                            $<BUILD_INTERFACE:${SHIVA_SOURCE_DIR}/src>
                             $<INSTALL_INTERFACE:include> )
 
 install( FILES ${shiva_headers} 
