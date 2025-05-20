@@ -220,7 +220,7 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
           constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
 
           // dimensional loop from domain to codomain
-    #if 0
+    #if 1
           forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
           {
             constexpr int i = decltype(ici)::value;
