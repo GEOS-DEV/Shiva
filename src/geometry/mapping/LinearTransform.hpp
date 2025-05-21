@@ -208,19 +208,19 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
           typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & J )
 {
-  using Transform = std::remove_reference_t< decltype(transform) >;
+  using Transform = LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >;
   using InterpolatedShape = typename Transform::InterpolatedShape;
   constexpr int DIMS = Transform::numDims;
 
   auto const & nodeCoords = transform.getData();
-  constexpr double qcoords[3] = { ( QUADRATURE::template coordinate< QA >() )... };
+  constexpr REAL_TYPE qcoords[3] = { ( QUADRATURE::template coordinate< QA >() )... };
 
   InterpolatedShape::supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
         {
           constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
 
           // dimensional loop from domain to codomain
-    #if 0
+    #if 1
           forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
           {
             constexpr int i = decltype(ici)::value;
