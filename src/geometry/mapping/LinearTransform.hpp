@@ -208,12 +208,12 @@ SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
           typename LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >::JacobianType & J )
 {
-  using Transform = std::remove_reference_t< decltype(transform) >;
+  using Transform = LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE >;
   using InterpolatedShape = typename Transform::InterpolatedShape;
   constexpr int DIMS = Transform::numDims;
 
   auto const & nodeCoords = transform.getData();
-  constexpr double qcoords[3] = { ( QUADRATURE::template coordinate< QA >() )... };
+  constexpr REAL_TYPE qcoords[3] = { ( QUADRATURE::template coordinate< QA >() )... };
 
   InterpolatedShape::supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
         {
