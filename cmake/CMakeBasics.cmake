@@ -11,6 +11,8 @@ set( SHIVA_BUILD_OBJ_LIBS OFF CACHE BOOL "" )
 
 option( SHIVA_ENABLE_BOUNDS_CHECK "Enable bounds checking in shiva::CArray" ON )
 
+option( SHIVA_ENABLE_CAMP "Enable CAMP usage" ON )
+
 if( CMAKE_CXX_STANDARD IN_LIST "98; 11; 14" )
     MESSAGE(FATAL_ERROR "Shiva requires at least c++17")
 endif()

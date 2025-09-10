@@ -15,3 +15,5 @@
 #cmakedefine SHIVA_USE_CALIPER
 
 #cmakedefine SHIVA_USE_BOUNDS_CHECK
+
+#cmakedefine SHIVA_USE_CAMP
