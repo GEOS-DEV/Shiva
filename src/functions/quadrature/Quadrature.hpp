@@ -158,7 +158,7 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
       //assert( index >= 0 && index < 5 );
       return 0.1 + (index & 1) * 0.4444444444444444444444444444444444 + !( index - 2 ) * 0.6111111111111111111111111111111111;
     }
-    return 0;//std::numeric_limits< REAL_TYPE >::max();
+    return std::numeric_limits< REAL_TYPE >::max();
   }
 
   /**

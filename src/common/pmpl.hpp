@@ -38,7 +38,7 @@ namespace shiva
     #define deviceSuccess cudaSuccess
     #define deviceGetErrorString    cudaGetErrorString
     #define deviceMemcpyDeviceToHost cudaMemcpyDeviceToHost
-    #define deviceSuccess = cudaSuccess;
+    #define deviceSuccess cudaSuccess;
     #elif defined(SHIVA_USE_HIP)
     #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
     #define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
@@ -49,7 +49,7 @@ namespace shiva
     #define deviceSuccess = hipSuccess;
     #define deviceGetErrorString    hipGetErrorString
     #define deviceMemcpyDeviceToHost hipMemcpyDeviceToHost
-    #define deviceSuccess = hipSuccess;
+    #define deviceSuccess hipSuccess;
     #endif
 #endif
 
