@@ -37,6 +37,8 @@ namespace shiva
     #define deviceError_t cudaError_t
     #define deviceSuccess cudaSuccess
     #define deviceGetErrorString    cudaGetErrorString
+    #define deviceMemcpyDeviceToHost cudaMemcpyDeviceToHost
+    #define deviceSuccess = cudaSuccess;
     #elif defined(SHIVA_USE_HIP)
     #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
     #define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
@@ -46,6 +48,8 @@ namespace shiva
     #define deviceError_t hipError_t
     #define deviceSuccess = hipSuccess;
     #define deviceGetErrorString    hipGetErrorString
+    #define deviceMemcpyDeviceToHost hipMemcpyDeviceToHost
+    #define deviceSuccess = hipSuccess;
     #endif
 #endif
 
@@ -102,7 +106,7 @@ void genericKernelWrapper( LAMBDA && func, bool const abortOnError = true )
   genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ) );
   // UNCRUSTIFY-ON
   deviceError_t err = deviceDeviceSynchronize();
-  if ( err != cudaSuccess )
+  if ( err != deviceSuccess )
   {
     printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
     if ( abortOnError )
@@ -162,9 +166,9 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
   genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ), deviceData );
   // UNCRUSTIFY-ON
   deviceError_t err = deviceDeviceSynchronize();
-  deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
+  deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), deviceMemcpyDeviceToHost );
   deviceFree( deviceData );
-  if ( err != cudaSuccess )
+  if ( err != deviceSuccess )
   {
     printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
     if ( abortOnError )
