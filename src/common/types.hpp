@@ -19,11 +19,11 @@
 
 #include "common/ShivaMacros.hpp"
 
-
 /// @brief Macro to define whether or not to use camp.
 #if defined(SHIVA_USE_CAMP)
 #include <camp/camp.hpp>
 #else
+
 #if defined(SHIVA_USE_CUDA)
 #include <cuda/std/tuple>
 #else
@@ -51,34 +51,15 @@ using tuple = camp::tuple< T ... >;
  * @return A tuple with the elements passed as arguments.
  */
 template< typename ... T >
-SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
-auto
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE 
+auto 
 make_tuple( T && ... t )
 {
   return camp::make_tuple( std::forward< T >( t ) ... );
 }
 
-#define SHIVA_HAVE_TUPLE_SB 1
-
 #else
 #if defined(SHIVA_USE_CUDA)
-
-// libcudacxx (CCCL) API version: e.g. 120400 for CUDA 12.4
-#ifndef _LIBCUDACXX_CUDA_API_VERSION
-  #define _LIBCUDACXX_CUDA_API_VERSION 0
-#endif
-
-#ifndef CUDART_VERSION
-  #define CUDART_VERSION 0
-#endif
-
-// Prefer the libcudacxx API version if present; fall back to runtime version.
-#if (_LIBCUDACXX_CUDA_API_VERSION >= 120400) || (CUDART_VERSION >= 12040)
-  #define SHIVA_HAVE_TUPLE_SB 1
-#else
-  #define SHIVA_HAVE_TUPLE_SB 0
-#endif
-
 /**
  * @brief Wrapper for cuda::std::tuple.
  * @tparam T Types of the elements of the tuple.
@@ -98,9 +79,6 @@ auto make_tuple( T && ... t )
 {
   return cuda::std::make_tuple( std::forward< T >( t ) ... );
 }
-
-using cuda::std::get;     // expose cuda::std::get as shiva::get
-
 #else
 /**
  * @brief Wrapper for std::tuple.
@@ -122,10 +100,6 @@ make_tuple( T && ... t )
 {
   return std::make_tuple( std::forward< T >( t ) ... );
 }
-
-#define SHIVA_HAVE_TUPLE_SB 1
-using std::get;
-
 #endif
 #endif
 
@@ -142,6 +116,5 @@ using int_sequence = std::integer_sequence< int, T ... >;
  */
 template< int N >
 using make_int_sequence = std::make_integer_sequence< int, N >;
-
 
 }
