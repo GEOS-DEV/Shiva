@@ -79,8 +79,6 @@ make_tuple( T && ... t )
   #define SHIVA_HAVE_TUPLE_SB 0
 #endif
 
-
-
 /**
  * @brief Wrapper for cuda::std::tuple.
  * @tparam T Types of the elements of the tuple.
@@ -100,6 +98,9 @@ auto make_tuple( T && ... t )
 {
   return cuda::std::make_tuple( std::forward< T >( t ) ... );
 }
+
+using cuda::std::get;     // expose cuda::std::get as shiva::get
+
 #else
 /**
  * @brief Wrapper for std::tuple.
@@ -123,6 +124,7 @@ make_tuple( T && ... t )
 }
 
 #define SHIVA_HAVE_TUPLE_SB 1
+using std::get;
 
 #endif
 #endif
@@ -142,10 +144,4 @@ template< int N >
 using make_int_sequence = std::make_integer_sequence< int, N >;
 
 
-
 }
-
-#if defined(__CUDA_ARCH__)
-  #undef  SHIVA_HAVE_TUPLE_SB
-  #define SHIVA_HAVE_TUPLE_SB 0
-#endif
