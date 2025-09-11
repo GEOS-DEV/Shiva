@@ -169,17 +169,17 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
 
   auto const & nodeCoords = transform.getData();
   InterpolatedShape::supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
-        {
-          CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( pointCoordsParent );
-          // dimensional loop from domain to codomain
-          forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
-          {
-            constexpr int i = decltype(ici)::value;
-            constexpr int j = decltype(icj)::value;
-            J( i, j ) = J( i, j ) + dNadXi( j ) * nodeCoords( decltype(ic_spIndices)::value ..., i );
-          } );
+  {
+    CArrayNd< REAL_TYPE, DIMS > const dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( pointCoordsParent );
+    // dimensional loop from domain to codomain
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
+    {
+      constexpr int i = decltype(ici)::value;
+      constexpr int j = decltype(icj)::value;
+      J( i, j ) = J( i, j ) + dNadXi( j ) * nodeCoords( decltype(ic_spIndices)::value ..., i );
+    } );
 
-        } );
+  } );
 }
 
 
@@ -216,27 +216,27 @@ jacobian( LinearTransform< REAL_TYPE, INTERPOLATED_SHAPE > const & transform,
   constexpr REAL_TYPE qcoords[3] = { ( QUADRATURE::template coordinate< QA >() )... };
 
   InterpolatedShape::supportLoop( [&] ( auto const ... ic_spIndices ) constexpr
-        {
-          constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
+  {
+    constexpr CArrayNd< REAL_TYPE, DIMS > dNadXi = InterpolatedShape::template gradient< decltype(ic_spIndices)::value ... >( qcoords );
 
-          // dimensional loop from domain to codomain
+    // dimensional loop from domain to codomain
     #if 1
-          forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
-          {
-            constexpr int i = decltype(ici)::value;
-            constexpr int j = decltype(icj)::value;
-            J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
-          } );
+    forNestedSequence< DIMS, DIMS >( [&] ( auto const ici, auto const icj ) constexpr
+    {
+      constexpr int i = decltype(ici)::value;
+      constexpr int j = decltype(icj)::value;
+      J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
+    } );
     #else
-          for ( int j = 0; j < DIMS; ++j )
-          {
-            for ( int i = 0; i < DIMS; ++i )
-            {
-              J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
-            }
-          }
+    for ( int j = 0; j < DIMS; ++j )
+    {
+      for ( int i = 0; i < DIMS; ++i )
+      {
+        J( j, i ) = J( j, i ) + dNadXi( i ) * nodeCoords( decltype(ic_spIndices)::value ..., j );
+      }
+    }
     #endif
-        } );
+  } );
 }
 
 

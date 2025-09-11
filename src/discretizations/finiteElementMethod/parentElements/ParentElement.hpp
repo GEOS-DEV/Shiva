@@ -110,9 +110,9 @@ public:
     REAL_TYPE rval = {0};
 
     forNestedSequence< BASIS_TYPE::numSupportPoints... >( [&] ( auto const ... ic_indices ) constexpr
-          {
-            rval = rval + ( value< decltype(ic_indices)::value ... >( parentCoord ) * var( decltype(ic_indices)::value ... ) );
-          } );
+    {
+      rval = rval + ( value< decltype(ic_indices)::value ... >( parentCoord ) * var( decltype(ic_indices)::value ... ) );
+    } );
     return rval;
   }
 
@@ -130,13 +130,13 @@ public:
   {
     CArrayNd< RealType, numDims > rval = {0.0};
     forNestedSequence< BASIS_TYPE::numSupportPoints... >( [&] ( auto const ... ic_indices ) constexpr
-          {
-            CArrayNd< RealType, numDims > const grad = gradient< decltype(ic_indices)::value ... >( parentCoord );
-            forSequence< numDims >( [&] ( auto const a ) constexpr
-            {
-              rval( a ) = rval( a ) + grad( a ) * var( decltype(ic_indices)::value ... );
-            } );
-          } );
+    {
+      CArrayNd< RealType, numDims > const grad = gradient< decltype(ic_indices)::value ... >( parentCoord );
+      forSequence< numDims >( [&] ( auto const a ) constexpr
+      {
+        rval( a ) = rval( a ) + grad( a ) * var( decltype(ic_indices)::value ... );
+      } );
+    } );
     return rval;
   }
 

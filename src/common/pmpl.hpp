@@ -28,27 +28,27 @@
 namespace shiva
 {
 #if defined(SHIVA_USE_DEVICE)
-  #if defined(SHIVA_USE_CUDA)
-    #define deviceMalloc( PTR, BYTES ) cudaMalloc( PTR, BYTES );
-    #define deviceMallocManaged( PTR, BYTES ) cudaMallocManaged( PTR, BYTES );
-    #define deviceDeviceSynchronize() cudaDeviceSynchronize();
-    #define deviceMemCpy( DST, SRC, BYTES, KIND ) cudaMemcpy( DST, SRC, BYTES, KIND );
-    #define deviceFree( PTR ) cudaFree( PTR );
-    #define deviceError_t cudaError_t
-    #define deviceGetErrorString    cudaGetErrorString
-    #define deviceMemcpyDeviceToHost cudaMemcpyDeviceToHost
-    constexpr cudaError_t deviceSuccess = cudaSuccess;
-    #elif defined(SHIVA_USE_HIP)
-    #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
-    #define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
-    #define deviceDeviceSynchronize() hipDeviceSynchronize();
-    #define deviceMemCpy( DST, SRC, BYTES, KIND ) hipMemcpy( DST, SRC, BYTES, KIND );
-    #define deviceFree( PTR ) hipFree( PTR );
-    #define deviceError_t hipError_t
-    #define deviceGetErrorString    hipGetErrorString
-    #define deviceMemcpyDeviceToHost hipMemcpyDeviceToHost
-    constexpr hipError_t deviceSuccess = hipSuccess;
-    #endif
+#if defined(SHIVA_USE_CUDA)
+#define deviceMalloc( PTR, BYTES ) cudaMalloc( PTR, BYTES );
+#define deviceMallocManaged( PTR, BYTES ) cudaMallocManaged( PTR, BYTES );
+#define deviceDeviceSynchronize() cudaDeviceSynchronize();
+#define deviceMemCpy( DST, SRC, BYTES, KIND ) cudaMemcpy( DST, SRC, BYTES, KIND );
+#define deviceFree( PTR ) cudaFree( PTR );
+#define deviceError_t cudaError_t
+#define deviceGetErrorString    cudaGetErrorString
+#define deviceMemcpyDeviceToHost cudaMemcpyDeviceToHost
+constexpr cudaError_t deviceSuccess = cudaSuccess;
+#elif defined(SHIVA_USE_HIP)
+#define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
+#define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
+#define deviceDeviceSynchronize() hipDeviceSynchronize();
+#define deviceMemCpy( DST, SRC, BYTES, KIND ) hipMemcpy( DST, SRC, BYTES, KIND );
+#define deviceFree( PTR ) hipFree( PTR );
+#define deviceError_t hipError_t
+#define deviceGetErrorString    hipGetErrorString
+#define deviceMemcpyDeviceToHost hipMemcpyDeviceToHost
+constexpr hipError_t deviceSuccess = hipSuccess;
+#endif
 #endif
 
 /**
