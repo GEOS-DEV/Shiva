@@ -29,3 +29,24 @@ blt_append_custom_compiler_flag( FLAGS_VAR CMAKE_CXX_FLAGS_DEBUG
 
 option( SHIVA_ENABLE_CAMP OFF )
 option( CAMP_ENABLE_TESTS OFF )
+
+
+if( ENABLE_CUDA )
+  # Extract CUDA version from CMake’s variables
+  set(SHIVA_CUDA_VERSION ${CUDAToolkit_VERSION})
+
+  # Also normalize to an integer for easy comparison (e.g. 12040 for 12.4.0)
+  string(REPLACE "." ";" CUDA_VERSION_LIST ${CUDAToolkit_VERSION})
+  list(GET CUDA_VERSION_LIST 0 CUDA_MAJOR)
+  list(GET CUDA_VERSION_LIST 1 CUDA_MINOR)
+  list(GET CUDA_VERSION_LIST 2 CUDA_PATCH)
+
+  math(EXPR CUDA_VERSION_INT "${CUDA_MAJOR}*1000 + ${CUDA_MINOR}*10 + ${CUDA_PATCH}")
+
+  target_compile_definitions( shiva PUBLIC
+                              SHIVA_CUDA_VERSION_STR="${CUDAToolkit_VERSION}"
+                              SHIVA_CUDA_VERSION_INT=${CUDA_VERSION_INT}
+                              SHIVA_CUDA_MAJOR=${CUDA_MAJOR}
+                              SHIVA_CUDA_MINOR=${CUDA_MINOR}
+                            )
+endif()

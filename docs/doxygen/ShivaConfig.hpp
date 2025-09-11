@@ -17,3 +17,7 @@
 #define SHIVA_USE_CAMP
 
 #define SHIVA_USE_BOUNDS_CHECK
+
+/* #undef SHIVA_CUDA_MAJOR */
+
+/* #undef SHIVA_CUDA_MINOR */

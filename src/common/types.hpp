@@ -51,8 +51,8 @@ using tuple = camp::tuple< T ... >;
  * @return A tuple with the elements passed as arguments.
  */
 template< typename ... T >
-SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE 
-auto 
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+auto
 make_tuple( T && ... t )
 {
   return camp::make_tuple( std::forward< T >( t ) ... );

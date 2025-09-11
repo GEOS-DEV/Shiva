@@ -17,3 +17,7 @@
 #cmakedefine SHIVA_USE_CAMP
 
 #cmakedefine SHIVA_USE_BOUNDS_CHECK
+
+#cmakedefine SHIVA_CUDA_MAJOR @SHIVA_CUDA_MAJOR@
+
+#cmakedefine SHIVA_CUDA_MINOR @SHIVA_CUDA_MINOR@
