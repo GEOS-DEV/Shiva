@@ -20,5 +20,5 @@
 
 #define SHIVA_CUDA_MAJOR        0
 #define SHIVA_CUDA_MINOR        0
-#define SHIVA_CUDA_PATCHLEVEL   0
-#define SHIVA_CUDA_VERSION_INT  0
+#define SHIVA_CUDA_PATCHLEVEL   
+#define SHIVA_CUDA_VERSION_INT  
