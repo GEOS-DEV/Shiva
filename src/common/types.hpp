@@ -19,11 +19,11 @@
 
 #include "common/ShivaMacros.hpp"
 
+
 /// @brief Macro to define whether or not to use camp.
 #if defined(SHIVA_USE_CAMP)
 #include <camp/camp.hpp>
 #else
-
 #if defined(SHIVA_USE_CUDA)
 #include <cuda/std/tuple>
 #else
@@ -58,8 +58,29 @@ make_tuple( T && ... t )
   return camp::make_tuple( std::forward< T >( t ) ... );
 }
 
+#define SHIVA_HAVE_TUPLE_SB 1
+
 #else
 #if defined(SHIVA_USE_CUDA)
+
+// libcudacxx (CCCL) API version: e.g. 120400 for CUDA 12.4
+#ifndef _LIBCUDACXX_CUDA_API_VERSION
+  #define _LIBCUDACXX_CUDA_API_VERSION 0
+#endif
+
+#ifndef CUDART_VERSION
+  #define CUDART_VERSION 0
+#endif
+
+// Prefer the libcudacxx API version if present; fall back to runtime version.
+#if (_LIBCUDACXX_CUDA_API_VERSION >= 120400) || (CUDART_VERSION >= 12040)
+  #define SHIVA_HAVE_TUPLE_SB 1
+#else
+  #define SHIVA_HAVE_TUPLE_SB 0
+#endif
+
+
+
 /**
  * @brief Wrapper for cuda::std::tuple.
  * @tparam T Types of the elements of the tuple.
@@ -100,6 +121,9 @@ make_tuple( T && ... t )
 {
   return std::make_tuple( std::forward< T >( t ) ... );
 }
+
+#define SHIVA_HAVE_TUPLE_SB 1
+
 #endif
 #endif
 
@@ -117,4 +141,11 @@ using int_sequence = std::integer_sequence< int, T ... >;
 template< int N >
 using make_int_sequence = std::make_integer_sequence< int, N >;
 
+
+
 }
+
+#if defined(__CUDA_ARCH__)
+  #undef  SHIVA_HAVE_TUPLE_SB
+  #define SHIVA_HAVE_TUPLE_SB 0
+#endif

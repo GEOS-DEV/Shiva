@@ -27,6 +27,5 @@ blt_append_custom_compiler_flag( FLAGS_VAR CMAKE_CXX_FLAGS_DEBUG
                                  CLANG "-fstandalone-debug"
                                 )
 
-set( SHIVA_ENABLE_CAMP OFF CACHE BOOL "")
-
-set( CAMP_ENABLE_TESTS OFF CACHE BOOL "")
+option( SHIVA_ENABLE_CAMP OFF )
+option( CAMP_ENABLE_TESTS OFF )

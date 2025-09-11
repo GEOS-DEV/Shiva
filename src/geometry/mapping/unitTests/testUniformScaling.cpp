@@ -100,7 +100,7 @@ TEST( testUniformScaling, testInvJacobianFunctionReturnByValue )
   auto cell = makeUniformScaling( h );
 
   // libcudacxx in CUDA 11 lacks SB support for cuda::std::tuple
-#if defined(SHIVA_USE_CUDA) && defined(CUDA_VERSION) && (CUDA_VERSION < 12000)
+#if defined(SHIVA_USE_CUDA) && SHIVA_HAVE_TUPLE_SB == 0
   auto tmp  = inverseJacobian( cell );
   auto detJ = shiva::get< 0 >( tmp );
   auto invJ = shiva::get< 1 >( tmp );
