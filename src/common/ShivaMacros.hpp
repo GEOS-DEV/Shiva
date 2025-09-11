@@ -110,38 +110,11 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
  * @param cond The condition to assert is true.
  * @param ... The message to print if the assertion fails.
  */
-#if defined(__CUDACC__)
-// NVCC: avoid is_constant_evaluated/if consteval to silence #3060.
-// (Optional: you can also add --diag-suppress=3060 instead.)
-  #define SHIVA_ASSERT_MSG(cond, ...)                                        \
-    do {                                                                     \
-      if (!(cond)) {                                                         \
-        shivaAssertionFailed(__FILE__, __LINE__, true, __VA_ARGS__);         \
-      }                                                                      \
-    } while (0)
-#elif defined(__cpp_if_consteval) && __cpp_if_consteval >= 202106L
-// Modern C++: prefer 'if consteval'
-  #define SHIVA_ASSERT_MSG(cond, ...)                                        \
-    do {                                                                     \
-      if (!(cond)) {                                                         \
-        if consteval {                                                       \
-          static_assert((cond), "SHIVA_ASSERT_MSG failed in constant eval"); \
-        } else {                                                             \
-          shivaAssertionFailed(__FILE__, __LINE__, true, __VA_ARGS__);       \
-        }                                                                    \
-      }                                                                      \
-    } while (0)
-#else
-// Portable fallback using std::is_constant_evaluated (no NVCC)
-  #include <type_traits>
-  #define SHIVA_ASSERT_MSG(cond, ...)                                        \
-    do {                                                                     \
-      if (!(cond)) {                                                         \
-        if (!std::is_constant_evaluated()) {                                 \
-          shivaAssertionFailed(__FILE__, __LINE__, true, __VA_ARGS__);       \
-        } else {                                                             \
-          static_assert((cond), "SHIVA_ASSERT_MSG failed in constant eval"); \
-        }                                                                    \
-      }                                                                      \
-    } while (0)
-#endif
+#define SHIVA_ASSERT_MSG( cond, ... ) \
+        do { \
+          if ( !(cond)) { \
+            if ( !__builtin_is_constant_evaluated()) { \
+              shivaAssertionFailed( __FILE__, __LINE__, true, __VA_ARGS__ ); \
+            } \
+          } \
+        } while ( 0 )
