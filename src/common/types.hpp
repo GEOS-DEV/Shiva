@@ -66,6 +66,7 @@ make_tuple( T && ... t )
  */
 template< typename ... T >
 using tuple = cuda::std::tuple< T ... >;
+using cuda::std::get;
 
 /**
  * @brief Wrapper for cuda::std::make_tuple.
