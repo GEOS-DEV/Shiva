@@ -32,21 +32,20 @@ option( CAMP_ENABLE_TESTS OFF )
 
 
 if( ENABLE_CUDA )
-  # Extract CUDA version from CMake’s variables
-  set(SHIVA_CUDA_VERSION ${CUDAToolkit_VERSION})
-
-  # Also normalize to an integer for easy comparison (e.g. 12040 for 12.4.0)
-  string(REPLACE "." ";" CUDA_VERSION_LIST ${CUDAToolkit_VERSION})
-  list(GET CUDA_VERSION_LIST 0 CUDA_MAJOR)
-  list(GET CUDA_VERSION_LIST 1 CUDA_MINOR)
-  list(GET CUDA_VERSION_LIST 2 CUDA_PATCH)
-
-  math(EXPR CUDA_VERSION_INT "${CUDA_MAJOR}*1000 + ${CUDA_MINOR}*10 + ${CUDA_PATCH}")
-
-  target_compile_definitions( shiva PUBLIC
-                              SHIVA_CUDA_VERSION_STR="${CUDAToolkit_VERSION}"
-                              SHIVA_CUDA_VERSION_INT=${CUDA_VERSION_INT}
-                              SHIVA_CUDA_MAJOR=${CUDA_MAJOR}
-                              SHIVA_CUDA_MINOR=${CUDA_MINOR}
-                            )
+  if(CUDAToolkit_FOUND AND CUDAToolkit_VERSION)
+    set(SHIVA_CUDA_VERSION ${CUDAToolkit_VERSION})
+    string(REPLACE "." ";" _ver_list ${CUDAToolkit_VERSION})
+    list(GET _ver_list 0 SHIVA_CUDA_MAJOR)
+    list(GET _ver_list 1 SHIVA_CUDA_MINOR)
+    list(GET _ver_list 2 SHIVA_CUDA_PATCHLEVEL)
+    math(EXPR SHIVA_CUDA_VERSION_INT "${SHIVA_CUDA_MAJOR}*1000 + ${SHIVA_CUDA_MINOR}*10 + ${SHIVA_CUDA_PATCHLEVEL}")
+  else()
+    message(FATAL_ERROR "Could not determine CUDA version. Please set CUDAToolkit_ROOT to the location of your CUDA installation.")
+  endif()
+else()
+  set(SHIVA_CUDA_VERSION "0.0.0")
+  set(SHIVA_CUDA_MAJOR 0)
+  set(SHIVA_CUDA_MINOR 0)
+  set(SHIVA_CUDA_PATCHLEVEL 0)
+  set(SHIVA_CUDA_VERSION_INT 0)
 endif()
