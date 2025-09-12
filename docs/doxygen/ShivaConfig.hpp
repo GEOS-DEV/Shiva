@@ -18,7 +18,5 @@
 
 #define SHIVA_USE_BOUNDS_CHECK
 
-#define SHIVA_CUDA_MAJOR        12
-#define SHIVA_CUDA_MINOR        6
-#define SHIVA_CUDA_PATCHLEVEL   
-#define SHIVA_CUDA_VERSION_INT  
+#define SHIVA_CUDA_MAJOR        11
+#define SHIVA_CUDA_MINOR        8
