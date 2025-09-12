@@ -305,7 +305,13 @@ void testInvJacobianFunctionReturnByValueHelper()
     auto cell = makeLinearTransform( Xref );
     for ( int q = 0; q < 8; ++q )
     {
+#if defined(SHIVA_USE_CUDA) && SHIVA_CUDA_MAJOR < 12
+      auto tmp  = inverseJacobian( cell, qCoords[q] );
+      auto detJ = shiva::get< 0 >( tmp );
+      auto invJ = shiva::get< 1 >( tmp );
+#else
       auto [ detJ, invJ ] = inverseJacobian( cell, qCoords[q] );
+#endif
 
       kernelData[ 10 * q ] = detJ;
       for ( int i = 0; i < 3; ++i )

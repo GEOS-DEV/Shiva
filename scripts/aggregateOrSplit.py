@@ -20,11 +20,13 @@ class HeaderFileManager:
         if include_paths is None:
             include_paths = []
 
+        header = os.path.abspath(header)  # Normalize here
+
         if header in self.dependencies:
             return  # Already processed
 
         self.dependencies[header] = set()
-        base_path = os.path.dirname(os.path.abspath(header))  # Base directory of the current header
+        base_path = os.path.dirname(header)  # Base directory of the current header
 
         try:
             with open(header, 'r') as file:
@@ -34,10 +36,10 @@ class HeaderFileManager:
                         included_file = include_match.group(1)
 
                         if included_file != self.config_file:
-                            resolved_path = self.resolve_path(
-                                included_file, base_path, include_paths)
+                            resolved_path = self.resolve_path( included_file, base_path, include_paths)
 
                             if resolved_path:
+                                resolved_path = os.path.abspath(resolved_path)
                                 self.dependencies[header].add(resolved_path)
 
                                 if os.path.exists(resolved_path):
@@ -82,16 +84,21 @@ class HeaderFileManager:
 
         return None  # Return None if no resolution was possible
 
+
     def generate_header_list(self):
         remaining_dependencies = self.dependencies.copy()
         size_of_remaining_dependencies = len(remaining_dependencies)
+        unique_files = set()  # Track unique files by absolute path
 
         while size_of_remaining_dependencies > 0:
             local_included = []
 
             for key in remaining_dependencies:
                 if len(remaining_dependencies[key]) == 0:
-                    self.included_list.append(key)
+                    abs_key = os.path.abspath(key)
+                    if abs_key not in unique_files:
+                        self.included_list.append(abs_key)
+                        unique_files.add(abs_key)
                     local_included.append(key)
 
             for included_key in local_included:
@@ -111,6 +118,7 @@ class HeaderFileManager:
             """
             Processes a single header file, commenting out includes and pragmas.
             """
+            header_path = os.path.abspath(header_path)
             if header_path in self.included:
                 return  # Avoid duplicate processing
             self.included.add(header_path)
@@ -133,6 +141,7 @@ class HeaderFileManager:
 
         with open(output_file, 'w') as output:
             for header in headers:
+                header = os.path.abspath(header)
                 self.create_dependency_graph(header, include_paths)
             
             for header in self.dependencies:

@@ -1,6 +1,7 @@
 #
 set( PREPROCESSOR_DEFINES CUDA
                           HIP
+                          CAMP
                           BOUNDS_CHECK
                         )
 

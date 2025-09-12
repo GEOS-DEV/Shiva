@@ -28,25 +28,27 @@
 namespace shiva
 {
 #if defined(SHIVA_USE_DEVICE)
-  #if defined(SHIVA_USE_CUDA)
-    #define deviceMalloc( PTR, BYTES ) cudaMalloc( PTR, BYTES );
-    #define deviceMallocManaged( PTR, BYTES ) cudaMallocManaged( PTR, BYTES );
-    #define deviceDeviceSynchronize() cudaDeviceSynchronize();
-    #define deviceMemCpy( DST, SRC, BYTES, KIND ) cudaMemcpy( DST, SRC, BYTES, KIND );
-    #define deviceFree( PTR ) cudaFree( PTR );
-    #define deviceError_t cudaError_t
-    #define deviceSuccess cudaSuccess
-    #define deviceGetErrorString    cudaGetErrorString
-    #elif defined(SHIVA_USE_HIP)
-    #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
-    #define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
-    #define deviceDeviceSynchronize() hipDeviceSynchronize();
-    #define deviceMemCpy( DST, SRC, BYTES, KIND ) hipMemcpy( DST, SRC, BYTES, KIND );
-    #define deviceFree( PTR ) hipFree( PTR );
-    #define deviceError_t hipError_t
-    #define deviceSuccess = hipSuccess;
-    #define deviceGetErrorString    hipGetErrorString
-    #endif
+#if defined(SHIVA_USE_CUDA)
+#define deviceMalloc( PTR, BYTES ) cudaMalloc( PTR, BYTES );
+#define deviceMallocManaged( PTR, BYTES ) cudaMallocManaged( PTR, BYTES );
+#define deviceDeviceSynchronize() cudaDeviceSynchronize();
+#define deviceMemCpy( DST, SRC, BYTES, KIND ) cudaMemcpy( DST, SRC, BYTES, KIND );
+#define deviceFree( PTR ) cudaFree( PTR );
+#define deviceError_t cudaError_t
+#define deviceGetErrorString    cudaGetErrorString
+#define deviceMemcpyDeviceToHost cudaMemcpyDeviceToHost
+constexpr cudaError_t deviceSuccess = cudaSuccess;
+#elif defined(SHIVA_USE_HIP)
+#define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
+#define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
+#define deviceDeviceSynchronize() hipDeviceSynchronize();
+#define deviceMemCpy( DST, SRC, BYTES, KIND ) hipMemcpy( DST, SRC, BYTES, KIND );
+#define deviceFree( PTR ) hipFree( PTR );
+#define deviceError_t hipError_t
+#define deviceGetErrorString    hipGetErrorString
+#define deviceMemcpyDeviceToHost hipMemcpyDeviceToHost
+constexpr hipError_t deviceSuccess = hipSuccess;
+#endif
 #endif
 
 /**
@@ -100,9 +102,9 @@ void genericKernelWrapper( LAMBDA && func, bool const abortOnError = true )
 #if defined(SHIVA_USE_DEVICE)
   // UNCRUSTIFY-OFF
   genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ) );
-  //UNCRUSTIFY-ON
+  // UNCRUSTIFY-ON
   deviceError_t err = deviceDeviceSynchronize();
-  if ( err != cudaSuccess )
+  if ( err != deviceSuccess )
   {
     printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
     if ( abortOnError )
@@ -157,13 +159,14 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
 #if defined(SHIVA_USE_DEVICE)
   DATA_TYPE * deviceData;
   deviceMalloc( &deviceData, N * sizeof(DATA_TYPE) );
+  deviceMemCpy( deviceData, hostData, N * sizeof(DATA_TYPE), cudaMemcpyHostToDevice );
   // UNCRUSTIFY-OFF
   genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ), deviceData );
   // UNCRUSTIFY-ON
   deviceError_t err = deviceDeviceSynchronize();
-  deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost );
+  deviceMemCpy( hostData, deviceData, N * sizeof(DATA_TYPE), deviceMemcpyDeviceToHost );
   deviceFree( deviceData );
-  if ( err != cudaSuccess )
+  if ( err != deviceSuccess )
   {
     printf( "Kernel failed: %s\n", deviceGetErrorString( err ));
     if ( abortOnError )

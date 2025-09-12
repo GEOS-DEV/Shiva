@@ -99,7 +99,14 @@ TEST( testUniformScaling, testInvJacobianFunctionReturnByValue )
   double const h = 3.14;
   auto cell = makeUniformScaling( h );
 
-  auto [ detJ, invJ ] = inverseJacobian( cell );
+  // libcudacxx in CUDA 11 lacks SB support for cuda::std::tuple
+#if defined(SHIVA_USE_CUDA) && SHIVA_CUDA_MAJOR < 12
+  auto tmp  = inverseJacobian( cell );
+  auto detJ = shiva::get< 0 >( tmp );
+  auto invJ = shiva::get< 1 >( tmp );
+#else
+  auto [detJ, invJ] = inverseJacobian( cell );
+#endif
   EXPECT_EQ( detJ, 0.125 * h * h * h );
   EXPECT_EQ( invJ( 0 ), ( 2 / h ) );
 }
