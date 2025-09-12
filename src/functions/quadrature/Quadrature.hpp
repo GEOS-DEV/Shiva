@@ -53,13 +53,13 @@ struct QuadratureGaussLegendre : public GaussLegendreSpacing< REAL_TYPE, N >
     }
     else if constexpr ( N == 3 )
     {
-      assert( index >= 0 && index < 3 );
+      //assert( index >= 0 && index < 3 );
       return 0.5555555555555555555555555555555556 +
              0.3333333333333333333333333333333333 * ( index & 1 );
     }
     else if constexpr ( N == 4 )
     {
-      assert( index >= 0 && index < 4 );
+      //assert( index >= 0 && index < 4 );
       return 0.5 + ( -1 + ( ( ( index + 1 ) & 2 ) ) ) * 0.15214515486254614262693605077800059277;
     }
     return std::numeric_limits< REAL_TYPE >::max();
@@ -145,17 +145,17 @@ struct QuadratureGaussLobatto : public GaussLobattoSpacing< REAL_TYPE, N >
     }
     else if constexpr ( N == 3 )
     {
-      assert( index >= 0 && index < 3 );
+      //assert( index >= 0 && index < 3 );
       return 0.3333333333333333333333333333333333 + ( index & 1 );
     }
     else if constexpr ( N == 4 )
     {
-      assert( index >= 0 && index < 4 );
+      //assert( index >= 0 && index < 4 );
       return 0.1666666666666666666666666666666667 + ( ((index + 1) & 2) >> 1 ) * 0.6666666666666666666666666666666667;
     }
     else if constexpr ( N == 5 )
     {
-      assert( index >= 0 && index < 5 );
+      //assert( index >= 0 && index < 5 );
       return 0.1 + (index & 1) * 0.4444444444444444444444444444444444 + !( index - 2 ) * 0.6111111111111111111111111111111111;
     }
     return std::numeric_limits< REAL_TYPE >::max();

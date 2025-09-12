@@ -51,7 +51,9 @@ using tuple = camp::tuple< T ... >;
  * @return A tuple with the elements passed as arguments.
  */
 template< typename ... T >
-SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto make_tuple( T && ... t )
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+auto
+make_tuple( T && ... t )
 {
   return camp::make_tuple( std::forward< T >( t ) ... );
 }
@@ -64,6 +66,7 @@ SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE auto make_tuple( T && ... t )
  */
 template< typename ... T >
 using tuple = cuda::std::tuple< T ... >;
+using cuda::std::get;
 
 /**
  * @brief Wrapper for cuda::std::make_tuple.
@@ -72,6 +75,7 @@ using tuple = cuda::std::tuple< T ... >;
  * @return A tuple with the elements passed as arguments.
  */
 template< typename ... T >
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
 auto make_tuple( T && ... t )
 {
   return cuda::std::make_tuple( std::forward< T >( t ) ... );
@@ -91,7 +95,9 @@ using tuple = std::tuple< T ... >;
  * @return A tuple with the elements passed as arguments.
  */
 template< typename ... T >
-auto make_tuple( T && ... t )
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE
+auto
+make_tuple( T && ... t )
 {
   return std::make_tuple( std::forward< T >( t ) ... );
 }
