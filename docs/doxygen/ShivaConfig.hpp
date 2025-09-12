@@ -8,15 +8,15 @@
 
 #define SHIVA_VERSION_PATCHLEVEL 0
 
-#define SHIVA_USE_CUDA
+/* #undef SHIVA_USE_CUDA */
 
 /* #undef SHIVA_USE_HIP */
 
 /* #undef SHIVA_USE_CALIPER */
 
-/* #undef SHIVA_USE_CAMP */
+#define SHIVA_USE_CAMP
 
 #define SHIVA_USE_BOUNDS_CHECK
 
-#define SHIVA_CUDA_MAJOR        11
-#define SHIVA_CUDA_MINOR        8
+#define SHIVA_CUDA_MAJOR        0
+#define SHIVA_CUDA_MINOR        0

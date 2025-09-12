@@ -105,31 +105,34 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
 
 
 
-
-// Portable builtin detector
+/**
+ * @brief This macro is used to detect the presence of builtin functions.
+ */
 #ifndef SHIVA_HAS_BUILTIN
   #ifdef __has_builtin
-    #define SHIVA_HAS_BUILTIN(x) __has_builtin(x)
+    #define SHIVA_HAS_BUILTIN( x ) __has_builtin( x )
   #else
-    #define SHIVA_HAS_BUILTIN(x) 0
+    #define SHIVA_HAS_BUILTIN( x ) 0
   #endif
 #endif
 
-// Define SHIVA_IS_CONST_EVAL() depending on compiler/toolchain
+/**
+ * @brief Define SHIVA_IS_CONST_EVAL() depending on compiler/toolchain
+ */
 #if defined(__CUDA_ARCH__)
-  // Device code (nvcc, hipcc): no support in C++17
+// Device code (nvcc, hipcc): no support in C++17
   #define SHIVA_IS_CONST_EVAL() (false)
 
-#elif SHIVA_HAS_BUILTIN(__builtin_is_constant_evaluated)
-  // GCC / Clang host code
+#elif SHIVA_HAS_BUILTIN( __builtin_is_constant_evaluated )
+// GCC / Clang host code
   #define SHIVA_IS_CONST_EVAL() (__builtin_is_constant_evaluated())
 
 #elif defined(_MSC_VER)
-  // MSVC
+// MSVC
   #define SHIVA_IS_CONST_EVAL() (__is_constant_evaluated())
 
 #else
-  // Fallback: always runtime
+// Fallback: always runtime
   #define SHIVA_IS_CONST_EVAL() (false)
 #endif
 
@@ -141,12 +144,10 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
  * @param ... The message to print if the assertion fails.
  */
 #define SHIVA_ASSERT_MSG( cond, ... ) \
-do { \
-  if ( !(cond)) { \
-    if ( !SHIVA_IS_CONST_EVAL() ) { \
-      shivaAssertionFailed( __FILE__, __LINE__, true, __VA_ARGS__ ); \
-    } \
-  } \
-} while ( 0 )
-
-
+        do { \
+          if ( !(cond)) { \
+            if ( !SHIVA_IS_CONST_EVAL() ) { \
+              shivaAssertionFailed( __FILE__, __LINE__, true, __VA_ARGS__ ); \
+            } \
+          } \
+        } while ( 0 )
