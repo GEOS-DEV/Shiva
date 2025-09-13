@@ -20,9 +20,19 @@ else()
     set( SHIVA_IS_SUBMODULE OFF )
 endif()
 
+
+option( SHIVA_ENABLE_CAMP "Enable CAMP usage" ON )
+option( CAMP_ENABLE_TESTS OFF )
+option( SHIVA_ENABLE_BLT "Enable BLT usage" ON )
+
+
 if( NOT SHIVA_IS_SUBMODULE )
     message( "not a submodule")
     project( Shiva LANGUAGES CXX C )
+
+    if( NOT SHIVA_ENABLE_BLT )
+      message( FATAL_ERROR "When building Shiva as a standalone project you must enable BLT support. Please set SHIVA_ENABLE_BLT to ON." )
+    endif()
 
     set( BLT_CXX_STD "c++17" CACHE STRING "Version of C++ standard" FORCE )
     set( ENABLE_WARNINGS_AS_ERRORS "ON" CACHE PATH "" )
@@ -52,16 +62,17 @@ if( NOT SHIVA_IS_SUBMODULE )
 
         include( ${BLT_SOURCE_DIR}/SetupBLT.cmake )
     endif()
-
-    include( cmake/CMakeBasics.cmake )
-    #include( cmake/SetupTPL.cmake )
 else()
+  if( SHIVA_ENABLE_BLT OR SHIVA_ENABLE_CAMP )
     if( NOT BLT_LOADED )
-        message( FATAL_ERROR "When using Shiva as a submodule you must have already loaded BLT." )
+        message( FATAL_ERROR "When using Shiva as a submodule and are using BLT, you must have already loaded BLT. CAMP requires BLT" )
     endif()
-    include( cmake/CMakeBasics.cmake )
+  else() 
+
+  endif()
 endif()
 
+include( cmake/CMakeBasics.cmake )
 include( cmake/Macros.cmake )
 include( cmake/Config.cmake )
 
@@ -69,22 +80,16 @@ include( cmake/Config.cmake )
 set(SHIVA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 set(SHIVA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} )
 
-message( STATUS "SHIVA_BINARY_DIR: ${SHIVA_BINARY_DIR}" )
-message( STATUS "SHIVA_SOURCE_DIR: ${SHIVA_SOURCE_DIR}" )
-
-
 add_subdirectory( src )
 
 if( SHIVA_ENABLE_CAMP )
-    
-if( SHIVA_ENABLE_CAMP )
+  if( NOT SHIVA_ENABLE_BLT )
+    message( FATAL_ERROR "CAMP support requires BLT. Please enable SHIVA_ENABLE_BLT." )
+  endif()
   add_subdirectory( tpl/camp )
-      target_compile_options( camp PRIVATE "-Wno-shadow") 
-      configure_file(tpl/camp/include/camp/config.in.hpp ${PROJECT_BINARY_DIR}/include/camp/config.hpp)
+  target_compile_options( camp PRIVATE "-Wno-shadow") 
+  configure_file(tpl/camp/include/camp/config.in.hpp ${PROJECT_BINARY_DIR}/include/camp/config.hpp)
 endif()
-endif()
-
-
 
 
 if( SHIVA_ENABLE_DOCS )
