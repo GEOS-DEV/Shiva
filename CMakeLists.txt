@@ -20,6 +20,8 @@ else()
     set( SHIVA_IS_SUBMODULE OFF )
 endif()
 
+message( "SHIVA_IS_SUBMODULE: ${SHIVA_IS_SUBMODULE}" )
+
 
 option( SHIVA_ENABLE_CAMP "Enable CAMP usage" ON )
 option( CAMP_ENABLE_TESTS OFF )
@@ -27,7 +29,7 @@ option( SHIVA_ENABLE_BLT "Enable BLT usage" ON )
 
 
 if( NOT SHIVA_IS_SUBMODULE )
-    message( "not a submodule")
+    message( "Shiva is not a submodule")
     project( Shiva LANGUAGES CXX C )
 
     if( NOT SHIVA_ENABLE_BLT )
@@ -63,6 +65,7 @@ if( NOT SHIVA_IS_SUBMODULE )
         include( ${BLT_SOURCE_DIR}/SetupBLT.cmake )
     endif()
 else()
+  message( "SHIVA is a submodule")
   if( SHIVA_ENABLE_BLT OR SHIVA_ENABLE_CAMP )
     if( NOT BLT_LOADED )
         message( FATAL_ERROR "When using Shiva as a submodule and are using BLT, you must have already loaded BLT. CAMP requires BLT" )
@@ -80,7 +83,6 @@ include( cmake/Config.cmake )
 set(SHIVA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 set(SHIVA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} )
 
-add_subdirectory( src )
 
 if( SHIVA_ENABLE_CAMP )
   if( NOT SHIVA_ENABLE_BLT )
@@ -90,6 +92,8 @@ if( SHIVA_ENABLE_CAMP )
   target_compile_options( camp PRIVATE "-Wno-shadow") 
   configure_file(tpl/camp/include/camp/config.in.hpp ${PROJECT_BINARY_DIR}/include/camp/config.hpp)
 endif()
+
+add_subdirectory( src )
 
 
 if( SHIVA_ENABLE_DOCS )

@@ -17,16 +17,11 @@ if( CMAKE_CXX_STANDARD IN_LIST "98; 11; 14" )
 endif()
 
 
-blt_append_custom_compiler_flag( FLAGS_VAR CMAKE_CXX_FLAGS DEFAULT "${OpenMP_CXX_FLAGS}")
-blt_append_custom_compiler_flag( FLAGS_VAR CMAKE_CXX_FLAGS
-                                 GNU   "-Wpedantic -pedantic-errors -Wshadow -Wfloat-equal -Wcast-align -Wcast-qual"
-                                 CLANG "-Wpedantic -pedantic-errors -Wshadow -Wfloat-equal -Wcast-align -Wcast-qual"
-                               )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Wpedantic -pedantic-errors -Wshadow -Wfloat-equal -Wcast-align -Wcast-qual" )
 
-blt_append_custom_compiler_flag( FLAGS_VAR CMAKE_CXX_FLAGS_DEBUG
-                                 GNU ""
-                                 CLANG "-fstandalone-debug"
-                                )
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") # For Clang or AppleClang
+  set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fstandalone-debug" )
+endif()
 
 
 

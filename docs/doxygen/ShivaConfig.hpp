@@ -14,7 +14,7 @@
 
 /* #undef SHIVA_USE_CALIPER */
 
-#define SHIVA_USE_CAMP
+/* #undef SHIVA_USE_CAMP */
 
 #define SHIVA_USE_BOUNDS_CHECK
 

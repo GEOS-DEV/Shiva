@@ -3,29 +3,34 @@ set( shiva_headers
      Shiva.hpp
      )
 
-set( shiva_sources
-     )
+set( shiva_dependencies )
 
-set( shiva_dependencies
-     geometry
-     )
+
+if( SHIVA_ENABLE_CAMP )
+  list( APPEND shiva_dependencies camp )
+endif()
+
+if( SHIVA_ENABLE_BLT AND ENABLE_HIP )
+    list( APPEND shiva_dependencies blt::hip )
+endif()
+
+if( ENABLE_CUDA )
+    list( APPEND shiva_dependencies cuda )
+endif()
 
 add_subdirectory( common )
 add_subdirectory( functions )
 add_subdirectory( discretizations )
 add_subdirectory( geometry )
 
-blt_add_library( NAME             shiva
-#                 SOURCES          ${shiva_sources}
-                 HEADERS          ${shiva_headers}
-                 DEPENDS_ON       ${shiva_dependencies}
-                )
+
+
+
+add_library( shiva INTERFACE ${shiva_headers} )
 
 target_include_directories( shiva
                             INTERFACE
-                            $<BUILD_INTERFACE:${SHIVA_BINARY_DIR}/include>
-                            $<BUILD_INTERFACE:${SHIVA_SOURCE_DIR}/src>
-                            $<INSTALL_INTERFACE:include> )
+                            ${shiva_headers} )
 
 install( FILES ${shiva_headers} 
          DESTINATION include )
@@ -37,8 +42,11 @@ install( TARGETS shiva
          LIBRARY DESTINATION lib
          RUNTIME DESTINATION lib )
 
-install( EXPORT shiva
-         DESTINATION lib/cmake/shiva )
+if( SHIVA_ENABLE_BLT )
 
-shiva_add_code_checks( PREFIX shiva
-                       EXCLUDES "blt/*" )
+  install( EXPORT shiva
+           DESTINATION lib/cmake/shiva )
+
+  shiva_add_code_checks( PREFIX shiva
+                        EXCLUDES "blt/*" )
+endif()
