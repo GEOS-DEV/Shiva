@@ -5,10 +5,12 @@ project(Shiva VERSION 0.1.0)
 include(GNUInstallDirs)
 
 # -------- Options (lean) -------------------------------------------------------
-option(SHIVA_USE_CUDA          "Enable CUDA code paths in headers (interface define only)" OFF)
-option(SHIVA_USE_HIP           "Enable HIP code paths in headers  (interface define only)" OFF)
-option(SHIVA_ENABLE_UNIT_TESTS "Build unit tests (standalone only)" ON)
-option(SHIVA_ENABLE_CAMP       "Link against CAMP if available" OFF)
+option( SHIVA_USE_CUDA             "Enable CUDA code paths in headers (interface define only)" OFF )
+option( SHIVA_USE_HIP              "Enable HIP code paths in headers  (interface define only)" OFF )
+option( SHIVA_ENABLE_UNIT_TESTS    "Build unit tests (standalone only)" ON )
+option( SHIVA_ENABLE_CAMP          "Link against CAMP if available" OFF )
+option( SHIVA_BUILD_OBJ_LIBS       "Build object libraries...useful for dependency trees" OFF )
+option( SHIVA_ENABLE_BOUNDS_CHECK  "Enable bounds checking in shiva::CArray" OFF )
 
 # Top-level or subproject?
 set(SHIVA_IS_TOPLEVEL "${PROJECT_IS_TOP_LEVEL}")
@@ -25,20 +27,15 @@ include("${CMAKE_CURRENT_LIST_DIR}/cmake/Config.cmake")
 add_library(Shiva INTERFACE)
 add_library(Shiva::shiva ALIAS Shiva)
 
-target_include_directories(Shiva INTERFACE
-  "$<BUILD_INTERFACE:${SHIVA_SOURCE_DIR}/include>"   # include/shiva/...
-  "$<BUILD_INTERFACE:${SHIVA_BINARY_DIR}/include>"   # build/include/shiva/ShivaConfig.hpp
-  "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-)
+
+
+target_include_directories( Shiva INTERFACE
+                            "$<BUILD_INTERFACE:${SHIVA_SOURCE_DIR}/include>"   # include/shiva/...
+                            "$<BUILD_INTERFACE:${SHIVA_BINARY_DIR}/include>"   # build/include/shiva/ShivaConfig.hpp
+                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>" )
 
 target_compile_features(Shiva INTERFACE cxx_std_17)
 
-if (SHIVA_USE_CUDA)
-  target_compile_definitions(Shiva INTERFACE SHIVA_USE_CUDA=1)
-endif()
-if (SHIVA_USE_HIP)
-  target_compile_definitions(Shiva INTERFACE SHIVA_USE_HIP=1)
-endif()
 
 # Optional CAMP wiring (no BLT required here)
 if (SHIVA_ENABLE_CAMP)
@@ -53,9 +50,9 @@ if (SHIVA_ENABLE_CAMP)
   endif()
 endif()
 
-# -------- Tests (BLT only when standalone) -------------------------------------
+# -------- Tests (BLT only when standalone for testing and documentation ) ------
 if (SHIVA_IS_TOPLEVEL AND SHIVA_ENABLE_UNIT_TESTS)
-  include(CTest)
+  set(BLT_CXX_STD "c++17")
   # Load BLT you vendor under cmake/blt
   set(BLT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/blt" CACHE PATH "Path to BLT")
   if (NOT EXISTS "${BLT_SOURCE_DIR}/SetupBLT.cmake")

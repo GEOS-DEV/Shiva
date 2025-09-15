@@ -14,6 +14,13 @@ if(NOT DEFINED TEST_OUTPUT_DIRECTORY)
   set(TEST_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
 endif()
 
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Wpedantic -pedantic-errors -Wshadow -Wfloat-equal -Wcast-align -Wcast-qual" )
+
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") # For Clang or AppleClang
+  set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fstandalone-debug" )
+endif()
+
+
 macro(shiva_add_gtest)
   set(options)
   set(oneValueArgs NAME)

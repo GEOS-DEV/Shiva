@@ -65,20 +65,17 @@ message( "SHIVA_BINARY_DIR = ${SHIVA_BINARY_DIR}" )
 file(MAKE_DIRECTORY "${_shiva_gen_inc}")
 
 configure_file( "${SHIVA_SOURCE_DIR}/include/shiva/ShivaConfig.hpp.in"
-                "${_shiva_gen_inc}/ShivaConfig.hpp"
-)
+                "${_shiva_gen_inc}/ShivaConfig.hpp" )
 
 # Optional: a copy for Doxygen without touching the source tree
 set(_shiva_gen_doc "${SHIVA_BINARY_DIR}/docs/doxygen")
 file(MAKE_DIRECTORY "${_shiva_gen_doc}")
-configure_file(
-  "${SHIVA_SOURCE_DIR}/include/shiva/ShivaConfig.hpp.in"
-  "${_shiva_gen_doc}/ShivaConfig.hpp"
-)
+configure_file( "${SHIVA_SOURCE_DIR}/include/shiva/ShivaConfig.hpp.in"
+                "${_shiva_gen_doc}/ShivaConfig.hpp" )
 
 # Install the generated header (binary include tree)
-install(FILES "${_shiva_gen_inc}/ShivaConfig.hpp"
-        DESTINATION include)
+install( FILES "${_shiva_gen_inc}/ShivaConfig.hpp"
+         DESTINATION include )
 
 
-message(STATUS "Shiva config header -> ${SHIVA_BINARY_DIR}/include/ShivaConfig.hpp")
+message( STATUS "Shiva config header -> ${SHIVA_BINARY_DIR}/include/ShivaConfig.hpp" )
