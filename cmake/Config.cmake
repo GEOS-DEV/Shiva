@@ -1,65 +1,85 @@
-#
-set( PREPROCESSOR_DEFINES CUDA
-                          HIP
-                          CAMP
-                          BOUNDS_CHECK
-                        )
+# cmake/Config.cmake
+include_guard(DIRECTORY)
 
-set( USE_CONFIGFILE ON CACHE BOOL "" )
-foreach( DEP in ${PREPROCESSOR_DEFINES})
-    if( ${DEP}_FOUND OR ENABLE_${DEP} OR SHIVA_ENABLE_${DEP} )
-        set( SHIVA_USE_${DEP} TRUE )
-    endif()
-endforeach()
+# Expect these to be set by the parent CMakeLists:
+# - SHIVA_SOURCE_DIR
+# - SHIVA_BINARY_DIR
 
-if( ENABLE_ADDR2LINE )
-    if ( NOT DEFINED ADDR2LINE_EXEC )
-        set( ADDR2LINE_EXEC /usr/bin/addr2line CACHE PATH "" )
-    endif()
+# ---------- Feature switches (normalize to SHIVA_USE_* booleans) ----------
+# Start from user options if you expose them; fall back to CMake signals.
 
-    if ( NOT EXISTS ${ADDR2LINE_EXEC} )
-        message( FATAL_ERROR "The addr2line executable does not exist: ${ADDR2LINE_EXEC}" )
-    endif()
-
-    set( SHIVA_ADDR2LINE_EXEC ${ADDR2LINE_EXEC} )
+# CUDA
+if (DEFINED SHIVA_USE_CUDA)
+  # keep as-is
+elseif (CMAKE_CUDA_COMPILER)
+  set(SHIVA_USE_CUDA TRUE)
+else()
+  set(SHIVA_USE_CUDA FALSE)
 endif()
 
+# HIP
+if (DEFINED SHIVA_USE_HIP)
+  # keep as-is
+elseif (DEFINED HIP_FOUND OR CMAKE_HIP_COMPILER)
+  set(SHIVA_USE_HIP TRUE)
+else()
+  set(SHIVA_USE_HIP FALSE)
+endif()
 
-configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/src/ShivaConfig.hpp.in
-                ${CMAKE_BINARY_DIR}/include/ShivaConfig.hpp )
+# CAMP
+if (DEFINED SHIVA_USE_CAMP)
+  # keep as-is
+elseif (DEFINED SHIVA_ENABLE_CAMP)
+  set(SHIVA_USE_CAMP "${SHIVA_ENABLE_CAMP}")
+else()
+  set(SHIVA_USE_CAMP FALSE)
+endif()
 
-configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/src/ShivaConfig.hpp.in
-                ${CMAKE_CURRENT_SOURCE_DIR}/docs/doxygen/ShivaConfig.hpp )
+# BOUNDS_CHECK (provide an option upstream if you want this user-tunable)
+if (NOT DEFINED SHIVA_USE_BOUNDS_CHECK)
+  set(SHIVA_USE_BOUNDS_CHECK FALSE)
+endif()
 
-# Install the generated header.
-install( FILES ${CMAKE_BINARY_DIR}/include/ShivaConfig.hpp
-         DESTINATION include )
+# ---------- CUDA version numbers (if available) ----------
+set(SHIVA_CUDA_MAJOR 0)
+set(SHIVA_CUDA_MINOR 0)
+if (SHIVA_USE_CUDA AND DEFINED CMAKE_CUDA_COMPILER_VERSION)
+  # CMAKE_CUDA_COMPILER_VERSION like "12.4"
+  string(REPLACE "." ";" _cuda_ver_list "${CMAKE_CUDA_COMPILER_VERSION}")
+  list(GET _cuda_ver_list 0 SHIVA_CUDA_MAJOR)
+  list(LENGTH _cuda_ver_list _cuda_len)
+  if (_cuda_len GREATER 1)
+    list(GET _cuda_ver_list 1 SHIVA_CUDA_MINOR)
+  endif()
+endif()
 
-# Configure and install the CMake config
+# ---------- Version numbers expected by the header ----------
+# Your header expects *_PATCHLEVEL; map from project() version.
+set(SHIVA_VERSION_MAJOR      "${PROJECT_VERSION_MAJOR}")
+set(SHIVA_VERSION_MINOR      "${PROJECT_VERSION_MINOR}")
+set(SHIVA_VERSION_PATCHLEVEL "${PROJECT_VERSION_PATCH}")
 
-# Set up cmake package config file
+# ---------- Emit the generated header(s) ----------
+set(_shiva_gen_inc "${SHIVA_BINARY_DIR}/include")
+message( "SHIVA_BINARY_DIR = ${SHIVA_BINARY_DIR}" )
+file(MAKE_DIRECTORY "${_shiva_gen_inc}")
 
-set(SHIVA_INSTALL_INCLUDE_DIR "include" CACHE STRING "")
-set(SHIVA_INSTALL_CONFIG_DIR "lib" CACHE STRING "")
-set(SHIVA_INSTALL_LIB_DIR "lib" CACHE STRING "")
-set(SHIVA_INSTALL_BIN_DIR "bin" CACHE STRING "")
-set(SHIVA_INSTALL_CMAKE_MODULE_DIR "${SHIVA_INSTALL_CONFIG_DIR}/cmake" CACHE STRING "")
-set(SHIVA_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE STRING "" FORCE)
+configure_file(
+  "${SHIVA_SOURCE_DIR}/include/ShivaConfig.hpp.in"
+  "${_shiva_gen_inc}/ShivaConfig.hpp"
+)
+
+# Optional: a copy for Doxygen without touching the source tree
+set(_shiva_gen_doc "${SHIVA_BINARY_DIR}/docs/doxygen")
+file(MAKE_DIRECTORY "${_shiva_gen_doc}")
+configure_file(
+  "${SHIVA_SOURCE_DIR}/include/ShivaConfig.hpp.in"
+  "${_shiva_gen_doc}/ShivaConfig.hpp"
+)
+
+# Install the generated header (binary include tree)
+install(FILES "${_shiva_gen_inc}/ShivaConfig.hpp"
+        DESTINATION include)
 
 
-include(CMakePackageConfigHelpers)
-configure_package_config_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/shiva-config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/shiva-config.cmake
-  INSTALL_DESTINATION
-    ${SHIVA_INSTALL_CONFIG_DIR}
-  PATH_VARS
-    SHIVA_INSTALL_INCLUDE_DIR
-    SHIVA_INSTALL_LIB_DIR
-    SHIVA_INSTALL_BIN_DIR
-    SHIVA_INSTALL_CMAKE_MODULE_DIR
-  )
-
-
-install( FILES ${CMAKE_CURRENT_BINARY_DIR}/shiva-config.cmake
-         DESTINATION share/shiva/cmake/)
+message(STATUS "Shiva config header -> ${SHIVA_BINARY_DIR}/include/ShivaConfig.hpp")

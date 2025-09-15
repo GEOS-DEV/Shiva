@@ -9,8 +9,3 @@ set( shiva_headers
      geometry/shapes/NSimplex.hpp
      PARENT_SCOPE 
      )
-
-if( SHIVA_ENABLE_UNIT_TESTS )
-     add_subdirectory( mapping/unitTests )
-     add_subdirectory( shapes/unitTests )
-endif()

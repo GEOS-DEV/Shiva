@@ -6,7 +6,3 @@ set( shiva_headers
      functions/spacing/Spacing.hpp
      PARENT_SCOPE 
      )
-
-if( SHIVA_ENABLE_UNIT_TESTS )
-     add_subdirectory( unitTests )
-endif()

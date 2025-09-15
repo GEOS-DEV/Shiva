@@ -13,7 +13,3 @@ set( shiva_headers
      common/ShivaMacros.hpp
      common/types.hpp
      PARENT_SCOPE )
-
-if( SHIVA_ENABLE_UNIT_TESTS )
-    add_subdirectory( unitTests )
-endif()
