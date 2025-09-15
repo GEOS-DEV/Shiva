@@ -37,7 +37,7 @@ SHIVA_GLOBAL void testSequenceExpansionHelper( FUNC func )
 template< typename FUNC >
 void kernelLaunch( FUNC && func )
 {
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   testSequenceExpansionHelper << < 1, 1 >> > ( std::forward< FUNC >( func ) );
 #else
   testSequenceExpansionHelper( std::forward< FUNC >( func ) );

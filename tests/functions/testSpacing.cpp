@@ -122,7 +122,7 @@ void testSpacingValuesAtRuntime()
   using SpacingType = SPACING< REAL_TYPE, N >;
   using Ref = ReferenceSolution< SpacingType >;
 
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   constexpr int bytes = N * sizeof(REAL_TYPE);
   REAL_TYPE *values;
   deviceMallocManaged( &values, bytes );
@@ -138,7 +138,7 @@ void testSpacingValuesAtRuntime()
     EXPECT_NEAR( values[a], Ref::coords[a], 1e-14 );
   }
 
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   deviceFree( values );
 #endif
 }
@@ -162,7 +162,7 @@ SHIVA_GLOBAL void compileTimeValuesKernel( std::index_sequence< I... > )
 template< template< typename, int > typename SPACING, typename REAL_TYPE, typename INDEX_SEQUENCE >
 void testSpacingValuesAtCompileTime( INDEX_SEQUENCE iSeq )
 {
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   compileTimeValuesKernel< SPACING, REAL_TYPE ><< < 1, 1 >> > ( iSeq );
 #else
   compileTimeValuesKernel< SPACING, REAL_TYPE >( iSeq );

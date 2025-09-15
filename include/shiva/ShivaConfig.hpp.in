@@ -8,13 +8,13 @@
 
 #define SHIVA_VERSION_PATCHLEVEL @SHIVA_VERSION_PATCHLEVEL@
 
-#cmakedefine SHIVA_USE_CUDA
+#cmakedefine SHIVA_ENABLE_CUDA
 
-#cmakedefine SHIVA_USE_HIP
+#cmakedefine SHIVA_ENABLE_HIP
 
-#cmakedefine SHIVA_USE_CAMP
+#cmakedefine SHIVA_ENABLE_CAMP
 
-#cmakedefine SHIVA_USE_BOUNDS_CHECK
+#cmakedefine SHIVA_ENABLE_BOUNDS_CHECK
 
 #define SHIVA_CUDA_MAJOR        @SHIVA_CUDA_MAJOR@
 #define SHIVA_CUDA_MINOR        @SHIVA_CUDA_MINOR@

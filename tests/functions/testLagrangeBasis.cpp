@@ -70,7 +70,7 @@ SHIVA_GLOBAL void compileTimeKernel()
 template< typename BASIS_HELPER_TYPE >
 void testBasisAtCompileTime()
 {
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   compileTimeKernel< BASIS_HELPER_TYPE ><< < 1, 1 >> > ();
 #else
   compileTimeKernel< BASIS_HELPER_TYPE >();
@@ -99,7 +99,7 @@ void testBasisAtRunTime()
 {
   constexpr int order = BASIS_HELPER_TYPE::order;
   constexpr int N = order + 1;
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   constexpr int bytes = N * sizeof(double);
   double * values;
   double * gradients;
@@ -120,7 +120,7 @@ void testBasisAtRunTime()
     EXPECT_NEAR( gradients[a], BASIS_HELPER_TYPE::refGradients[a], fabs( BASIS_HELPER_TYPE::refGradients[a] * tolerance ) );
   }
 
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   deviceFree( values );
   deviceFree( gradients );
 #endif

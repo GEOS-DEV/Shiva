@@ -143,7 +143,7 @@ void testInvJacobianFunctionReturnByValueHelper()
   {
     auto cell = makeScaling( h );
 
-#if defined(SHIVA_USE_CUDA) && SHIVA_CUDA_MAJOR < 12
+#if defined(SHIVA_ENABLE_CUDA) && SHIVA_CUDA_MAJOR < 12
     auto tmp  = inverseJacobian( cell );
     auto detJ = shiva::get< 0 >( tmp );
     auto invJ = shiva::get< 1 >( tmp );

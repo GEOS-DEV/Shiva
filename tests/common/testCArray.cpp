@@ -132,7 +132,7 @@ TEST( testCArray, testStrides )
   testStridesHelper();
 }
 
-#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
+#if !defined( SHIVA_ENABLE_BOUNDS_CHECK ) || !defined(SHIVA_ENABLE_DEVICE)
 void testLinearIndexCT()
 {
   pmpl::genericKernelWrapper( [] SHIVA_DEVICE ()
@@ -192,13 +192,13 @@ void testLinearIndexRT()
 
 TEST( testCArray, testLinearIndex )
 {
-#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
+#if !defined( SHIVA_ENABLE_BOUNDS_CHECK ) || !defined(SHIVA_ENABLE_DEVICE)
   testLinearIndexCT();
 #endif
   testLinearIndexRT();
 }
 
-#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
+#if !defined( SHIVA_ENABLE_BOUNDS_CHECK ) || !defined(SHIVA_ENABLE_DEVICE)
 void testParenthesesOperatorCT()
 {
   using Array = TestCArrayHelper::Array3d;
@@ -264,7 +264,7 @@ void testParenthesesOperatorRT()
 }
 TEST( testCArray, testParenthesesOperator )
 {
-#if !defined( SHIVA_USE_BOUNDS_CHECK ) || !defined(SHIVA_USE_DEVICE)
+#if !defined( SHIVA_ENABLE_BOUNDS_CHECK ) || !defined(SHIVA_ENABLE_DEVICE)
   testParenthesesOperatorCT();
 #endif
   testParenthesesOperatorRT();

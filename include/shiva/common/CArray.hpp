@@ -230,7 +230,7 @@ CArray< T, DATA_BUFFER, DIMS ... >::squareBracketOperatorHelper( index_type inde
 {
   static_assert( sizeof...(DIMS) >= 1, "operator[] is only valid for sizeof...(DIMS) >= 1" );
 
-#if defined( SHIVA_USE_BOUNDS_CHECK )
+#if defined( SHIVA_ENABLE_BOUNDS_CHECK )
   constexpr int DIM = CArrayHelper::IntPeeler< DIMS... >::first;
   SHIVA_ASSERT_MSG( index >= 0 && index < DIM,
                     "Index out of bounds: 0 < index(%jd) < dim(%jd)",

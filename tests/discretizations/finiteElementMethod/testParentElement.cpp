@@ -132,7 +132,7 @@ SHIVA_GLOBAL void compileTimeKernel()
 template< typename TEST_PARENT_ELEMENT_HELPER >
 void testParentElementAtCompileTime()
 {
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   compileTimeKernel< TEST_PARENT_ELEMENT_HELPER ><< < 1, 1 >> > ();
 #else
   compileTimeKernel< TEST_PARENT_ELEMENT_HELPER >();
@@ -169,7 +169,7 @@ void testParentElementAtRunTime()
     fieldValues.data()[i] = TEST_PARENT_ELEMENT_HELPER::fieldValues.data()[i];
   }
 
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   constexpr int bytes = sizeof(double);
   double * value;
   double * gradient;

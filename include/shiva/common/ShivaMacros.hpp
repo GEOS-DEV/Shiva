@@ -26,13 +26,13 @@
 #include <cinttypes>
 #include <cstdarg>
 
-#if defined( SHIVA_USE_HIP )
+#if defined( SHIVA_ENABLE_HIP )
 #include <hip/hip_runtime.h>
 #endif
 
-#if defined(SHIVA_USE_CUDA) || defined(SHIVA_USE_HIP)
+#if defined(SHIVA_ENABLE_CUDA) || defined(SHIVA_ENABLE_HIP)
 /// This macro is used to indicate that the code is being compiled for device.
-#define SHIVA_USE_DEVICE
+#define SHIVA_ENABLE_DEVICE
 #endif
 
 #if defined( __CUDA_ARCH__ ) || defined( __HIP_DEVICE_COMPILE__ )
@@ -40,7 +40,7 @@
 #endif
 
 
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
 /// This macro is used to indicate that the code is being compiled for host
 /// execution.
 #define SHIVA_HOST __host__

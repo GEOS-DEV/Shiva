@@ -69,7 +69,7 @@ SHIVA_GLOBAL void compileTimeKernel()
 template< typename TEST_INTERPOLATED_SHAPE_HELPER >
 void testInterpolatedShapeAtCompileTime()
 {
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   compileTimeKernel< TEST_INTERPOLATED_SHAPE_HELPER ><< < 1, 1 >> > ();
 #else
   compileTimeKernel< TEST_INTERPOLATED_SHAPE_HELPER >();
@@ -117,7 +117,7 @@ void testInterpolatedShapeAtRunTime()
   constexpr int order = TEST_INTERPOLATED_SHAPE_HELPER::order;
   constexpr int N = order + 1;
 
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   constexpr int bytes = N * N * N * sizeof(double);
   double * values;
   double * gradients;

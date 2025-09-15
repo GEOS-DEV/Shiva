@@ -20,11 +20,11 @@
 #include "shiva/common/ShivaMacros.hpp"
 
 /// @brief Macro to define whether or not to use camp.
-#if defined(SHIVA_USE_CAMP)
+#if defined(SHIVA_ENABLE_CAMP)
 #include <camp/camp.hpp>
 #else
 
-#if defined(SHIVA_USE_CUDA)
+#if defined(SHIVA_ENABLE_CUDA)
 #include <cuda/std/tuple>
 #else
 #include <tuple>
@@ -35,7 +35,7 @@
 namespace shiva
 {
 
-#if defined(SHIVA_USE_CAMP)
+#if defined(SHIVA_ENABLE_CAMP)
 
 /**
  * @brief Wrapper for camp::tuple.
@@ -59,7 +59,7 @@ make_tuple( T && ... t )
 }
 
 #else
-#if defined(SHIVA_USE_CUDA)
+#if defined(SHIVA_ENABLE_CUDA)
 /**
  * @brief Wrapper for cuda::std::tuple.
  * @tparam T Types of the elements of the tuple.

@@ -27,8 +27,8 @@
 #include <utility>
 namespace shiva
 {
-#if defined(SHIVA_USE_DEVICE)
-#if defined(SHIVA_USE_CUDA)
+#if defined(SHIVA_ENABLE_DEVICE)
+#if defined(SHIVA_ENABLE_CUDA)
 #define deviceMalloc( PTR, BYTES ) cudaMalloc( PTR, BYTES );
 #define deviceMallocManaged( PTR, BYTES ) cudaMallocManaged( PTR, BYTES );
 #define deviceDeviceSynchronize() cudaDeviceSynchronize();
@@ -38,7 +38,7 @@ namespace shiva
 #define deviceGetErrorString    cudaGetErrorString
 #define deviceMemcpyDeviceToHost cudaMemcpyDeviceToHost
 constexpr cudaError_t deviceSuccess = cudaSuccess;
-#elif defined(SHIVA_USE_HIP)
+#elif defined(SHIVA_ENABLE_HIP)
 #define deviceMalloc( PTR, BYTES ) hipMalloc( PTR, BYTES );
 #define deviceMallocManaged( PTR, BYTES ) hipMallocManaged( PTR, BYTES );
 #define deviceDeviceSynchronize() hipDeviceSynchronize();
@@ -99,7 +99,7 @@ SHIVA_GLOBAL void genericKernel( LAMBDA func )
 template< typename LAMBDA >
 void genericKernelWrapper( LAMBDA && func, bool const abortOnError = true )
 {
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   // UNCRUSTIFY-OFF
   genericKernel <<< 1, 1 >>> ( std::forward< LAMBDA >( func ) );
   // UNCRUSTIFY-ON
@@ -156,7 +156,7 @@ template< typename DATA_TYPE, typename LAMBDA >
 void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && func, bool const abortOnError = true )
 {
 
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   DATA_TYPE * deviceData;
   deviceMalloc( &deviceData, N * sizeof(DATA_TYPE) );
   deviceMemCpy( deviceData, hostData, N * sizeof(DATA_TYPE), cudaMemcpyHostToDevice );
@@ -192,7 +192,7 @@ void genericKernelWrapper( int const N, DATA_TYPE * const hostData, LAMBDA && fu
 template< typename DATA_TYPE >
 SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE void deallocateData( DATA_TYPE * data )
 {
-#if defined(SHIVA_USE_DEVICE)
+#if defined(SHIVA_ENABLE_DEVICE)
   deviceFree( data );
 #else
   delete[] data;
