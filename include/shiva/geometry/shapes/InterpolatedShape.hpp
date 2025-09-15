@@ -13,11 +13,10 @@
 
 #pragma once
 
-#include "common/SequenceUtilities.hpp"
-#include "common/ShivaMacros.hpp"
-#include "common/types.hpp"
-
-#include "functions/bases/BasisProduct.hpp"
+#include "shiva/common/SequenceUtilities.hpp"
+#include "shiva/common/ShivaMacros.hpp"
+#include "shiva/common/types.hpp"
+#include "shiva/functions/bases/BasisProduct.hpp"
 
 
 #include <utility>

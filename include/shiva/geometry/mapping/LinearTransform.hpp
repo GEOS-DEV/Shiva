@@ -18,12 +18,12 @@
 
 #pragma once
 
-#include "common/MathUtilities.hpp"
-#include "common/ShivaMacros.hpp"
-#include "common/types.hpp"
-#include "common/IndexTypes.hpp"
-#include "common/NestedSequenceUtilities.hpp"
-#include "common/CArray.hpp"
+#include "shiva/common/MathUtilities.hpp"
+#include "shiva/common/ShivaMacros.hpp"
+#include "shiva/common/types.hpp"
+#include "shiva/common/IndexTypes.hpp"
+#include "shiva/common/NestedSequenceUtilities.hpp"
+#include "shiva/common/CArray.hpp"
 
 /**
  * namespace to encapsulate all shiva code

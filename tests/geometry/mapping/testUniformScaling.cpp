@@ -12,9 +12,9 @@
  */
 
 
-#include "../UniformScaling.hpp"
-#include "../JacobianTransforms.hpp"
-#include "common/pmpl.hpp"
+#include "shiva/geometry/mapping/UniformScaling.hpp"
+#include "shiva/geometry/mapping/JacobianTransforms.hpp"
+#include "shiva/common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 

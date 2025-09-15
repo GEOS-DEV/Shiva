@@ -17,7 +17,7 @@
  */
 #pragma once
 
-#include "common/ShivaMacros.hpp"
+#include "shiva/common/ShivaMacros.hpp"
 
 /// @brief Macro to define whether or not to use camp.
 #if defined(SHIVA_USE_CAMP)

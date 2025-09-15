@@ -12,15 +12,15 @@
  */
 
 
-#include "geometry/shapes/NCube.hpp"
-#include "../LinearTransform.hpp"
-#include "../JacobianTransforms.hpp"
-#include "functions/bases/LagrangeBasis.hpp"
-#include "functions/spacing/Spacing.hpp"
-#include "geometry/shapes/InterpolatedShape.hpp"
+#include "shiva/geometry/shapes/NCube.hpp"
+#include "shiva/geometry/mapping/LinearTransform.hpp"
+#include "shiva/geometry/mapping/JacobianTransforms.hpp"
+#include "shiva/functions/bases/LagrangeBasis.hpp"
+#include "shiva/functions/spacing/Spacing.hpp"
+#include "shiva/geometry/shapes/InterpolatedShape.hpp"
 
 
-#include "common/pmpl.hpp"
+#include "shiva/common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 

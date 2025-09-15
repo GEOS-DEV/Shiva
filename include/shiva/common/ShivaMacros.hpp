@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "ShivaConfig.hpp"
+#include "shiva/ShivaConfig.hpp"
 
 #include <cstdio>
 #include <cstdlib>

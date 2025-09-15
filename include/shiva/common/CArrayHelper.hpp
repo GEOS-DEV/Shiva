@@ -19,8 +19,8 @@
 #pragma once
 
 
-#include "common/ShivaErrorHandling.hpp"
-#include "common/types.hpp"
+#include "shiva/common/ShivaErrorHandling.hpp"
+#include "shiva/common/types.hpp"
 #include <utility>
 #include <cstdint>
 #include <cinttypes>

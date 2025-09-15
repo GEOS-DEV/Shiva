@@ -60,20 +60,19 @@ set(SHIVA_VERSION_MINOR      "${PROJECT_VERSION_MINOR}")
 set(SHIVA_VERSION_PATCHLEVEL "${PROJECT_VERSION_PATCH}")
 
 # ---------- Emit the generated header(s) ----------
-set(_shiva_gen_inc "${SHIVA_BINARY_DIR}/include")
+set(_shiva_gen_inc "${SHIVA_BINARY_DIR}/include/shiva")
 message( "SHIVA_BINARY_DIR = ${SHIVA_BINARY_DIR}" )
 file(MAKE_DIRECTORY "${_shiva_gen_inc}")
 
-configure_file(
-  "${SHIVA_SOURCE_DIR}/include/ShivaConfig.hpp.in"
-  "${_shiva_gen_inc}/ShivaConfig.hpp"
+configure_file( "${SHIVA_SOURCE_DIR}/include/shiva/ShivaConfig.hpp.in"
+                "${_shiva_gen_inc}/ShivaConfig.hpp"
 )
 
 # Optional: a copy for Doxygen without touching the source tree
 set(_shiva_gen_doc "${SHIVA_BINARY_DIR}/docs/doxygen")
 file(MAKE_DIRECTORY "${_shiva_gen_doc}")
 configure_file(
-  "${SHIVA_SOURCE_DIR}/include/ShivaConfig.hpp.in"
+  "${SHIVA_SOURCE_DIR}/include/shiva/ShivaConfig.hpp.in"
   "${_shiva_gen_doc}/ShivaConfig.hpp"
 )
 

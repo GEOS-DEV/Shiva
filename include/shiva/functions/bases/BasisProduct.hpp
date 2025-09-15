@@ -13,9 +13,9 @@
 
 #pragma once
 
-#include "common/NestedSequenceUtilities.hpp"
-#include "common/MultiIndex.hpp"
-#include "common/CArray.hpp"
+#include "shiva/common/NestedSequenceUtilities.hpp"
+#include "shiva/common/MultiIndex.hpp"
+#include "shiva/common/CArray.hpp"
 
 namespace shiva
 {

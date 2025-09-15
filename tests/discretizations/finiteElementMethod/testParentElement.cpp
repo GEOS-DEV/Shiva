@@ -12,12 +12,12 @@
  */
 
 
-#include "../finiteElementMethod/parentElements/ParentElement.hpp"
-#include "functions/bases/LagrangeBasis.hpp"
-#include "functions/spacing/Spacing.hpp"
-#include "geometry/shapes/NCube.hpp"
-#include "common/ShivaMacros.hpp"
-#include "common/pmpl.hpp"
+#include "shiva/discretizations/finiteElementMethod/parentElements/ParentElement.hpp"
+#include "shiva/functions/bases/LagrangeBasis.hpp"
+#include "shiva/functions/spacing/Spacing.hpp"
+#include "shiva/geometry/shapes/NCube.hpp"
+#include "shiva/common/ShivaMacros.hpp"
+#include "shiva/common/pmpl.hpp"
 
 
 

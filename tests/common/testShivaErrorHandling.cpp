@@ -12,8 +12,8 @@
  */
 
 
-#include "../ShivaErrorHandling.hpp"
-#include "../pmpl.hpp"
+#include "shiva/common/ShivaErrorHandling.hpp"
+#include "shiva/common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 

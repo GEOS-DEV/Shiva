@@ -17,10 +17,10 @@
 
 #pragma once
 
-#include "common/ShivaMacros.hpp"
-#include "common/IndexTypes.hpp"
-#include "common/types.hpp"
-#include "common/MathUtilities.hpp"
+#include "shiva/common/ShivaMacros.hpp"
+#include "shiva/common/IndexTypes.hpp"
+#include "shiva/common/types.hpp"
+#include "shiva/common/MathUtilities.hpp"
 
 namespace shiva
 {

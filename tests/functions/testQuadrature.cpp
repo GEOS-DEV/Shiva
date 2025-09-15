@@ -12,7 +12,7 @@
  */
 
 
-#include "../quadrature/Quadrature.hpp"
+#include "shiva/functions/quadrature/Quadrature.hpp"
 
 #include <gtest/gtest.h>
 #include <cmath>

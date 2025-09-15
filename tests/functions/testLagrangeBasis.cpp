@@ -12,11 +12,11 @@
  */
 
 
-#include "../bases/LagrangeBasis.hpp"
-#include "../spacing/Spacing.hpp"
-#include "../../common/ShivaMacros.hpp"
-#include "common/pmpl.hpp"
-#include "common/types.hpp"
+#include "shiva/functions/bases/LagrangeBasis.hpp"
+#include "shiva/functions/spacing/Spacing.hpp"
+#include "shiva/common/ShivaMacros.hpp"
+#include "shiva/common/pmpl.hpp"
+#include "shiva/common/types.hpp"
 
 #include <gtest/gtest.h>
 #include <cmath>

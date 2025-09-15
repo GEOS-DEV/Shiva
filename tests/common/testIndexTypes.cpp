@@ -12,8 +12,8 @@
  */
 
 
-#include "../IndexTypes.hpp"
-#include "common/pmpl.hpp"
+#include "shiva/common/IndexTypes.hpp"
+#include "shiva/common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 

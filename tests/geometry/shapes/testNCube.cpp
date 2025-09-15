@@ -12,8 +12,8 @@
  */
 
 
-#include "../NCube.hpp"
-#include "common/pmpl.hpp"
+#include "shiva/geometry/shapes/NCube.hpp"
+#include "shiva/common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 

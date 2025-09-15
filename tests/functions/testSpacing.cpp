@@ -13,9 +13,9 @@
 
 
 
-#include "../spacing/Spacing.hpp"
-#include "common/SequenceUtilities.hpp"
-#include "common/pmpl.hpp"
+#include "shiva/functions/spacing/Spacing.hpp"
+#include "shiva/common/SequenceUtilities.hpp"
+#include "shiva/common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 #include <cmath>

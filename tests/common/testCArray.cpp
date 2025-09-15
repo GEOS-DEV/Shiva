@@ -12,10 +12,9 @@
  */
 
 
-#include "../CArray.hpp"
-
-#include "../SequenceUtilities.hpp"
-#include "common/pmpl.hpp"
+#include "shiva/common/CArray.hpp"
+#include "shiva/common/SequenceUtilities.hpp"
+#include "shiva/common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 

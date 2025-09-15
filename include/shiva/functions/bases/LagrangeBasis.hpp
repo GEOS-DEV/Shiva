@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "common/SequenceUtilities.hpp"
-#include "common/ShivaMacros.hpp"
+#include "shiva/common/SequenceUtilities.hpp"
+#include "shiva/common/ShivaMacros.hpp"
 
 
 #include <utility>

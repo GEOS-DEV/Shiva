@@ -12,8 +12,8 @@
  */
 
 
-#include "../NSimplex.hpp"
-#include "common/pmpl.hpp"
+#include "shiva/geometry/shapes/NSimplex.hpp"
+#include "shiva/common/pmpl.hpp"
 
 #include <gtest/gtest.h>
 

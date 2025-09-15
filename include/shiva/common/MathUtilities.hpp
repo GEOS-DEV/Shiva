@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "common/ShivaMacros.hpp"
+#include "shiva/common/ShivaMacros.hpp"
 
 #include <utility>
 
