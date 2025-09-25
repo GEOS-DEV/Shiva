@@ -31,6 +31,7 @@ macro(shiva_add_code_checks)
             endif()
         endforeach()
     endif()
+    message( STATUS "shiva_add_code_checks: After excludes, have ${_sources}" )
 
     set( CPPCHECK_FLAGS --std=c++17 
                         --enable=all 

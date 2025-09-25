@@ -93,7 +93,7 @@ if( SHIVA_ENABLE_BLT )
 
   include( "${CMAKE_CURRENT_LIST_DIR}/cmake/Macros.cmake" )
   shiva_add_code_checks( PREFIX shiva
-                         EXCLUDES "blt/*" )
+                         EXCLUDES build* blt/* camp/* )
 
 endif( SHIVA_ENABLE_BLT)
 
