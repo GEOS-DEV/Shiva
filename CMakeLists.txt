@@ -5,14 +5,21 @@ project(Shiva VERSION 0.1.0)
 include(GNUInstallDirs)
 
 # -------- Options (lean) -------------------------------------------------------
-option( SHIVA_ENABLE_BLT              "Enable BLT integration (testing, packaging, etc.)" OFF )
-option( SHIVA_ENABLE_CUDA             "Enable CUDA code paths in headers (interface define only)" OFF )
-option( SHIVA_ENABLE_HIP              "Enable HIP code paths in headers  (interface define only)" OFF )
+option( SHIVA_ENABLE_BLT           "Enable BLT integration (testing, packaging, etc.)" ON )
+option( SHIVA_ENABLE_CUDA          "Enable CUDA code paths in headers (interface define only)" OFF )
+option( SHIVA_ENABLE_HIP           "Enable HIP code paths in headers  (interface define only)" OFF )
 option( SHIVA_ENABLE_UNIT_TESTS    "Build unit tests (standalone only)" ON )
 option( SHIVA_ENABLE_CAMP          "Link against CAMP if available" OFF )
 option( SHIVA_BUILD_OBJ_LIBS       "Build object libraries...useful for dependency trees" OFF )
 option( SHIVA_ENABLE_BOUNDS_CHECK  "Enable bounds checking in shiva::CArray" OFF )
 
+if( ENABLE_CUDA )
+  set( SHIVA_ENABLE_CUDA ON )
+endif()
+
+if( ENABLE_HIP )
+  set( SHIVA_ENABLE_HIP ON )
+endif()
 
 if( SHIVA_ENABLE_CUDA AND SHIVA_ENABLE_HIP )
   message( FATAL_ERROR "CUDA and HIP are mutually exclusive; enable only one." )
@@ -56,7 +63,6 @@ if( SHIVA_ENABLE_BLT )
     include("${BLT_SOURCE_DIR}/SetupBLT.cmake")
   else()
 
-
   endif( SHIVA_IS_TOPLEVEL )
 
 
@@ -65,7 +71,9 @@ if( SHIVA_ENABLE_BLT )
   else()
     message( FATAL_ERROR "BLT requested but failed to load." )
   endif( BLT_LOADED )
-  
+
+
+
   if( SHIVA_ENABLE_CAMP )
       add_subdirectory(tpl/camp)          # vendored fallback when standalone
       target_link_libraries(Shiva INTERFACE camp)
@@ -82,6 +90,10 @@ if( SHIVA_ENABLE_BLT )
 
     add_subdirectory(tests)
   endif()
+
+  include( "${CMAKE_CURRENT_LIST_DIR}/cmake/Macros.cmake" )
+  shiva_add_code_checks( PREFIX shiva
+                         EXCLUDES "blt/*" )
 
 endif( SHIVA_ENABLE_BLT)
 
