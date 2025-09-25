@@ -24,7 +24,6 @@ endif()
 
 # ---------- Emit the generated header(s) ----------
 set(_shiva_gen_inc "${SHIVA_BINARY_DIR}/include/shiva")
-message( "SHIVA_BINARY_DIR = ${SHIVA_BINARY_DIR}" )
 file(MAKE_DIRECTORY "${_shiva_gen_inc}")
 
 configure_file( "${SHIVA_SOURCE_DIR}/include/shiva/ShivaConfig.hpp.in"

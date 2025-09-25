@@ -5,10 +5,10 @@ project(Shiva VERSION 0.1.0)
 include(GNUInstallDirs)
 
 # -------- Options (lean) -------------------------------------------------------
-option( SHIVA_ENABLE_BLT           "Enable BLT integration (testing, packaging, etc.)" ON )
+option( SHIVA_ENABLE_BLT           "Enable BLT integration (testing, packaging, etc.)" OFF )
 option( SHIVA_ENABLE_CUDA          "Enable CUDA code paths in headers (interface define only)" OFF )
 option( SHIVA_ENABLE_HIP           "Enable HIP code paths in headers  (interface define only)" OFF )
-option( SHIVA_ENABLE_UNIT_TESTS    "Build unit tests (standalone only)" ON )
+option( SHIVA_ENABLE_UNIT_TESTS    "Build unit tests (standalone only)" OFF )
 option( SHIVA_ENABLE_CAMP          "Link against CAMP if available" OFF )
 option( SHIVA_BUILD_OBJ_LIBS       "Build object libraries...useful for dependency trees" OFF )
 option( SHIVA_ENABLE_BOUNDS_CHECK  "Enable bounds checking in shiva::CArray" OFF )
@@ -48,9 +48,6 @@ target_include_directories( Shiva INTERFACE
 
 target_compile_features(Shiva INTERFACE cxx_std_17)
 
-
-
-
 # -------- BLT (optional; usable as top-level or submodule) ---------------------
 if( SHIVA_ENABLE_BLT )
   set( BLT_CXX_STD "c++17" )
@@ -87,8 +84,10 @@ if( SHIVA_ENABLE_BLT )
     if ( SHIVA_ENABLE_HIP  AND NOT CMAKE_HIP_COMPILER )
       enable_language ( HIP )
     endif ()
-
+    message( STATUS "Building unit tests." )
     add_subdirectory(tests)
+  else()
+    message( STATUS "Skipping unit tests." )
   endif()
 
   include( "${CMAKE_CURRENT_LIST_DIR}/cmake/Macros.cmake" )

@@ -21,3 +21,7 @@ if(ENABLE_CUDA)
   set(CMAKE_CUDA_FLAGS "-restrict --expt-extended-lambda --expt-relaxed-constexpr -Werror cross-execution-space-call,reorder,deprecated-declarations" CACHE STRING "")
 
 endif()
+
+set( SHIVA_ENABLE_BLT ON CACHE BOOL "" FORCE)
+set( SHIVA_ENABLE_UNIT_TESTS ON CACHE BOOL "" FORCE )
+set( SHIVA_ENABLE_BOUNDS_CHECK ON CACHE BOOL "" FORCE)
