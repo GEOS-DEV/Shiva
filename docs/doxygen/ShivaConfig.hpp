@@ -2,21 +2,21 @@
 
 #pragma once
 
-#define SHIVA_VERSION_MAJOR 0
+#define SHIVA_VERSION_MAJOR 
 
-#define SHIVA_VERSION_MINOR 1
+#define SHIVA_VERSION_MINOR 
 
-#define SHIVA_VERSION_PATCHLEVEL 0
+#define SHIVA_VERSION_PATCHLEVEL 
 
-/* #undef SHIVA_USE_CUDA */
+/* #undef SHIVA_ENABLE_CUDA */
 
-/* #undef SHIVA_USE_HIP */
+/* #undef SHIVA_ENABLE_HIP */
 
-/* #undef SHIVA_USE_CALIPER */
+/* #undef SHIVA_ENABLE_CALIPER */
 
-#define SHIVA_USE_CAMP
+/* #undef SHIVA_ENABLE_CAMP */
 
-#define SHIVA_USE_BOUNDS_CHECK
+/* #undef SHIVA_ENABLE_BOUNDS_CHECK */
 
-#define SHIVA_CUDA_MAJOR        0
-#define SHIVA_CUDA_MINOR        0
+#define SHIVA_CUDA_MAJOR        
+#define SHIVA_CUDA_MINOR        

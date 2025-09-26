@@ -1,0 +1,12 @@
+# cmake/ShivaConfig.cmake.in
+@PACKAGE_INIT@  # sets up PACKAGE_PREFIX_DIR etc.
+
+# If Shiva has installed-time deps, find them here (optional):
+include(CMakeFindDependencyMacro)
+# find_dependency(camp CONFIG)  # uncomment if you install+use camp externally
+
+# Import the exported targets for this package
+include("${CMAKE_CURRENT_LIST_DIR}/ShivaTargets.cmake")
+
+# (Optional) convenience vars
+set(Shiva_INCLUDE_DIRS "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@")

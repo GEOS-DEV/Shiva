@@ -1,91 +1,125 @@
-###################################################################################################
-# Copyright (c) 2021, Lawrence Livermore National Security, LLC and LvArray contributors.
-# All rights reserved.
-# See the LICENSE file for details.
-# SPDX-License-Identifier: (BSD-3-Clause)
-###################################################################################################
+cmake_minimum_required(VERSION 3.23.1)
+project(Shiva VERSION 0.1.0)
 
-cmake_minimum_required( VERSION 3.23.1 )
+# Portable install dir vars: ${CMAKE_INSTALL_INCLUDEDIR}, ${CMAKE_INSTALL_LIBDIR}, etc.
+include(GNUInstallDirs)
 
-# Set version number
-set( SHIVA_VERSION_MAJOR 0 )
-set( SHIVA_VERSION_MINOR 1 )
-set( SHIVA_VERSION_PATCHLEVEL 0 )
+# -------- Options (lean) -------------------------------------------------------
+option( SHIVA_ENABLE_BLT           "Enable BLT integration (testing, packaging, etc.)" OFF )
+option( SHIVA_ENABLE_CUDA          "Enable CUDA code paths in headers (interface define only)" OFF )
+option( SHIVA_ENABLE_HIP           "Enable HIP code paths in headers  (interface define only)" OFF )
+option( SHIVA_ENABLE_UNIT_TESTS    "Build unit tests (standalone only)" OFF )
+option( SHIVA_ENABLE_CAMP          "Link against CAMP if available" OFF )
+option( SHIVA_BUILD_OBJ_LIBS       "Build object libraries...useful for dependency trees" OFF )
+option( SHIVA_ENABLE_BOUNDS_CHECK  "Enable bounds checking in shiva::CArray" OFF )
 
-# check if Shiva is build as a submodule or a separate project
-get_directory_property( parent_dir PARENT_DIRECTORY )
-if(parent_dir)
-    set( SHIVA_IS_SUBMODULE ON )
-else()
-    set( SHIVA_IS_SUBMODULE OFF )
+if( ENABLE_CUDA )
+  set( SHIVA_ENABLE_CUDA ON )
 endif()
 
-if( NOT SHIVA_IS_SUBMODULE )
-    message( "not a submodule")
-    project( Shiva LANGUAGES CXX C )
+if( ENABLE_HIP )
+  set( SHIVA_ENABLE_HIP ON )
+endif()
 
-    set( BLT_CXX_STD "c++17" CACHE STRING "Version of C++ standard" FORCE )
-    set( ENABLE_WARNINGS_AS_ERRORS "ON" CACHE PATH "" )
+if( SHIVA_ENABLE_CUDA AND SHIVA_ENABLE_HIP )
+  message( FATAL_ERROR "CUDA and HIP are mutually exclusive; enable only one." )
+endif()
 
-    option( SHIVA_ENABLE_UNIT_TESTS "Builds tests" ON )
-    option( SHIVA_ENABLE_EXAMPLES "Builds examples" ON )
-    option( SHIVA_ENABLE_BENCHMARKS "Builds benchmarks" ON )
-    option( SHIVA_ENABLE_DOCS "Builds documentation" ON )
 
-    option( ENABLE_CUDA "Build with CUDA" OFF )
-    option( ENABLE_HIP "Build with HIP" OFF )
+# Top-level or subproject?
+set( SHIVA_IS_TOPLEVEL "${PROJECT_IS_TOP_LEVEL}" )
 
-    if( NOT BLT_LOADED )
-        if( DEFINED BLT_SOURCE_DIR )
-            if( NOT EXISTS ${BLT_SOURCE_DIR}/SetupBLT.cmake )
-                message( FATAL_ERROR "Given BLT_SOURCE_DIR does not contain SetupBLT.cmake" )
-            endif()
-        else ()
-            set( BLT_SOURCE_DIR ${PROJECT_SOURCE_DIR}/cmake/blt CACHE PATH "" )
+# Convenience dirs
+set( SHIVA_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" )
+set( SHIVA_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" )
 
-            if( NOT EXISTS ${BLT_SOURCE_DIR}/SetupBLT.cmake )
-                message( FATAL_ERROR "The BLT submodule is not present. If in git repository run the following two commands:\n \
-                git submodule init\n \
-                git submodule update" )
-            endif ()
-        endif ()
+# -------- Generate config header ----------------------------------------------
+# Expects: include/shiva/ShivaConfig.hpp.in
+include( "${CMAKE_CURRENT_LIST_DIR}/cmake/Config.cmake" )
 
-        include( ${BLT_SOURCE_DIR}/SetupBLT.cmake )
+# -------- Header-only target ---------------------------------------------------
+add_library(Shiva INTERFACE)
+add_library(Shiva::shiva ALIAS Shiva)
+
+target_include_directories( Shiva INTERFACE
+                            "$<BUILD_INTERFACE:${SHIVA_SOURCE_DIR}/include>"   # include/shiva/...
+                            "$<BUILD_INTERFACE:${SHIVA_BINARY_DIR}/include>"   # build/include/shiva/ShivaConfig.hpp
+                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>" )
+
+target_compile_features(Shiva INTERFACE cxx_std_17)
+
+# -------- BLT (optional; usable as top-level or submodule) ---------------------
+if( SHIVA_ENABLE_BLT )
+  set( BLT_CXX_STD "c++17" )
+  # Load BLT if Shiva is standalone
+  if( SHIVA_IS_TOPLEVEL )
+    set(BLT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/blt" CACHE PATH "Path to BLT")
+    if (NOT EXISTS "${BLT_SOURCE_DIR}/SetupBLT.cmake")
+      message(FATAL_ERROR "BLT not found at '${BLT_SOURCE_DIR}'.")
     endif()
+    include("${BLT_SOURCE_DIR}/SetupBLT.cmake")
+  else()
 
-    include( cmake/CMakeBasics.cmake )
-    #include( cmake/SetupTPL.cmake )
-else()
-    if( NOT BLT_LOADED )
-        message( FATAL_ERROR "When using Shiva as a submodule you must have already loaded BLT." )
-    endif()
-    include( cmake/CMakeBasics.cmake )
-endif()
-
-include( cmake/Macros.cmake )
-include( cmake/Config.cmake )
+  endif( SHIVA_IS_TOPLEVEL )
 
 
-set(SHIVA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
-set(SHIVA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} )
-
-message( STATUS "SHIVA_BINARY_DIR: ${SHIVA_BINARY_DIR}" )
-message( STATUS "SHIVA_SOURCE_DIR: ${SHIVA_SOURCE_DIR}" )
-
-
-add_subdirectory( src )
-
-if( SHIVA_ENABLE_CAMP )
-    add_subdirectory( tpl/camp )
-    target_compile_options( camp PRIVATE "-Wno-shadow") 
-
-    configure_file(tpl/camp/include/camp/config.in.hpp
-      ${PROJECT_BINARY_DIR}/include/camp/config.hpp)
-endif()
+  if( BLT_LOADED )
+    message( STATUS "BLT loaded successfully." )
+  else()
+    message( FATAL_ERROR "BLT requested but failed to load." )
+  endif( BLT_LOADED )
 
 
-if( SHIVA_ENABLE_DOCS )
-    add_subdirectory( docs )
-endif()
+
+  if( SHIVA_ENABLE_CAMP )
+      add_subdirectory(tpl/camp)          # vendored fallback when standalone
+      target_link_libraries(Shiva INTERFACE camp)
+  endif()
+
+  if( SHIVA_ENABLE_UNIT_TESTS )
+    # Enable GPU languages **only** for tests/examples at the top level
+    if ( SHIVA_ENABLE_CUDA AND NOT CMAKE_CUDA_COMPILER )
+      enable_language ( CUDA )
+    endif ()
+    if ( SHIVA_ENABLE_HIP  AND NOT CMAKE_HIP_COMPILER )
+      enable_language ( HIP )
+    endif ()
+    message( STATUS "Building unit tests." )
+    add_subdirectory(tests)
+  else()
+    message( STATUS "Skipping unit tests." )
+  endif()
+
+  include( "${CMAKE_CURRENT_LIST_DIR}/cmake/Macros.cmake" )
+  shiva_add_code_checks( PREFIX shiva
+                         EXCLUDES build* blt/* camp/* )
+
+endif( SHIVA_ENABLE_BLT)
 
 
+# -------- Install & package ----------------------------------------------------
+install(TARGETS Shiva EXPORT ShivaTargets)
+
+# Install public headers and generated config header tree
+install( DIRECTORY "${SHIVA_SOURCE_DIR}/include/"
+         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" )
+install( DIRECTORY "${SHIVA_BINARY_DIR}/include/"
+         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+         OPTIONAL )
+
+include( CMakePackageConfigHelpers )
+
+write_basic_package_version_file( "${CMAKE_CURRENT_BINARY_DIR}/ShivaConfigVersion.cmake"
+                                  VERSION "${PROJECT_VERSION}"
+                                  COMPATIBILITY SameMajorVersion )
+
+configure_package_config_file( "${CMAKE_CURRENT_LIST_DIR}/cmake/ShivaConfig.cmake.in"
+                               "${CMAKE_CURRENT_BINARY_DIR}/ShivaConfig.cmake"
+                               INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Shiva" )
+
+install( FILES "${CMAKE_CURRENT_BINARY_DIR}/ShivaConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/ShivaConfigVersion.cmake"
+         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Shiva" )
+install( EXPORT ShivaTargets
+         FILE ShivaTargets.cmake
+         NAMESPACE Shiva::
+         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Shiva" )
