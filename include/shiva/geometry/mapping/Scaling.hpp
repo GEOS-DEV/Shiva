@@ -67,6 +67,8 @@ public:
    */
   constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType const & getData() const { return m_length; }
 
+  constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType & getData() { return m_length; }
+
   /**
    * @brief provides a reference to the member data.
    * @return a mutable reference to the member data.
@@ -112,6 +114,19 @@ jacobian( Scaling< REAL_TYPE > const & cell,
   J( 2 ) = 0.5 * h[2];
 }
 
+
+template< typename QUADRATURE,
+          int ... QA,
+          typename REAL_TYPE >
+SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
+jacobian( Scaling< REAL_TYPE > const & cell,
+          typename Scaling< REAL_TYPE >::JacobianType & J )
+{
+  typename Scaling< REAL_TYPE >::DataType const & h = cell.getData();
+  J( 0 ) = 0.5 * h[0];
+  J( 1 ) = 0.5 * h[1];
+  J( 2 ) = 0.5 * h[2];
+}
 
 /**
  * @brief Calculates the inverse Jacobian transformation and detJ for a
