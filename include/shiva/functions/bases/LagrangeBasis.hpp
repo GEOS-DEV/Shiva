@@ -122,7 +122,7 @@ public:
       auto func = [&coord]< int ... b > ( auto aa ) constexpr
       {
         constexpr int aVal = decltype(aa)::value;
-        return gradientOfValueTerm< BF_INDEX, aVal >() * ( valueProductFactor< BF_INDEX, b, aVal >( coord ) * ... );
+        return gradientOfValueTerm< BF_INDEX, aVal >() * ( valueProductTerm< BF_INDEX, a >( coord ) * ... );
       };
 
       return ( executeSequence< numSupportPoints >( func, std::integral_constant< int, a >{} ) + ... );

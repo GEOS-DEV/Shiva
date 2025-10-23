@@ -94,7 +94,7 @@ struct BasisProduct
     // expand pack over number of dimensions
     return executeSequence< numDims >( [&]< int ... PRODUCT_TERM_INDEX > () constexpr
     {
-      return ( BASIS_TYPE::template value< BASIS_FUNCTION_INDICES >( parentCoord[PRODUCT_TERM_INDEX] ) * ... );
+      return ( BASIS_TYPES::template value< BASIS_FUNCTION_INDICES >( parentCoord[PRODUCT_TERM_INDEX] ) * ... );
     } );
 #else
     return executeSequence< numDims >( [&] ( auto ... PRODUCT_TERM_INDEX ) constexpr
