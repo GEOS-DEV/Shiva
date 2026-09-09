@@ -32,19 +32,23 @@ macro(shiva_add_code_checks)
         endforeach()
     endif()
 
-    set( CPPCHECK_FLAGS --std=c++17 
-                        --enable=all 
+    set( CPPCHECK_FLAGS --std=c++20
+                        --enable=all
                         --quiet
+                        # Use the existing SHIVA_HAS_BUILTIN fallback during analysis.
+                        -U__has_builtin
+                        # Omit the informational summary: testCppCheck rejects any stderr.
+                        --suppress=checkersReport
                         --suppress=missingIncludeSystem
                         --suppress=unmatchedSuppression
-                        --suppress=missingInclude 
-                        --suppress=noConstructor 
+                        --suppress=missingInclude
+                        --suppress=noConstructor
                         --suppress=noExplicitConstructor
-                        --suppress=unusedFunction 
-                        --suppress=constStatement 
+                        --suppress=unusedFunction
+                        --suppress=constStatement
                         --suppress=unusedStructMember
                         --suppress=unknownMacro )
-                        
+
     blt_add_code_checks( PREFIX    ${arg_PREFIX}
                          SOURCES   ${_sources}
                          UNCRUSTIFY_CFG_FILE ${PROJECT_SOURCE_DIR}/src/uncrustify.cfg

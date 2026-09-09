@@ -13,6 +13,7 @@
 
 
 #include "shiva/functions/bases/LagrangeBasis.hpp"
+#include "shiva/functions/bases/BasisProduct.hpp"
 #include "shiva/functions/spacing/Spacing.hpp"
 #include "shiva/common/ShivaMacros.hpp"
 #include "shiva/common/pmpl.hpp"
@@ -20,6 +21,7 @@
 
 #include <gtest/gtest.h>
 #include <cmath>
+#include <limits>
 
 using namespace shiva;
 using namespace shiva::functions;
@@ -140,6 +142,138 @@ TEST( testSpacing, testLagrangeBasisGaussLobattoSpacing )
   using BasisHelperType = TestBasisHelper< LagrangeBasis< double, 5, GaussLobattoSpacing > >;
   testBasisAtCompileTime< BasisHelperType >();
   testBasisAtRunTime< BasisHelperType >();
+}
+
+// Closed-form values and derivatives for the constant, linear, and quadratic
+// bases on [-1, 1]. Unused entries pad the lower-order rows with zeros.
+template< typename REAL_TYPE, int ORDER >
+SHIVA_CONSTEXPR_HOSTDEVICE_FORCEINLINE CArrayNd< REAL_TYPE, 2, 3 >
+lowOrderReference( REAL_TYPE const x )
+{
+  constexpr REAL_TYPE zero = 0;
+  constexpr REAL_TYPE one = 1;
+  constexpr REAL_TYPE half = 0.5;
+  if constexpr ( ORDER == 0 )
+  {
+    return { one, zero, zero, zero, zero, zero };
+  }
+  else if constexpr ( ORDER == 1 )
+  {
+    return { (1 - x) / 2, (1 + x) / 2, zero, -half, half, zero };
+  }
+  else
+  {
+    return { x * (x - 1) / 2, 1 - x * x, x * (x + 1) / 2,
+             x - half, -2 * x, x + half };
+  }
+}
+
+template< typename REAL_TYPE, int ORDER, template< typename, int > typename SPACING_TYPE >
+void testLowOrderBasis()
+{
+  using BasisType = LagrangeBasis< REAL_TYPE, ORDER, SPACING_TYPE >;
+  constexpr int numPoints = 4;
+  constexpr int stride = 1 + 2 * BasisType::numSupportPoints;
+  constexpr REAL_TYPE coords[numPoints] = { -1, 0, REAL_TYPE( 0.3 ), 1 };
+  constexpr REAL_TYPE tolerance = 16 * std::numeric_limits< REAL_TYPE >::epsilon();
+  REAL_TYPE data[numPoints * stride]{};
+  for ( int point = 0; point < numPoints; ++point )
+  {
+    data[point * stride] = coords[point];
+  }
+
+  pmpl::genericKernelWrapper( numPoints * stride, data, [] SHIVA_HOST_DEVICE ( REAL_TYPE * const kernelData )
+  {
+    forSequence< numPoints >( [] ( auto const POINT ) constexpr
+    {
+      constexpr REAL_TYPE compileTimeCoords[numPoints] = { -1, 0, REAL_TYPE( 0.3 ), 1 };
+      constexpr REAL_TYPE coord = compileTimeCoords[POINT];
+      constexpr auto expected = lowOrderReference< REAL_TYPE, ORDER >( coord );
+      forSequence< BasisType::numSupportPoints >( [&] ( auto const BF_INDEX ) constexpr
+      {
+        constexpr REAL_TYPE value = BasisType::template value< BF_INDEX >( coord );
+        constexpr REAL_TYPE gradient = BasisType::template gradient< BF_INDEX >( coord );
+        static_assert( pmpl::check( value, expected( 0, BF_INDEX ), tolerance ) );
+        static_assert( pmpl::check( gradient, expected( 1, BF_INDEX ), tolerance ) );
+      } );
+    } );
+
+    for ( int point = 0; point < numPoints; ++point )
+    {
+      int const offset = point * stride;
+      REAL_TYPE const coord = kernelData[offset];
+      forSequence< BasisType::numSupportPoints >( [&] ( auto const BF_INDEX )
+      {
+        kernelData[offset + 1 + BF_INDEX] = BasisType::template value< BF_INDEX >( coord );
+        kernelData[offset + 1 + BasisType::numSupportPoints + BF_INDEX] = BasisType::template gradient< BF_INDEX >( coord );
+      } );
+    }
+  } );
+
+  for ( int point = 0; point < numPoints; ++point )
+  {
+    auto const expected = lowOrderReference< REAL_TYPE, ORDER >( coords[point] );
+    for ( int basis = 0; basis < BasisType::numSupportPoints; ++basis )
+    {
+      EXPECT_NEAR( data[point * stride + 1 + basis], expected( 0, basis ), tolerance );
+      EXPECT_NEAR( data[point * stride + 1 + BasisType::numSupportPoints + basis], expected( 1, basis ), tolerance );
+    }
+  }
+}
+
+TEST( testLagrangeBasis, lowOrderEqualSpacing )
+{
+  testLowOrderBasis< float, 0, EqualSpacing >();
+  testLowOrderBasis< double, 0, EqualSpacing >();
+  testLowOrderBasis< float, 1, EqualSpacing >();
+  testLowOrderBasis< double, 1, EqualSpacing >();
+  testLowOrderBasis< float, 2, EqualSpacing >();
+  testLowOrderBasis< double, 2, EqualSpacing >();
+}
+
+TEST( testLagrangeBasis, lowOrderGaussLobattoSpacing )
+{
+  testLowOrderBasis< float, 1, GaussLobattoSpacing >();
+  testLowOrderBasis< double, 1, GaussLobattoSpacing >();
+  testLowOrderBasis< float, 2, GaussLobattoSpacing >();
+  testLowOrderBasis< double, 2, GaussLobattoSpacing >();
+}
+
+template< typename REAL_TYPE >
+void testAnisotropicBasisProduct()
+{
+  using Product = BasisProduct< REAL_TYPE,
+                                LagrangeBasis< REAL_TYPE, 1, EqualSpacing >,
+                                LagrangeBasis< REAL_TYPE, 2, GaussLobattoSpacing > >;
+  constexpr REAL_TYPE tolerance = std::numeric_limits< REAL_TYPE >::epsilon();
+  REAL_TYPE data[3] = { REAL_TYPE( 0.5 ), REAL_TYPE( -0.25 ), 0 };
+  pmpl::genericKernelWrapper( 3, data, [] SHIVA_HOST_DEVICE ( REAL_TYPE * const kernelData )
+  {
+    // Phi_01(x,y) = (1-x)(1-y*y)/2.
+    // Distinct magnitudes ensure reusing a coordinate changes the basis value.
+    constexpr REAL_TYPE coord[2] = { REAL_TYPE( 0.5 ), REAL_TYPE( -0.25 ) };
+    constexpr auto value = Product::template value< 0, 1 >( coord );
+    constexpr auto gradient = Product::template gradient< 0, 1 >( coord );
+    static_assert( pmpl::check( value, REAL_TYPE( 0.234375 ), tolerance ) );
+    static_assert( pmpl::check( gradient( 0 ), REAL_TYPE( -0.46875 ), tolerance ) );
+    static_assert( pmpl::check( gradient( 1 ), REAL_TYPE( 0.125 ), tolerance ) );
+
+    REAL_TYPE const runtimeCoord[2] = { kernelData[0], kernelData[1] };
+    auto const runtimeGradient = Product::template gradient< 0, 1 >( runtimeCoord );
+    kernelData[0] = Product::template value< 0, 1 >( runtimeCoord );
+    kernelData[1] = runtimeGradient( 0 );
+    kernelData[2] = runtimeGradient( 1 );
+  } );
+
+  EXPECT_NEAR( data[0], REAL_TYPE( 0.234375 ), tolerance );
+  EXPECT_NEAR( data[1], REAL_TYPE( -0.46875 ), tolerance );
+  EXPECT_NEAR( data[2], REAL_TYPE( 0.125 ), tolerance );
+}
+
+TEST( testLagrangeBasis, anisotropicBasisProduct )
+{
+  testAnisotropicBasisProduct< float >();
+  testAnisotropicBasisProduct< double >();
 }
 
 int main( int argc, char * * argv )

@@ -4,6 +4,16 @@
 # Shiva
 Shiva Discretization Library
 
+Requirements: a C++20 compiler. CUDA builds require CUDA 12 or newer.
+
+HIP consumers must explicitly require C++20 on each target that compiles HIP sources using Shiva. The Shiva interface propagates the C++ and CUDA standards; HIP standard propagation is unavailable at the project's minimum CMake version. Replace `my_target` with your consuming target:
+
+```cmake
+set_target_properties(my_target PROPERTIES
+  HIP_STANDARD 20
+  HIP_STANDARD_REQUIRED ON)
+```
+
 # Project Goals
 The goals are:
 

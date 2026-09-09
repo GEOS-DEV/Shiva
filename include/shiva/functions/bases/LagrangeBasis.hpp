@@ -38,9 +38,6 @@ namespace functions
  * @tparam ORDER The order of the basis function
  * @tparam SPACING_TYPE The spacing type to define the interpolation points for
  * the Lagrange polynomials.
- * @tparam USE_FOR_SEQUENCE If true, the staticFor will be used to calculate
- * values and gradient functions. If false, the executeSequence function will be
- * used.
  *
  * The equation for a Lagrange interpolating basis function is:
  *
@@ -81,19 +78,12 @@ public:
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE REAL_TYPE
   value( REAL_TYPE const & coord )
   {
-#if __cplusplus >= 202002L
     return executeSequence< numSupportPoints >( [&]< int ... a > () constexpr
     {
       // return fold expression that is the product of all the polynomial
       // factor terms.
       return ( valueProductTerm< BF_INDEX, a >( coord ) * ... );
     } );
-#else
-    return executeSequence< numSupportPoints >( [&] ( auto const ... a ) constexpr
-    {
-      return ( valueProductTerm< BF_INDEX, decltype(a)::value >( coord ) * ... );
-    } );
-#endif
   }
 
   /**
@@ -116,30 +106,17 @@ public:
   gradient( REAL_TYPE const & coord )
   {
 
-#if __cplusplus >= 202002L
     return executeSequence< numSupportPoints >( [&coord]< int ... a > () constexpr
     {
-      auto func = [&coord]< int ... b > ( auto aa ) constexpr
+      REAL_TYPE const values[ numSupportPoints ] = { valueProductTerm< BF_INDEX, a >( coord )... };
+      auto func = [&values]< int ... b > ( auto aa ) constexpr
       {
         constexpr int aVal = decltype(aa)::value;
-        return gradientOfValueTerm< BF_INDEX, aVal >() * ( valueProductTerm< BF_INDEX, a >( coord ) * ... );
+        return gradientOfValueTerm< BF_INDEX, aVal >() * ( valueProductFactor< b, aVal >( values ) * ... );
       };
 
       return ( executeSequence< numSupportPoints >( func, std::integral_constant< int, a >{} ) + ... );
     } );
-#else
-    return executeSequence< numSupportPoints >( [&coord] ( auto const ... a ) constexpr
-    {
-      REAL_TYPE const values[ numSupportPoints ] = { valueProductTerm< BF_INDEX, decltype(a)::value >( coord )... };
-      auto func = [&values] ( auto aa, auto ... b ) constexpr
-      {
-        constexpr int aVal = decltype(aa)::value;
-        return gradientOfValueTerm< BF_INDEX, aVal >() * ( valueProductFactor< decltype(b)::value, aVal >( values ) * ... );
-      };
-
-      return ( executeSequence< numSupportPoints >( func, a ) + ... );
-    } );
-#endif
   }
 
 
@@ -151,10 +128,11 @@ private:
    * @tparam BF_INDEX The index of the basis function to calculate the value of.
    * @tparam TERM_INDEX The index of the term in the sequence product.
    * @param coord The coordinate to calculate the value at.
-   * @return The value of the Lagrange polynomial basis function.
+   * @return One when @p TERM_INDEX equals @p BF_INDEX, otherwise the value
+   * of the product factor.
    *
    * In the equation for the "Lagrange basis", the "value term" is:
-   * \f[ \frac{ x - x_k }{ x_j - x_k } \f]. The
+   * \f[ \frac{ x - x_k }{ x_j - x_k } \f] for \f$ k \neq j \f$.
    *
    */
   template< int BF_INDEX, int TERM_INDEX >
@@ -175,18 +153,17 @@ private:
   }
 
   /**
-   * @brief Applies an index filter to an array that contains the values of the
-   * Lagrange polynomial basis function product terms.
+   * @brief Omits the differentiated factor from the product of Lagrange basis
+   * terms in a product-rule summand.
    * @tparam TERM_INDEX The index of the factor to calculate the value of.
    * @tparam DERIVATIVE_INDEX The index of the derivative term that is calling
    * this function.
    * @param values The array that contains the Lagrange polynomial basis terms.
-   * @return The value of the Lagrange polynomial basis function.
+   * @return One for the differentiated factor, otherwise the stored value term.
    *
-   * In the equation for the "Lagrange basis":
-   * \f[ P_j(x) = \prod_{ { {k=0} \atop {k\neq j} } }^{n-1}
-   *\frac{x-x_k}{x_j-x_k} \f], the filter addresses the case where \f$ k = j
-   *\f$.
+   * The factor with index @p DERIVATIVE_INDEX is replaced by its derivative
+   * outside this product. Returning one here omits it without dividing by its
+   * value, which may be zero at a support point.
    *
    */
   template< int TERM_INDEX, int DERIVATIVE_INDEX = -1 >
@@ -208,7 +185,8 @@ private:
    * function for a @p BF_INDEX.
    * @tparam BF_INDEX The index of the basis function.
    * @tparam TERM_INDEX The index of the term in the sequence product.
-   * @return The gradient of the Lagrange polynomial basis function.
+   * @return Zero when @p TERM_INDEX equals @p BF_INDEX, otherwise the
+   * derivative of the product factor.
    *
    */
   template< int BF_INDEX, int TERM_INDEX >

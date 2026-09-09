@@ -120,7 +120,7 @@ void i_g_n_o_r_e( ARGS const & ... ) {}
  * @brief Define SHIVA_IS_CONST_EVAL() depending on compiler/toolchain
  */
 #if defined(__CUDA_ARCH__)
-// Device code (nvcc, hipcc): no support in C++17
+// Keep CUDA device checks on the runtime path.
   #define SHIVA_IS_CONST_EVAL() (false)
 
 #elif SHIVA_HAS_BUILTIN( __builtin_is_constant_evaluated )
