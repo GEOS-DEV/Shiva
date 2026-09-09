@@ -20,6 +20,8 @@
 #include "shiva/common/ShivaMacros.hpp"
 #include "shiva/common/types.hpp"
 #include "shiva/common/CArray.hpp"
+
+#include <type_traits>
 namespace shiva
 {
 
@@ -63,10 +65,14 @@ public:
 
   /**
    * @brief Returns the length dimensions of the rectangular cuboid.
-   * @return The length dimensions of the rectangular cuboid.
+   * @return A const reference to the stored length dimensions.
    */
   constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType const & getData() const { return m_length; }
 
+  /**
+   * @brief Provides mutable access to the length dimensions of the rectangular cuboid.
+   * @return A reference to the stored length dimensions.
+   */
   constexpr SHIVA_HOST_DEVICE SHIVA_FORCE_INLINE DataType & getData() { return m_length; }
 
   /**
@@ -100,8 +106,8 @@ namespace utilities
 /**
  * @brief Calculates the Jacobian transformation for a rectangular cuboid.
  * @tparam REAL_TYPE The floating point type.
- * @param cell The rectangular cuboid for which the Jacobian is calculated.
- * @param J The Jacobian transformation operator.
+ * @param[in] cell The rectangular cuboid for which the Jacobian is calculated.
+ * @param[out] J The diagonal Jacobian entries, overwritten with half the current lengths.
  */
 template< typename REAL_TYPE >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
@@ -115,17 +121,29 @@ jacobian( Scaling< REAL_TYPE > const & cell,
 }
 
 
+/**
+ * @brief Calculates the constant Jacobian, independent of quadrature arguments.
+ * @tparam QUADRATURE The quadrature type, ignored because the Jacobian is constant.
+ * @tparam QA The quadrature indices, ignored for any index pack length, including zero.
+ * @tparam REAL_TYPE The floating point type.
+ * @param[in] cell The rectangular cuboid for which the Jacobian is calculated.
+ * @param[out] J The diagonal Jacobian entries, overwritten with half the current lengths.
+ *
+ * The constraint excludes QUADRATURE equal to REAL_TYPE so explicit scalar calls
+ * select the non-quadrature overload:
+ * @code
+ * jacobian< REAL_TYPE >( cell, J );
+ * @endcode
+ */
 template< typename QUADRATURE,
           int ... QA,
-          typename REAL_TYPE >
+          typename REAL_TYPE,
+          std::enable_if_t< !std::is_same_v< QUADRATURE, REAL_TYPE >, int > = 0 >
 SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE void
 jacobian( Scaling< REAL_TYPE > const & cell,
           typename Scaling< REAL_TYPE >::JacobianType & J )
 {
-  typename Scaling< REAL_TYPE >::DataType const & h = cell.getData();
-  J( 0 ) = 0.5 * h[0];
-  J( 1 ) = 0.5 * h[1];
-  J( 2 ) = 0.5 * h[2];
+  jacobian( cell, J );
 }
 
 /**
