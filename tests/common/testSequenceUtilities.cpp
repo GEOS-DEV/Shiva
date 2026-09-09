@@ -112,8 +112,6 @@ TEST( testSequenceUtilities, testForSequenceLambda )
 
 
 
-#if __cplusplus >= 202002L
-
 void testSequenceExpansionTemplateLambdaHelper()
 {
   kernelLaunch( [] SHIVA_HOST_DEVICE ()
@@ -135,18 +133,18 @@ TEST( testSequenceUtilities, testSequenceExpansionTemplateLambda )
 
 
 
-void testSequenceExpansionTemplateLambdaHelper()
+void testNestedSequenceExpansionTemplateLambdaHelper()
 {
   kernelLaunch( [] SHIVA_HOST_DEVICE ()
   {
-    constexpr int staticSum0 = executeSequence< 10 >( [&]< int ... a > () constexpr
+    constexpr int staticSum0 =
+      executeSequence< 10 >( [&]< int ... a > () constexpr
     {
       return
         ( executeSequence< 10 >
-          (
-            [ h = Data::h, aa = std::integral_constant< int, a >{} ]< int ... b > () constexpr
+            ( [ h = Data::h, aa = std::integral_constant< int, a >{} ]< int ... b > () constexpr
       { return ( (h[aa] * h[b]) + ...); }
-          ) + ...
+            ) + ...
         );
     } );
     static_assert( staticSum0 == Data::nested_sum_of_h );
@@ -155,7 +153,7 @@ void testSequenceExpansionTemplateLambdaHelper()
 
 TEST( testSequenceUtilities, testNestedSequenceExpansionTemplateLambda )
 {
-  testSequenceExpansionTemplateLambdaHelper();
+  testNestedSequenceExpansionTemplateLambdaHelper();
 }
 
 
@@ -183,7 +181,6 @@ TEST( testSequenceUtilities, testForSequenceTemplateLambda )
 {
   testForSequenceTemplateLambdaHelper();
 }
-#endif
 
 
 int main( int argc, char * * argv )

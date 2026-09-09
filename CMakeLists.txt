@@ -46,11 +46,11 @@ target_include_directories( Shiva INTERFACE
                             "$<BUILD_INTERFACE:${SHIVA_BINARY_DIR}/include>"   # build/include/shiva/ShivaConfig.hpp
                             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>" )
 
-target_compile_features(Shiva INTERFACE cxx_std_17)
+target_compile_features(Shiva INTERFACE cxx_std_20 cuda_std_20)
 
 # -------- BLT (optional; usable as top-level or submodule) ---------------------
 if( SHIVA_ENABLE_BLT )
-  set( BLT_CXX_STD "c++17" )
+  set( BLT_CXX_STD "c++20" )
   # Load BLT if Shiva is standalone
   if( SHIVA_IS_TOPLEVEL )
     set(BLT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/blt" CACHE PATH "Path to BLT")

@@ -17,7 +17,9 @@
 #include "shiva/common/pmpl.hpp"
 #include "shiva/functions/quadrature/Quadrature.hpp"
 
+#include <algorithm>
 #include <gtest/gtest.h>
+#include <iterator>
 #include <type_traits>
 
 using namespace shiva;
@@ -152,14 +154,7 @@ constexpr bool checkScalingInterfaceConstexpr()
 {
   bool checks[10]{};
   checkScalingInterface< REAL_TYPE >( checks );
-  for( bool const check : checks )
-  {
-    if( !check )
-    {
-      return false;
-    }
-  }
-  return true;
+  return std::all_of( std::begin( checks ), std::end( checks ), [] ( bool const check ) constexpr { return check; } );
 }
 
 static_assert( checkScalingInterfaceConstexpr< float >() );

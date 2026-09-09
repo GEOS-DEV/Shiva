@@ -70,6 +70,7 @@ struct BasisProduct
    * coordinate.
    * @tparam BASIS_FUNCTION_INDICES Pack of indices of the basis function to
    * evaluate in each dimension.
+   * @tparam COORD_TYPE Coordinate type supporting indexing in each dimension.
    * @param parentCoord The parent coordinate at which to evaluate the basis
    * function.
    * @return The value of the basis function at the specified parent coordinate.
@@ -79,7 +80,7 @@ struct BasisProduct
    * \Phi_{i_0 i_1 ... i_{(numDims-1)}}(\boldsymbol{\xi}) =
    * \prod_{k=0}^{(numDims-1)} \phi_{i_k}(\xi_k)\text{, where } \\
    * i_j \text{is index of the basis function in the jth dimension, and
-   * ranges from [0...(order+1)]}
+   * ranges from 0 to one less than the number of support points in that dimension.}
    * \f]
    *
    */
@@ -89,23 +90,11 @@ struct BasisProduct
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
 
-
-#if __cplusplus >= 202002L
-    // expand pack over number of dimensions
-    return executeSequence< numDims >( [&]< int ... PRODUCT_TERM_INDEX > () constexpr
-    {
-      return ( BASIS_TYPE::template value< BASIS_FUNCTION_INDICES >( parentCoord[PRODUCT_TERM_INDEX] ) * ... );
-    } );
-#else
+    // Integral-constant arguments preserve distinct coordinate indices in NVCC device code.
     return executeSequence< numDims >( [&] ( auto ... PRODUCT_TERM_INDEX ) constexpr
     {
-      // fold expression to multiply the value of each BASIS_TYPE in each
-      // dimension. In other words the fold expands on BASIS_TYPE...,
-      // BASIS_FUNCTION_INDICES..., and PRODUCT_TERM_INDEX... together.
       return ( BASIS_TYPES::template value< BASIS_FUNCTION_INDICES >( parentCoord[decltype(PRODUCT_TERM_INDEX)::value] ) * ... );
     } );
-
-#endif
   }
 
   /**
@@ -113,6 +102,7 @@ struct BasisProduct
    * parent coordinate.
    * @tparam BASIS_FUNCTION_INDICES Pack of indices of the basis function to
    * evaluate in each dimension.
+   * @tparam COORD_TYPE Coordinate type supporting indexing in each dimension.
    * @param parentCoord The parent coordinate at which to evaluate the basis
    * function gradient.
    * @return The gradient of the basis function at the specified parent
@@ -131,14 +121,12 @@ struct BasisProduct
   gradient( COORD_TYPE const & parentCoord )
   {
     static_assert( sizeof...(BASIS_FUNCTION_INDICES) == numDims, "Wrong number of basis function indicies specified" );
-
-#if __cplusplus >= 202002L
     return executeSequence< numDims >( [&]< int ... i > () constexpr->CArrayNd< RealType, numDims >
     {
       auto gradientComponent = [&] ( auto const iGrad,
                                      auto const  ... PRODUCT_TERM_INDICES ) constexpr
       {
-        // Ca
+        // Multiply the directional gradient by the values in every other dimension.
         return ( gradientComponentHelper< BASIS_TYPES,
                                           decltype(iGrad)::value,
                                           BASIS_FUNCTION_INDICES,
@@ -147,46 +135,26 @@ struct BasisProduct
 
       return { (executeSequence< numDims >( gradientComponent, std::integral_constant< int, i >{} ) )...  };
     } );
-#else
-    // Expand over the dimensions.
-    return executeSequence< numDims >( [&] ( auto ... a ) constexpr->CArrayNd< RealType, numDims >
-    {
-      // define a lambda that calculates the gradient of the basis function in
-      // a single dimension/direction.
-      auto gradientComponent = [&] ( auto GRADIENT_COMPONENT, auto ... PRODUCT_TERM_INDICES ) constexpr
-      {
-        // fold expression calling gradientComponentHelper using expanding on
-        // BASIS_TYPE, BASIS_FUNCTION_INDICES, and PRODUCT_TERM_INDICES.
-        return ( gradientComponentHelper< BASIS_TYPES,
-                                          decltype(GRADIENT_COMPONENT)::value,
-                                          BASIS_FUNCTION_INDICES,
-                                          decltype(PRODUCT_TERM_INDICES)::value >( parentCoord ) * ... );
-      };
-
-      // execute the gradientComponent lambda on each direction, expand the
-      // pack on "i" corresponding to each direction of the gradient.
-      return { (executeSequence< numDims >( gradientComponent, a ) )...  };
-    } );
-#endif
   }
 
 
 private:
   /**
    * @brief Helper function to return the gradient of a basis function, or the
-   * value of the basis function depending on whether or not the index of the
-   * basis function (@p BASIS_FUNCTION) matches the index of the direction
-   * component index (@p GRADIENT_COMPONENT). This filter is illustrated in the
+   * value of the basis function depending on whether the coordinate dimension
+   * (@p COORD_INDEX) matches the gradient direction (@p GRADIENT_COMPONENT).
+   * This filter is illustrated in the
    * documentation for the gradient function.
    * @tparam BASIS_FUNCTION The basis function type
    * @tparam GRADIENT_COMPONENT The dimension component of the gradient.
    * @tparam BASIS_FUNCTION_INDEX The index of the basis function that is being
    * evaluated.
    * @tparam COORD_INDEX The dimension component of the coordinate.
+   * @tparam COORD_TYPE Coordinate type supporting indexing in each dimension.
    * @param parentCoord The parent coordinate at which to evaluate the basis
    * function gradient.
-   * @return The gradient component of the basis function at the specified
-   * parent coordinate.
+   * @return The one-dimensional basis derivative when the dimensions match,
+   * otherwise the one-dimensional basis value.
    */
   template< typename BASIS_FUNCTION, int GRADIENT_COMPONENT, int BASIS_FUNCTION_INDEX, int COORD_INDEX, typename COORD_TYPE >
   SHIVA_STATIC_CONSTEXPR_HOSTDEVICE_FORCEINLINE RealType

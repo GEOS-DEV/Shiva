@@ -80,12 +80,14 @@ jobs:
           lfs: false
       - name: code_checks
         env:
-          DOCKER_REPOSITORY: geosx/ubuntu:22.04-${{ needs.get_docker_image_tag_hash.outputs.DOCKER_IMAGE_TAG_HASH }}
+          # Cppcheck 2.13 and LLVM 20 support the project's required C++20 syntax.
+          DOCKER_REPOSITORY: geosx/ubuntu:24.04-clang20-1c3c049b3f629d9d44838656fd306b2a0c04c9e8
           HOST_CONFIG: hostconfigs/environment.cmake
-          CMAKE_CXX_COMPILER: /usr/bin/clang++
-          CMAKE_C_COMPILER: /usr/bin/clang
+          CMAKE_CXX_COMPILER: /usr/lib/llvm-20/bin/clang++
+          CMAKE_C_COMPILER: /usr/lib/llvm-20/bin/clang
           CMAKE_BUILD_TYPE: Release
           BUILD_AND_TEST_ARGS: --code-checks
+          DOCKER_RUN_ARGS: --env PATH=/usr/lib/llvm-20/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
         run: ./scripts/ci_build_and_test.sh
 
   linux_builds:
@@ -154,51 +156,7 @@ jobs:
             CMAKE_C_COMPILER: /usr/bin/gcc
             CMAKE_BUILD_TYPE: Debug
 
-          - name: ubuntu22-gcc11-cuda11-rel (ubuntu-22, gcc 11.4.0, cuda-11.8.0, Release)
-            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8
-            RUNS_ON: streak2
-            CMAKE_CXX_COMPILER: /usr/bin/g++
-            CMAKE_C_COMPILER: /usr/bin/gcc
-            CMAKE_BUILD_TYPE: Release
-            ENABLE_CUDA: ON
-            CMAKE_CUDA_ARCHITECTURES: "86"
-            NPROC: 1
-            DOCKER_RUN_ARGS: "--cpus=1 --memory=64g --runtime=nvidia --gpus all"
-
-          - name: ubuntu22-gcc11-cuda11-dbg (ubuntu-22, gcc 11.4.0, cuda-11.8.0, Debug)
-            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8
-            RUNS_ON: streak2
-            CMAKE_CXX_COMPILER: /usr/bin/g++
-            CMAKE_C_COMPILER: /usr/bin/gcc
-            CMAKE_BUILD_TYPE: Debug
-            ENABLE_CUDA: ON
-            CMAKE_CUDA_ARCHITECTURES: "86"
-            NPROC: 1
-            DOCKER_RUN_ARGS: "--cpus=1 --memory=64g --runtime=nvidia --gpus all"
-
-          - name: ubuntu22-clang14-cuda11-rel (ubuntu-22, clang-14.0.0, cuda-11.8.0, Release)
-            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8
-            RUNS_ON: streak2
-            CMAKE_CXX_COMPILER: /usr/bin/clang++
-            CMAKE_C_COMPILER: /usr/bin/clang
-            CMAKE_BUILD_TYPE: Release
-            ENABLE_CUDA: ON
-            CMAKE_CUDA_ARCHITECTURES: "86"
-            NPROC: 1
-            DOCKER_RUN_ARGS: "--cpus=1 --memory=64g --runtime=nvidia --gpus all"
-
-          - name: ubuntu22-clang14-cuda11-dbg (ubuntu-22, clang-14.0.0, cuda-11.8.0, Debug)
-            DOCKER_REPOSITORY: geosx/ubuntu:22.04-cuda11.8
-            RUNS_ON: streak2
-            CMAKE_CXX_COMPILER: /usr/bin/clang++
-            CMAKE_C_COMPILER: /usr/bin/clang
-            CMAKE_BUILD_TYPE: Debug
-            ENABLE_CUDA: ON
-            CMAKE_CUDA_ARCHITECTURES: "86"
-            NPROC: 1
-            DOCKER_RUN_ARGS: "--cpus=1 --memory=64g --runtime=nvidia --gpus all"
-
-          - name: RHEL8.10-clang17-cuda12-rel (ubi8.10, clang-17.0.6, cuda-12.4.1, Release)
+          - name: RHEL8.10-clang17-cuda12-rel (ubi8.10, clang-17.0.6, cuda-12.8, Release)
             DOCKER_REPOSITORY: geosx/ubi:8.10-cuda12.8
             RUNS_ON: streak2
             CMAKE_CXX_COMPILER: clang++
@@ -209,7 +167,7 @@ jobs:
             NPROC: 1
             DOCKER_RUN_ARGS: "--cpus=1 --memory=64g --runtime=nvidia --gpus all"
 
-          - name: RHEL8.10-gcc13-cuda12-rel (ubi8.10, gcc 13.2.1, cuda-12.4.1, Release)
+          - name: RHEL8.10-gcc13-cuda12-rel (ubi8.10, gcc 13.2.1, cuda-12.8, Release)
             DOCKER_REPOSITORY: geosx/ubi:8.10-cuda12.8
             RUNS_ON: streak2
             CMAKE_CXX_COMPILER: /opt/rh/gcc-toolset-13/root/bin/g++
